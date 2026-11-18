@@ -1,0 +1,8 @@
+Triggering 4 separate HubSpot workflows on "Contact Created" is why enterprise demo leads get assigned to the wrong rep or lost on API timeouts.
+
+We replaced a client's 19-minute webhook chain (6,400 leads/mo) with a single Postgres routing worker:
+- Domain advisory locks (0 duplicate deals)
+- 2.0s parallel enrichment SLA
+- 4.2s CRM write + Slack alert (+31% booked demos)
+
+Email contact@olventech.com

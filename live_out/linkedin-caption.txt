@@ -1,0 +1,15 @@
+Waiting 19 minutes to route an enterprise demo request happens when HubSpot workflows race each other without a transaction lock.
+
+We audited a B2B SaaS RevOps pipeline handling 6,400 inbound leads a month. Whenever a new contact landed in HubSpot, three separate automation workflows fired at the same time: one for firmographic enrichment, one for territory assignment, and one for Slack alerting. Because HubSpot has no row-level transaction lock, the territory workflow frequently ran before enrichment finished, assigning enterprise accounts to the wrong region or creating duplicate deals when prospects double-clicked the submit button.
+
+Worse, when the enrichment API timed out, 8.7% of demo requests failed silently before a rep ever saw them.
+
+How we rebuilt the routing engine at Olven Tech:
+
+1. Domain-level advisory locks in Postgres: Every form submission hits a lightweight ingestion worker that acquires a transaction lock on the normalized company domain. Double-clicks and multi-contact submissions from the same buyer group never create duplicate deals.
+2. Parallel enrichment with a hard 2.0s SLA: Firmographic and CRM account-match queries run concurrently. If an external provider takes longer than 2,000ms, the worker proceeds immediately with first-party form data and backfills enrichment asynchronously.
+3. Single atomic CRM write + Slack escalation: The worker calculates territory round-robin weight in Postgres, writes the HubSpot Contact, Company, and Deal in one pass, and posts the Slack alert in 4.2 seconds.
+
+Results over 90 days: lead-to-rep notification dropped from 19 minutes to 4.2 seconds, dropped leads went from 8.7% to 0%, and qualified demo bookings increased 31%.
+
+If your RevOps team is fighting duplicate CRM records or slow lead handoffs, email contact@olventech.com.

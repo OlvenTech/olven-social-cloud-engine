@@ -1,0 +1,7 @@
+Chained HubSpot webhooks race each other and drop 8.7% of demo leads on enrichment timeouts.
+
+We replaced a 19-min chain (6.4k leads/mo) with a Postgres routing worker:
+- Domain advisory locks (0 duplicates)
+- 4.2s SLA (+31% demos)
+
+contact@olventech.com
