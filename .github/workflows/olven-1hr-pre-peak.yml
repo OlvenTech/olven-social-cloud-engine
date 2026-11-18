@@ -1,0 +1,70 @@
+name: Olven Tech — 1-Hour-Before-Peak Live Cloud Generator & Anti-Slop Gate
+
+on:
+  schedule:
+    # Wave 1 (Morning): 12:00 UTC (1 hour before 13:00 UTC Morning Peak)
+    - cron: '0 12 * * *'
+    # Wave 2 (Evening): 14:00 UTC / 18:00-21:00 UTC (1 hour before Evening Peak)
+    - cron: '0 14,18,19,20,21 * * *'
+  workflow_dispatch:
+    inputs:
+      day_num:
+        description: 'Target Day Number (leave empty for auto-next from state/wave_cursor.json)'
+        required: false
+        default: ''
+      slot:
+        description: 'Morning or Evening (leave empty for auto-next from state/wave_cursor.json)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  generate-lint-stage-1hr-before:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Olven Social Cloud Engine
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright Chromium & Pillow
+        run: |
+          pip install pillow requests
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Execute Live R&D, 6-Archetype Render & 3-Layer Anti-Slop Quality Blocker
+        run: |
+          python3 run_cloud_wave.py "${{ github.event.inputs.day_num }}" "${{ github.event.inputs.slot }}"
+
+      - name: Commit verified wave to live_out/ and advance cursor
+        run: |
+          git config user.name "olven-cloud-engine"
+          git config user.email "contact@olventech.com"
+          git add state/wave_cursor.json live_out/ history/
+          git diff --staged --quiet || git commit -m "chore(wave): render & verify live T-1h wave"
+          git push origin main
+
+      - name: Trigger Make.com Scenario 8619522 to materialize Drive folder & QUEUED row
+        env:
+          MAKE_API_TOKEN: ${{ secrets.MAKE_API_TOKEN }}
+        run: |
+          sleep 3
+          curl -fsSL -X POST "https://eu1.make.com/api/v2/scenarios/8619522/run" \
+            -H "Authorization: Token ${MAKE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+          echo ""
+          echo "Triggered Make.com Scenario 8619522 to materialize Google Drive folder and QUEUED row."
