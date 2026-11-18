@@ -2,10 +2,17 @@ name: Olven Tech — 1-Hour-Before-Peak Live Cloud Generator & Anti-Slop Gate
 
 on:
   schedule:
-    # Wave 1 (Morning): 12:00 UTC (1 hour before 13:00 UTC Morning Peak)
-    - cron: '0 12 * * *'
-    # Wave 2 (Evening): 14:00 UTC / 18:00-21:00 UTC (1 hour before Evening Peak)
-    - cron: '0 14,18,19,20,21 * * *'
+    # Wave 1 (Morning, Daily Mon-Sun): 07:00 UTC = 12:00 PM PKT (1 hour before 01:00 PM PKT / 08:00 UTC Morning Peak)
+    - cron: '0 7 * * *'
+    # Wave 2 (Evening, Fri): 13:00 UTC = 06:00 PM PKT (1 hour before 07:00 PM PKT / 14:00 UTC Fri Peak)
+    - cron: '0 13 * * 5'
+    # Wave 2 (Evening, Wed & Sat): 14:00 UTC = 07:00 PM PKT (1 hour before 08:00 PM PKT / 15:00 UTC Wed/Sat Peak)
+    - cron: '0 14 * * 3,6'
+    # Wave 2 (Evening, Tue & Thu): 15:00 UTC = 08:00 PM PKT (1 hour before 09:00 PM PKT / 16:00 UTC Tue/Thu Peak)
+    - cron: '0 15 * * 2,4'
+    # Wave 2 (Evening, Sun & Mon): 16:00 UTC = 09:00 PM PKT (1 hour before 10:00 PM PKT / 17:00 UTC Sun/Mon Peak)
+    - cron: '0 16 * * 0,1'
+
   workflow_dispatch:
     inputs:
       day_num:
@@ -61,6 +68,9 @@ jobs:
         env:
           MAKE_API_TOKEN: ${{ secrets.MAKE_API_TOKEN }}
         run: |
+          for f in manifest.json linkedin.png facebook.png instagram.png x.png; do
+            curl -fsSL "https://purge.jsdelivr.net/gh/OlvenTech/olven-social-cloud-engine@main/live_out/${f}" || true
+          done
           sleep 3
           curl -fsSL -X POST "https://eu1.make.com/api/v2/scenarios/8619522/run" \
             -H "Authorization: Token ${MAKE_API_TOKEN}" \
@@ -68,3 +78,4 @@ jobs:
             -d '{}'
           echo ""
           echo "Triggered Make.com Scenario 8619522 to materialize Google Drive folder and QUEUED row."
+
