@@ -1,5 +1,6 @@
 {
   "day_num": 9,
   "slot": "Morning",
-  "seq_index": 11
+  "seq_index": 11,
+  "media_type": "video"
 }
