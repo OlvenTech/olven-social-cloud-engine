@@ -1,5 +1,7 @@
-Letting an AI agent call write endpoints in Stripe, Shopify, or your ERP based solely on prompt instructions will eventually corrupt data or leak cash.
+Third-party SaaS outages are inevitable, but losing 300 customer orders during a 40-minute ERP outage is an architectural choice.
 
-We re-engineered an 11,000-ticket/month support automation that had issued $14.2k in duplicate and out-of-policy credits. By stripping direct API keys from the agent and placing a deterministic Postgres policy proxy in front of Stripe (with hard dollar caps, carrier state verification, and idempotency locks), our client kept 78.4% full automation while cutting unauthorized refunds to $0.00.
+Many webhook integrations fail because they retry three times within 30 seconds and then drop the payload while the vendor API is returning HTTP 503.
 
-Need production-safe automation architecture? Email contact@olventech.com.
+We replaced a client's fragile webhook handlers (1.2M events/month) with a Postgres write-ahead outbox, circuit breaker, and 12-hour backoff replay engine. Even during two major vendor outages over the last six months, they lost zero records and spent zero engineering hours on manual backfills.
+
+Want outage-proof system integrations? Reach us at contact@olventech.com.

@@ -1,7 +1,8 @@
-System prompts are not a security boundary. Never give an LLM direct Stripe API keys.
+Retrying a failed webhook 3 times in 30 seconds drops orders whenever an ERP is down for 40 minutes.
 
-We placed a Postgres policy proxy in front of an 11k ticket/mo support agent:
-- Hard <=$150 code cap + carrier check
-- 78.4% auto-resolved, $0 leaked
+Our Postgres write-ahead outbox (1.2M events/mo):
+- 6.4ms payload persistence
+- Circuit-breaker pause & ordered replay
+- 0 lost rows
 
 contact@olventech.com
