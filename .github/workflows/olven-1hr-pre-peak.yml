@@ -23,6 +23,10 @@ on:
         description: 'Morning or Evening (leave empty for auto-next from state/wave_cursor.json)'
         required: false
         default: ''
+      media_type:
+        description: 'video or image (leave empty to auto-alternate from state/wave_cursor.json)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -46,15 +50,16 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Playwright Chromium & Pillow
+      - name: Install Playwright Chromium, Pillow & FFmpeg
         run: |
+          command -v ffmpeg >/dev/null 2>&1 || (sudo apt-get update && sudo apt-get install -y ffmpeg)
           pip install pillow requests
           npm install
           npx playwright install --with-deps chromium
 
-      - name: Execute Live R&D, 6-Archetype Render & 3-Layer Anti-Slop Quality Blocker
+      - name: Execute Live R&D, 6-Archetype Visual/Reel Render & 3-Layer Anti-Slop Quality Blocker
         run: |
-          python3 run_cloud_wave.py "${{ github.event.inputs.day_num }}" "${{ github.event.inputs.slot }}"
+          python3 run_cloud_wave.py "${{ github.event.inputs.day_num }}" "${{ github.event.inputs.slot }}" "${{ github.event.inputs.media_type }}"
 
       - name: Commit verified wave to live_out/ and advance cursor
         run: |
@@ -64,18 +69,17 @@ jobs:
           git diff --staged --quiet || git commit -m "chore(wave): render & verify live T-1h wave"
           git push origin main
 
-      - name: Trigger Make.com Scenario 8619522 to materialize Drive folder & QUEUED row
+      - name: Purge jsDelivr CDN & Trigger Make.com Scenario 8619522 to stage QUEUED row
         env:
           MAKE_API_TOKEN: ${{ secrets.MAKE_API_TOKEN }}
         run: |
-          for f in manifest.json linkedin.png facebook.png instagram.png x.png; do
+          for f in manifest.json linkedin.png facebook.png instagram.png x.png walkthrough-video.mp4; do
             curl -fsSL "https://purge.jsdelivr.net/gh/OlvenTech/olven-social-cloud-engine@main/live_out/${f}" || true
           done
-          sleep 3
+          sleep 5
           curl -fsSL -X POST "https://eu1.make.com/api/v2/scenarios/8619522/run" \
             -H "Authorization: Token ${MAKE_API_TOKEN}" \
             -H "Content-Type: application/json" \
             -d '{}'
           echo ""
-          echo "Triggered Make.com Scenario 8619522 to materialize Google Drive folder and QUEUED row."
-
+          echo "Triggered Make.com Scenario 8619522 to stage QUEUED row."
