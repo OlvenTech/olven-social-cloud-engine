@@ -1,15 +1,14 @@
-Waiting 19 minutes to route an enterprise demo request happens when HubSpot workflows race each other without a transaction lock.
+System prompts are not a security boundary when an AI support agent holds production Stripe refund keys.
 
-We audited a B2B SaaS RevOps pipeline handling 6,400 inbound leads a month. Whenever a new contact landed in HubSpot, three separate automation workflows fired at the same time: one for firmographic enrichment, one for territory assignment, and one for Slack alerting. Because HubSpot has no row-level transaction lock, the territory workflow frequently ran before enrichment finished, assigning enterprise accounts to the wrong region or creating duplicate deals when prospects double-clicked the submit button.
+We were brought in to fix an automated support pipeline handling 11,000 tickets a month after their LLM agent issued $14,200 in duplicate and out-of-policy credits over a single quarter. The previous setup relied on a 2,000-word prompt telling the model "never refund orders over $150 or orders already marked delivered." When a webhook timed out or a buyer pasted conflicting tracking text, the model called the Stripe refund endpoint anyway.
 
-Worse, when the enrichment API timed out, 8.7% of demo requests failed silently before a rep ever saw them.
+Here is how we re-architected their agent execution layer at Olven Tech:
 
-How we rebuilt the routing engine at Olven Tech:
+1. Zero credentials inside the agent runtime: The model cannot call Stripe or the ERP directly. It can only emit a typed intent payload (order_id, reason_code, requested_cents) to our internal Postgres policy proxy.
+2. Deterministic invariant checks in code: Before any external API call is made, pure Python/Postgres logic verifies the order's real payment status, checks live carrier delivery state from the database, and enforces a hard ceiling of $150 per customer per 90-day window.
+3. Database idempotency lock: A unique constraint on (order_id, action_type) makes double refunds mathematically impossible even if the worker retries five times.
+4. Human-in-the-loop Slack gate for exceptions: Anything above $150 stages a pending row and sends support leads a Slack card with one-click Approve/Reject buttons.
 
-1. Domain-level advisory locks in Postgres: Every form submission hits a lightweight ingestion worker that acquires a transaction lock on the normalized company domain. Double-clicks and multi-contact submissions from the same buyer group never create duplicate deals.
-2. Parallel enrichment with a hard 2.0s SLA: Firmographic and CRM account-match queries run concurrently. If an external provider takes longer than 2,000ms, the worker proceeds immediately with first-party form data and backfills enrichment asynchronously.
-3. Single atomic CRM write + Slack escalation: The worker calculates territory round-robin weight in Postgres, writes the HubSpot Contact, Company, and Deal in one pass, and posts the Slack alert in 4.2 seconds.
+Result: 78.4% of routine tickets still resolve automatically in under 15 seconds, while unauthorized and duplicate refunds dropped to $0.00.
 
-Results over 90 days: lead-to-rep notification dropped from 19 minutes to 4.2 seconds, dropped leads went from 8.7% to 0%, and qualified demo bookings increased 31%.
-
-If your RevOps team is fighting duplicate CRM records or slow lead handoffs, email contact@olventech.com.
+Building AI workflows that touch money or production data? Reach us at contact@olventech.com.

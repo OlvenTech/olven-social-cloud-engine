@@ -1,7 +1,7 @@
-Chained HubSpot webhooks race each other and drop 8.7% of demo leads on enrichment timeouts.
+System prompts are not a security boundary. Never give an LLM direct Stripe API keys.
 
-We replaced a 19-min chain (6.4k leads/mo) with a Postgres routing worker:
-- Domain advisory locks (0 duplicates)
-- 4.2s SLA (+31% demos)
+We placed a Postgres policy proxy in front of an 11k ticket/mo support agent:
+- Hard <=$150 code cap + carrier check
+- 78.4% auto-resolved, $0 leaked
 
 contact@olventech.com

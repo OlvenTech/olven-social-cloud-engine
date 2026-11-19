@@ -1,0 +1,7 @@
+System prompts are not a security boundary. Never give an LLM direct Stripe API keys.
+
+We placed a Postgres policy proxy in front of an 11k ticket/mo support agent:
+- Hard <=$150 code cap + carrier check
+- 78.4% auto-resolved, $0 leaked
+
+contact@olventech.com

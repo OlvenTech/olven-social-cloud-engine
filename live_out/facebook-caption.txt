@@ -1,7 +1,5 @@
-Most B2B teams don't have a lead generation problem; they have a 19-minute lead routing latency problem.
+Letting an AI agent call write endpoints in Stripe, Shopify, or your ERP based solely on prompt instructions will eventually corrupt data or leak cash.
 
-We recently audited a HubSpot pipeline processing 6,400 inbound leads per month where 8.7% of demo requests were failing silently inside chained webhook automations, and reps waited 19 minutes on average to get notified.
+We re-engineered an 11,000-ticket/month support automation that had issued $14.2k in duplicate and out-of-policy credits. By stripping direct API keys from the agent and placing a deterministic Postgres policy proxy in front of Stripe (with hard dollar caps, carrier state verification, and idempotency locks), our client kept 78.4% full automation while cutting unauthorized refunds to $0.00.
 
-By replacing three competing CRM workflows with a single Postgres-backed routing worker (using domain-level locks and a 2-second parallel enrichment budget), we brought routing speed down to 4.2 seconds, eliminated duplicate deals, and lifted booked demos by 31%.
-
-If your CRM automations are dropping or delaying inbound pipeline, reach us at contact@olventech.com.
+Need production-safe automation architecture? Email contact@olventech.com.

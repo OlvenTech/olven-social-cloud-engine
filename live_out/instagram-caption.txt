@@ -1,12 +1,13 @@
-Waiting 19 minutes to route an enterprise demo request silently kills B2B conversion rates.
+Telling a system prompt "be careful with refunds" fails the moment a webhook retries or a ticket contains conflicting text.
 
-When a prospect submits a demo form, many teams trigger three or four separate HubSpot workflows for enrichment, territory assignment, and Slack notifications. Because those workflows run without a shared lock, territory rules fire before enrichment finishes, API timeouts drop 8.7% of leads, and double-clicks create duplicate deals.
+We audited an automated support system processing 11,000 tickets a month that had leaked $14,200 in duplicate and out-of-policy Stripe refunds. The model had direct access to the refund API and relied on prompt instructions that broke under production edge cases.
 
-How we rebuilt a 6,400-lead/month RevOps pipeline at Olven Tech:
-1. Postgres advisory locks on company domain prevent duplicate deals and race conditions.
-2. Parallel enrichment capped at a strict 2-second timeout so slow third-party APIs never block a lead.
-3. One atomic write to HubSpot and Slack in 4.2 seconds.
+How we engineered a safe execution layer at Olven Tech:
+1. Stripped all external Stripe and ERP credentials from the agent runtime.
+2. Placed a deterministic Postgres policy proxy in front of Stripe that checks real order totals, carrier delivery state, and 90-day customer caps in strict code.
+3. Enforced database idempotency keys so retries can never double-refund an order.
+4. Routed high-dollar exceptions to Slack for a 1-click human sign-off.
 
-Result: Routing time dropped from 19 minutes to 4.2 seconds, zero dropped leads, and a 31% lift in booked demos.
+Result: 78.4% automated resolution with $0.00 in unauthorized writes.
 
-Need deterministic RevOps infrastructure? Email contact@olventech.com.
+Email contact@olventech.com to harden your production workflows.

@@ -1,8 +1,8 @@
-Triggering 4 separate HubSpot workflows on "Contact Created" is why enterprise demo leads get assigned to the wrong rep or lost on API timeouts.
+Never give an LLM direct API keys to issue Stripe refunds or write to your ERP. Prompts are not a security boundary.
 
-We replaced a client's 19-minute webhook chain (6,400 leads/mo) with a single Postgres routing worker:
-- Domain advisory locks (0 duplicate deals)
-- 2.0s parallel enrichment SLA
-- 4.2s CRM write + Slack alert (+31% booked demos)
+We fixed an 11k ticket/mo support pipeline by placing a deterministic Postgres policy gate between the agent and Stripe:
+- Verifies order state & $150 cap in code
+- Unique (order_id) lock prevents retry double-refunds
+- Routes >$150 to Slack for 1-click approval
 
-Email contact@olventech.com
+78.4% auto-resolved, $0.00 leaked. (contact@olventech.com)

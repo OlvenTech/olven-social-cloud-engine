@@ -1,0 +1,5 @@
+Letting an AI agent call write endpoints in Stripe, Shopify, or your ERP based solely on prompt instructions will eventually corrupt data or leak cash.
+
+We re-engineered an 11,000-ticket/month support automation that had issued $14.2k in duplicate and out-of-policy credits. By stripping direct API keys from the agent and placing a deterministic Postgres policy proxy in front of Stripe (with hard dollar caps, carrier state verification, and idempotency locks), our client kept 78.4% full automation while cutting unauthorized refunds to $0.00.
+
+Need production-safe automation architecture? Email contact@olventech.com.
