@@ -153,10 +153,12 @@ def main():
         if src.exists():
             shutil.copy2(src, LIVE_OUT_DIR / fname)
 
-    now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    now_dt = datetime.datetime.now(datetime.timezone.utc)
+    now_utc = now_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    v_tag = f"d{day_num}_{slot.lower()}_{int(now_dt.timestamp())}"
     hn_top = (signals.get("hn_frontpage") or [{"title": "Live B2B Systems Architecture"}])[0].get("title", "")
-    video_url = f"{REPO_CDN_BASE}/walkthrough-video.mp4" if media_type == "video" else ""
-    instagram_img_url = f"{REPO_RAW_BASE}/instagram.png"
+    video_url = f"{REPO_CDN_BASE}/walkthrough-video.mp4?v={v_tag}" if media_type == "video" else ""
+    instagram_img_url = f"{REPO_RAW_BASE}/instagram.png?v={v_tag}"
     instagram_media_url = video_url if media_type == "video" else instagram_img_url
 
     manifest = {
@@ -168,12 +170,12 @@ def main():
         "generated_at_utc": now_utc,
         "visual_archetype": spec.get("visual_archetype"),
         "hn_top_signal": hn_top,
-        "linkedin_img_url": f"{REPO_RAW_BASE}/linkedin.png",
-        "facebook_img_url": f"{REPO_RAW_BASE}/facebook.png",
+        "linkedin_img_url": f"{REPO_RAW_BASE}/linkedin.png?v={v_tag}",
+        "facebook_img_url": f"{REPO_RAW_BASE}/facebook.png?v={v_tag}",
         "instagram_img_url": instagram_img_url,
         "instagram_media_url": instagram_media_url,
         "video_url": video_url,
-        "x_img_url": f"{REPO_RAW_BASE}/x.png",
+        "x_img_url": f"{REPO_RAW_BASE}/x.png?v={v_tag}",
         "threads_img_url": instagram_img_url,
         "linkedin_caption": (wave_dir / "linkedin-caption.txt").read_text(encoding="utf-8").strip(),
         "facebook_caption": (wave_dir / "facebook-caption.txt").read_text(encoding="utf-8").strip(),
