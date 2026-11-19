@@ -624,8 +624,9 @@ async function renderWalkthroughVideo(specPath, outDir) {
   fs.mkdirSync(framesDir, { recursive: true });
 
   const launchOpts = { args: ['--no-sandbox', '--disable-setuid-sandbox'] };
-  if (fs.existsSync('/usr/bin/chromium')) {
-    launchOpts.executablePath = '/usr/bin/chromium';
+  const chromeBin = ['/usr/bin/chromium', '/usr/bin/chromium-browser', '/usr/bin/google-chrome'].find((p) => fs.existsSync(p));
+  if (chromeBin) {
+    launchOpts.executablePath = chromeBin;
   }
   const browser = await chromium.launch(launchOpts);
   const context = await browser.newContext({
