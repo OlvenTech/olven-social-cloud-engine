@@ -50,12 +50,17 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Playwright Chromium, Pillow & FFmpeg
+      - name: Install Pillow, Node deps & FFmpeg (uses preinstalled Chrome)
         run: |
-          command -v ffmpeg >/dev/null 2>&1 || (sudo apt-get update && sudo apt-get install -y ffmpeg)
-          pip install pillow requests
-          npm install
-          npx playwright install --with-deps chromium
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            DEBIAN_FRONTEND=noninteractive sudo apt-get update -qq
+            DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -qq --no-install-recommends ffmpeg
+          fi
+          pip install --quiet pillow requests
+          npm install --no-audit --no-fund
+          if [ ! -x /usr/bin/google-chrome ] && [ ! -x /usr/bin/chromium ]; then
+            npx playwright install --with-deps chromium
+          fi
 
       - name: Execute Live R&D, 6-Archetype Visual/Reel Render & 3-Layer Anti-Slop Quality Blocker
         run: |
