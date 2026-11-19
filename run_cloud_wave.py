@@ -174,6 +174,7 @@ def main():
         "instagram_media_url": instagram_media_url,
         "video_url": video_url,
         "x_img_url": f"{REPO_RAW_BASE}/x.png",
+        "threads_img_url": instagram_img_url,
         "linkedin_caption": (wave_dir / "linkedin-caption.txt").read_text(encoding="utf-8").strip(),
         "facebook_caption": (wave_dir / "facebook-caption.txt").read_text(encoding="utf-8").strip(),
         "instagram_caption": (wave_dir / "instagram-caption.txt").read_text(encoding="utf-8").strip(),
