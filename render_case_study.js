@@ -1010,10 +1010,10 @@ async function main() {
     JSON.stringify({ visual_archetype: chosenArchetype, doc_id: spec.doc_id, headline: spec.headline }, null, 2)
   );
 
-  const browser = await chromium.launch({
-    executablePath: '/usr/bin/chromium',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
+  const launchOpts = { args: ['--no-sandbox', '--disable-setuid-sandbox'] };
+  const chromeBin = ['/usr/bin/chromium', '/usr/bin/chromium-browser', '/usr/bin/google-chrome'].find((p) => fs.existsSync(p));
+  if (chromeBin) launchOpts.executablePath = chromeBin;
+  const browser = await chromium.launch(launchOpts);
 
   for (const p of PLATFORMS) {
     const context = await browser.newContext({
