@@ -56,7 +56,7 @@ jobs:
             DEBIAN_FRONTEND=noninteractive sudo apt-get update -qq
             DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -qq --no-install-recommends ffmpeg
           fi
-          pip install --quiet pillow requests
+          pip install --quiet pillow requests numpy edge-tts
           npm install --no-audit --no-fund
           if [ ! -x /usr/bin/google-chrome ] && [ ! -x /usr/bin/chromium ]; then
             npx playwright install --with-deps chromium
