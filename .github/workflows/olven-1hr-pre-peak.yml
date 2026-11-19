@@ -1,18 +1,8 @@
 name: Olven Tech — 1-Hour-Before-Peak Live Cloud Generator & Anti-Slop Gate
 
+# NOTE: Triggered deterministically at T-45 min (PKT) by Make.com Scenario 8619522 via workflow_dispatch
+# (eliminates GitHub Actions free-tier schedule cron delays/drops).
 on:
-  schedule:
-    # Wave 1 (Morning, Daily Mon-Sun): 06:47 UTC = 11:47 AM PKT (~1h13m before 01:00 PM PKT / 08:00 UTC Morning Peak; avoids :00 cron lag)
-    - cron: '47 6 * * *'
-    # Wave 2 (Evening, Fri): 12:47 UTC = 05:47 PM PKT (~1h13m before 07:00 PM PKT / 14:00 UTC Fri Peak)
-    - cron: '47 12 * * 5'
-    # Wave 2 (Evening, Wed & Sat): 13:47 UTC = 06:47 PM PKT (~1h13m before 08:00 PM PKT / 15:00 UTC Wed/Sat Peak)
-    - cron: '47 13 * * 3,6'
-    # Wave 2 (Evening, Tue & Thu): 14:47 UTC = 07:47 PM PKT (~1h13m before 09:00 PM PKT / 16:00 UTC Tue/Thu Peak)
-    - cron: '47 14 * * 2,4'
-    # Wave 2 (Evening, Sun & Mon): 15:47 UTC = 08:47 PM PKT (~1h13m before 10:00 PM PKT / 17:00 UTC Sun/Mon Peak)
-    - cron: '47 15 * * 0,1'
-
   workflow_dispatch:
     inputs:
       day_num:
@@ -50,6 +40,14 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Cache pip & node_modules for fast deterministic CI runs
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            node_modules
+          key: olven-ci-deps-${{ runner.os }}-${{ hashFiles('package.json') }}-v2
+
       - name: Install Pillow, Node deps & FFmpeg (uses preinstalled Chrome)
         run: |
           if ! command -v ffmpeg >/dev/null 2>&1; then
@@ -57,7 +55,9 @@ jobs:
             DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -qq --no-install-recommends ffmpeg
           fi
           pip install --quiet pillow requests numpy edge-tts
-          npm install --no-audit --no-fund
+          if [ ! -d node_modules/playwright ]; then
+            npm install --no-audit --no-fund
+          fi
           if [ ! -x /usr/bin/google-chrome ] && [ ! -x /usr/bin/chromium ]; then
             npx playwright install --with-deps chromium
           fi
@@ -74,25 +74,17 @@ jobs:
           git add state/wave_cursor.json live_out/ history/
           if git diff --staged --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No wave changes staged (cooldown skip) — skipping push and Make trigger."
+            echo "No wave changes staged — skipping push."
           else
-            git commit -m "chore(wave): render & verify live T-1h wave"
+            git commit -m "chore(wave): render & verify live T-45m wave"
             git push origin main
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Purge jsDelivr CDN & Trigger Make.com Scenario 8619522 to stage QUEUED row
+      - name: Purge jsDelivr CDN cache for freshly pushed media
         if: steps.commit_wave.outputs.changed == 'true'
-        env:
-          MAKE_API_TOKEN: ${{ secrets.MAKE_API_TOKEN }}
         run: |
           for f in manifest.json linkedin.png facebook.png instagram.png x.png walkthrough-video.mp4; do
             curl -fsSL "https://purge.jsdelivr.net/gh/OlvenTech/olven-social-cloud-engine@main/live_out/${f}" || true
           done
-          sleep 5
-          curl -fsSL -X POST "https://eu1.make.com/api/v2/scenarios/8619522/run" \
-            -H "Authorization: Token ${MAKE_API_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d '{}'
-          echo ""
-          echo "Triggered Make.com Scenario 8619522 to stage QUEUED row."
+          echo "CDN purged; Make Scenario 8619522 will fetch fresh manifest from GitHub API and stage QUEUED row."
