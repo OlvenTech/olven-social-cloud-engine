@@ -1,17 +1,16 @@
 #!/usr/bin/env node
 /**
- * Olven Tech — 6-Archetype Bespoke Visual Systems Renderer (2x Retina)
+ * Olven Tech — High-Retention Silicon Valley Visual Engine (2x Retina)
  *
- * Every archetype has a radically different visual composition, canvas geometry,
- * and engineering diagram widget so consecutive posts on an Instagram or LinkedIn
- * profile grid look like bespoke studio posters — never a repeated template:
+ * 6 radically distinct, scroll-stopping visual genres engineered for high dwell time,
+ * saves, and shares (zero repetitive "Before/After + 4 KPI box" slide templates):
  *
- *  1. editorial_light_blueprint     — Warm FT Paper Poster (#F5F2EB) + Giant Hero Stat + Dark SQL/Code Terminal Window
- *  2. security_policy_shield_matrix — Deep Emerald Blueprint (#061410) + 3-Column SVG Policy Firewall Flowchart + Audit Log
- *  3. circuit_breaker_state_machine — 2x2 Linear/Apple Bento Grid (#EEF2F6) with Navy Hero Tile & SVG Backoff Curve
- *  4. split_latency_waterfall       — 50/50 Vertical Split Screen (Left Crimson-Obsidian #160B0E vs Right Mint #ECFDF5)
- *  5. revenue_ledger_reconciliation — Lavender-Ivory (#EEF2FF) + Live Database CDC Table UI & Slack Alert Card Mockup
- *  6. cdc_hash_diff_funnel          — Warm Espresso & Terracotta (#191210 / #EA580C) + Financial Ledger Balance Sheet Receipt
+ *  1. editorial_light_blueprint     — Apple / Stripe Press Minimalist Giant-Stat Billboard (70% whitespace)
+ *  2. security_policy_shield_matrix — Authentic Slack #prod-incidents War-Room Thread Card
+ *  3. circuit_breaker_state_machine — ByteByteGo / Excalidraw Hand-Sketched Whiteboard Architecture
+ *  4. split_latency_waterfall       — Vercel / Raycast macOS Glass GitHub PR Diff Window
+ *  5. revenue_ledger_reconciliation — Datadog / Grafana Live Telemetry Cliff Chart
+ *  6. cdc_hash_diff_funnel          — High-Contrast Editorial Magazine Split ("Naive vs. Prod")
  */
 const fs = require('fs');
 const path = require('path');
@@ -24,17 +23,17 @@ const { chromium } = require(PLAYWRIGHT_PATH);
 const ASSETS_DIR = path.join(__dirname, 'assets');
 const b64Font = (file) => fs.readFileSync(path.join(ASSETS_DIR, file)).toString('base64');
 
-let rawLogo = fs.readFileSync(path.join(ASSETS_DIR, 'horizontal_dark.svg'), 'utf8')
+const rawLogo = fs.readFileSync(path.join(ASSETS_DIR, 'horizontal_dark.svg'), 'utf8')
   .replace(/<\?xml[\s\S]*?\?>/g, '');
 
-const logoForDarkBg = rawLogo.replace(
+const logoForDarkBg = (h = 30) => rawLogo.replace(
   /<svg\b([^>]*)>/,
-  '<svg $1 style="height:34px; width:auto; display:block;">'
+  `<svg $1 style="height:${h}px; width:auto; display:block; border-radius:6px;">`
 );
 
-const logoForLightBg = rawLogo.replace(
+const logoForLightBg = (h = 30) => rawLogo.replace(
   /<svg\b([^>]*)>/,
-  '<svg $1 style="height:34px; width:auto; display:block; filter: invert(0.92) hue-rotate(180deg) contrast(1.25);">'
+  `<svg $1 style="height:${h}px; width:auto; display:block; filter: invert(0.92) hue-rotate(180deg) contrast(1.25); border-radius:6px;">`
 );
 
 const PLATFORMS = [
@@ -52,6 +51,17 @@ const ARCHETYPES = [
   'revenue_ledger_reconciliation',
   'cdc_hash_diff_funnel'
 ];
+
+function stripHtml(s) {
+  return String(s || '').replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').trim();
+}
+
+function shorten(s, maxLen) {
+  const clean = stripHtml(s);
+  if (clean.length <= maxLen) return clean;
+  const cut = clean.slice(0, maxLen).replace(/\s+\S*$/, '');
+  return cut + '.';
+}
 
 function baseFontsCss() {
   const fJakarta = b64Font('PlusJakartaSans.woff2');
@@ -71,898 +81,818 @@ function baseFontsCss() {
     @font-face {
       font-family: 'IBM Plex Mono';
       src: url(data:font/woff2;base64,${fMono}) format('woff2');
-      font-weight: 400 600;
+      font-weight: 400 700;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     .inline-code {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.9em;
-      padding: 2px 7px;
-      border-radius: 4px;
-      font-weight: 600;
+      font-size: 0.88em; font-weight: 600;
+      padding: 2px 7px; border-radius: 5px;
     }
   `;
 }
 
 /**
- * ARCHETYPE 1: Warm FT Paper Poster + Giant Hero Stat + Dark SQL/Code Execution Terminal
+ * GENRE 1 (editorial_light_blueprint):
+ * Apple / Stripe Press Minimalist Giant-Stat Billboard Poster
+ * Ultra-high whitespace, ONE massive focal metric, punchy editorial hook, zero box clutter.
  */
-function renderEditorialLightBlueprint(spec, p) {
+function renderBillboardPoster(spec, p) {
+  const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
+  const m0 = spec.metrics[0];
+  const m1 = spec.metrics[1];
+  const valLen = String(m0.value).length;
+  const heroSize = isWide
+    ? (valLen > 7 ? 128 : 168)
+    : (valLen > 7 ? 148 : 204);
+
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+    ${baseFontsCss()}
+    body {
+      width: ${p.width}px; height: ${p.height}px;
+      background: #F6F2EA; color: #0B1120;
+      font-family: 'Inter', sans-serif;
+      padding: ${isWide ? '54px 76px' : '74px 78px'};
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+    .accent-arc {
+      position: absolute; right: -160px; top: -160px;
+      width: 680px; height: 680px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(29,78,216,0.14) 0%, rgba(29,78,216,0) 70%);
+      pointer-events: none;
+    }
+    .top-bar {
+      position: relative; z-index: 2;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      letter-spacing: 0.1em; color: #1D4ED8; text-transform: uppercase;
+      padding: 8px 16px; border: 1.5px solid #1D4ED8; border-radius: 999px;
+      background: rgba(29,78,216,0.06);
+    }
+    .center-stage {
+      position: relative; z-index: 2;
+      display: ${isWide ? 'grid' : 'flex'};
+      ${isWide ? 'grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center;' : 'flex-direction: column; gap: 38px;'}
+    }
+    .stat-block {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .stat-kicker {
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
+      color: #64748B; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .giant-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: ${heroSize}px; font-weight: 800; line-height: 0.92;
+      letter-spacing: -0.055em; color: #1D4ED8;
+    }
+    .stat-delta {
+      display: inline-flex; align-items: center; gap: 10px; align-self: flex-start;
+      margin-top: 8px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 700;
+      color: #0B1120; background: #DBEAFE; padding: 10px 18px; border-radius: 10px;
+    }
+    .copy-block {
+      display: flex; flex-direction: column; gap: 22px;
+      ${isWide ? 'border-left: 3px solid #0B1120; padding-left: 44px;' : 'border-top: 3px solid #0B1120; padding-top: 34px;'}
+    }
+    h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: ${isWide ? '44px' : '56px'}; line-height: 1.08; font-weight: 800;
+      letter-spacing: -0.03em; color: #0B1120;
+    }
+    .takeaway {
+      font-size: ${isWide ? '21px' : '25px'}; line-height: 1.45; color: #334155; font-weight: 500;
+    }
+    .bottom-strip {
+      position: relative; z-index: 2;
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 22px; border-top: 1.5px solid rgba(11,17,32,0.16);
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: #475569;
+    }
+    .swap-pill {
+      color: #0B1120; font-weight: 700;
+    }
+    .swap-pill span { color: #DC2626; text-decoration: line-through; margin-right: 10px; }
+    .swap-pill strong { color: #059669; }
+  </style></head><body>
+    <div class="accent-arc"></div>
+    <div class="top-bar">
+      <div>${logoForLightBg(34)}</div>
+      <div class="tag">${spec.eyebrow.split('·')[0].trim()}</div>
+    </div>
+
+    <div class="center-stage">
+      <div class="stat-block">
+        <div class="stat-kicker">${m0.label}</div>
+        <div class="giant-num">${m0.value}</div>
+        <div class="stat-delta">▲ ${m0.sub} · ${m1.label}: ${m1.value}</div>
+      </div>
+      <div class="copy-block">
+        <h1>${spec.headline}</h1>
+        <div class="takeaway">${shorten(spec.after_points[0], 130)}</div>
+      </div>
+    </div>
+
+    <div class="bottom-strip">
+      <div class="swap-pill"><span>${spec.before_badge}</span> → <strong>${spec.after_badge}</strong></div>
+      <div>olventech.com</div>
+    </div>
+  </body></html>`;
+}
+
+/**
+ * GENRE 2 (security_policy_shield_matrix):
+ * Authentic Dark-Mode Slack #prod-incidents War-Room Thread Card
+ * People instinctively stop scrolling to read real production incident threads.
+ */
+function renderSlackIncidentStory(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
   const m0 = spec.metrics[0];
   const m1 = spec.metrics[1];
 
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"/><style>
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background: #F4EFE6; color: #0F172A;
+      background:
+        radial-gradient(circle at 18% 15%, rgba(239,68,68,0.22), transparent 44%),
+        radial-gradient(circle at 84% 85%, rgba(16,185,129,0.24), transparent 48%),
+        #070B13;
+      color: #F8FAFC;
       font-family: 'Inter', sans-serif;
-      padding: ${isWide ? '38px 48px' : '48px 52px'};
-      display: flex; flex-direction: column; gap: ${isWide ? '18px' : '24px'};
+      padding: ${isWide ? '40px 64px' : '58px 56px'};
+      display: flex; flex-direction: column; justify-content: space-between; gap: ${isWide ? '22px' : '30px'};
       position: relative; overflow: hidden;
     }
-    .paper-grid {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
-      background-size: 40px 40px; pointer-events: none;
-    }
-    .top-bar {
-      position: relative; z-index: 2;
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 3px solid #0F172A; padding-bottom: 14px;
-    }
-    .issue-tag {
-      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
-      background: #0F172A; color: #F4EFE6; padding: 6px 14px; border-radius: 4px;
-    }
-    .poster-hero {
-      position: relative; z-index: 2;
-      display: grid; grid-template-columns: ${isWide ? '1.35fr 0.65fr' : '1.2fr 0.8fr'};
-      gap: 24px; align-items: stretch;
-    }
-    .hero-copy {
-      display: flex; flex-direction: column; justify-content: center;
-    }
-    .eyebrow {
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
-      color: #1D4ED8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+    .top-head {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
     }
     h1 {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '38px' : '46px'}; font-weight: 800; line-height: 1.08;
-      letter-spacing: -0.03em; color: #0F172A;
+      font-size: ${isWide ? '38px' : '48px'}; line-height: 1.09; font-weight: 800;
+      letter-spacing: -0.03em; color: #FFFFFF; max-width: ${isWide ? '1060px' : '860px'};
     }
-    .subhead {
-      margin-top: 12px; font-size: ${isWide ? '17px' : '19px'}; line-height: 1.42; color: #334155; font-weight: 500;
+    .slack-window {
+      flex: 1;
+      background: #11161D; border: 1.5px solid rgba(148,163,184,0.22);
+      border-radius: 22px; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.58);
+      display: flex; flex-direction: column;
     }
-    .giant-stat-poster {
-      background: #1D4ED8; color: #FFFFFF; border: 3px solid #0F172A; border-radius: 14px;
-      padding: 24px 28px; box-shadow: 8px 8px 0px #0F172A;
-      display: flex; flex-direction: column; justify-content: space-between;
+    .slack-topbar {
+      background: #191F29; border-bottom: 1px solid rgba(148,163,184,0.16);
+      padding: 16px 26px; display: flex; justify-content: space-between; align-items: center;
     }
-    .gsp-top {
+    .ch-name {
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; color: #F8FAFC;
+    }
+    .dots { display: flex; gap: 8px; margin-right: 12px; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .live-badge {
       font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
-      color: #BFDBFE; letter-spacing: 0.06em;
-      display: flex; justify-content: space-between;
+      background: rgba(16,185,129,0.16); color: #34D399; border: 1px solid rgba(52,211,153,0.4);
+      padding: 5px 12px; border-radius: 999px;
     }
-    .gsp-num {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '64px' : '82px'}; font-weight: 800; line-height: 0.95;
-      letter-spacing: -0.04em; color: #FFFFFF; margin: 10px 0;
+    .messages {
+      flex: 1; padding: ${isWide ? '22px 32px' : '38px 36px'};
+      display: flex; flex-direction: column; justify-content: center; gap: ${isWide ? '20px' : '38px'};
     }
-    .gsp-from {
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px;
-      background: rgba(15, 23, 42, 0.35); padding: 8px 12px; border-radius: 6px; color: #FEF08A;
+    .msg {
+      display: flex; gap: 18px; align-items: flex-start;
     }
-    .terminal-workbench {
-      position: relative; z-index: 2; flex: 1;
-      background: #0B0F19; color: #E2E8F0; border: 3px solid #0F172A; border-radius: 14px;
-      box-shadow: 8px 8px 0px #0F172A;
-      display: grid; grid-template-columns: ${isWide ? '1.1fr 0.9fr' : '1fr'};
-      overflow: hidden;
+    .avatar {
+      width: 50px; height: 50px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 800; color: #FFFFFF;
     }
-    .term-left {
-      padding: ${isWide ? '22px 26px' : '26px 30px'};
-      border-right: ${isWide ? '1px solid #1E293B' : 'none'};
-      border-bottom: ${isWide ? 'none' : '1px solid #1E293B'};
-      display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
+    .av-alert { background: linear-gradient(135deg, #DC2626, #991B1B); }
+    .av-eng { background: linear-gradient(135deg, #10B981, #047857); }
+    .msg-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .msg-meta { display: flex; align-items: center; gap: 12px; }
+    .sender { font-weight: 800; font-size: 19px; color: #FFFFFF; }
+    .bot-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700;
+      background: #273244; color: #94A3B8; padding: 3px 7px; border-radius: 4px;
     }
-    .term-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #1E293B; padding-bottom: 12px;
+    .ts { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #64748B; }
+    .alert-card {
+      background: rgba(239,68,68,0.10); border-left: 5px solid #EF4444;
+      border-radius: 0 10px 10px 0; padding: 16px 20px;
     }
-    .dots { display: flex; gap: 7px; align-items: center; }
-    .dot { width: 11px; height: 11px; border-radius: 50%; }
-    .sql-trace {
-      font-family: 'IBM Plex Mono', monospace; font-size: ${isWide ? '13.5px' : '14.5px'};
-      line-height: 1.55; background: #060911; border: 1px solid #1E293B;
-      border-radius: 8px; padding: 14px 18px; color: #93C5FD;
+    .alert-title {
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700; color: #FCA5A5; margin-bottom: 6px;
     }
-    .stage-chain {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    .msg-text { font-size: ${isWide ? '19px' : '22px'}; line-height: 1.44; color: #E2E8F0; }
+    .fix-code {
+      margin-top: 8px; background: #090D14; border: 1px solid #1E293B; border-radius: 10px;
+      padding: 14px 18px; font-family: 'IBM Plex Mono', monospace;
+      font-size: ${isWide ? '16px' : '17.5px'}; color: #6EE7B7; line-height: 1.5;
     }
-    .stage-pill {
-      background: #111827; border: 1.5px solid #3B82F6; border-radius: 8px; padding: 10px 12px;
+    .reactions { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+    .react {
+      background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.35);
+      border-radius: 999px; padding: 5px 14px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700; color: #A7F3D0;
     }
-    .sp-idx { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #60A5FA; font-weight: 700; }
-    .sp-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; color: #F8FAFC; margin-top: 3px; }
-    .term-right {
-      padding: ${isWide ? '22px 26px' : '24px 30px'}; background: #111827;
-      display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
-    }
-    .comparison-rows {
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .comp-item {
-      background: #1E293B; border-left: 4px solid #10B981; border-radius: 6px;
-      padding: 11px 14px; font-size: 15px; line-height: 1.4; color: #F1F5F9;
-    }
-    .comp-item.warn {
-      background: rgba(127, 29, 29, 0.25); border-left-color: #EF4444; color: #FECACA;
-    }
-    .inline-code { background: #0F172A; color: #38BDF8; border: 1px solid #334155; }
-    .bottom-kpis {
-      position: relative; z-index: 2;
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
-    }
-    .bk-card {
-      background: #FFFFFF; border: 2.5px solid #0F172A; border-radius: 10px;
-      padding: 14px 18px; box-shadow: 4px 4px 0px #0F172A;
-    }
-    .bk-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #475569; font-weight: 700; }
-    .bk-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 26px; font-weight: 800; color: #0F172A; margin: 2px 0; }
-    .bk-sub { font-size: 12.5px; color: #1D4ED8; font-weight: 700; }
     .footer {
-      position: relative; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
-      border-top: 2px solid #0F172A; padding-top: 10px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700; color: #0F172A;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #94A3B8; font-weight: 600;
     }
+    .inline-code { background: #1E293B; color: #38BDF8; }
   </style></head><body>
-    <div class="paper-grid"></div>
-    <div class="top-bar">
-      <div>${logoForLightBg}</div>
-      <div class="issue-tag">${spec.doc_id}</div>
+    <div class="top-head">
+      <h1>${spec.headline}</h1>
+      <div style="flex-shrink:0;">${logoForDarkBg(32)}</div>
     </div>
-    <div class="poster-hero">
-      <div class="hero-copy">
-        <div class="eyebrow">PRODUCTION ARCHITECTURE REPORT · ${spec.eyebrow}</div>
-        <h1>${spec.headline}</h1>
-        <div class="subhead">${spec.subhead}</div>
-      </div>
-      <div class="giant-stat-poster">
-        <div class="gsp-top"><span>${m0.label}</span><span>VERIFIED SLA</span></div>
-        <div class="gsp-num">${m0.value}</div>
-        <div class="gsp-from">▲ ${m0.sub} · ${m1.label}: ${m1.value}</div>
-      </div>
-    </div>
-    <div class="terminal-workbench">
-      <div class="term-left">
-        <div class="term-bar">
+
+    <div class="slack-window">
+      <div class="slack-topbar">
+        <div class="ch-name">
           <div class="dots">
             <span class="dot" style="background:#EF4444"></span>
             <span class="dot" style="background:#F59E0B"></span>
             <span class="dot" style="background:#10B981"></span>
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#94A3B8;margin-left:8px;">olven_atomic_worker.sql — ${spec.after_badge}</span>
           </div>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#34D399;">● PRODUCTION ACTIVE</span>
+          <span>#prod-incidents</span>
         </div>
-        <div class="sql-trace">
-          <div style="color:#64748B;">-- 1. Eliminate Legacy Failure (${spec.before_title}: ${spec.before_badge})</div>
-          <div style="color:#F87171;">-- BLOCKED: ${spec.before_nodes.join(' -> ')}</div>
-          <div style="color:#38BDF8;margin-top:6px;">BEGIN ISOLATION LEVEL REPEATABLE READ;</div>
-          <div style="color:#A7F3D0;">SELECT pg_try_advisory_xact_lock(hashtext(entity_key));</div>
-          <div style="color:#FDE68A;">COMMIT AND NOTIFY downstream_verified_channel;</div>
-        </div>
-        <div class="stage-chain">
-          ${spec.after_nodes.map((n, i) => `
-            <div class="stage-pill">
-              <div class="sp-idx">STEP 0${i + 1}</div>
-              <div class="sp-name">${n}</div>
+        <div class="live-badge">RESOLVED · ${spec.after_badge}</div>
+      </div>
+
+      <div class="messages">
+        <div class="msg">
+          <div class="avatar av-alert">!</div>
+          <div class="msg-body">
+            <div class="msg-meta">
+              <span class="sender">PagerDuty Alert</span>
+              <span class="bot-tag">APP</span>
+              <span class="ts">03:14 AM</span>
             </div>
-          `).join('')}
+            <div class="alert-card">
+              <div class="alert-title">SEV-1 · ${spec.before_badge}</div>
+              <div class="msg-text">${shorten(spec.before_points[0], 135)}</div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="term-right">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#F87171;font-weight:700;letter-spacing:0.05em;">
-          ✕ LEGACY BOTTLENECK (${spec.before_badge})
-        </div>
-        <div class="comparison-rows">
-          <div class="comp-item warn">${spec.before_points[0]}</div>
-          <div class="comp-item warn">${spec.before_points[1]}</div>
-        </div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#34D399;font-weight:700;letter-spacing:0.05em;margin-top:4px;">
-          ✓ ENGINEERED INVARIANTS (${spec.after_badge})
-        </div>
-        <div class="comparison-rows">
-          ${spec.after_points.map(pt => `<div class="comp-item">${pt}</div>`).join('')}
+
+        <div class="msg">
+          <div class="avatar av-eng">OV</div>
+          <div class="msg-body">
+            <div class="msg-meta">
+              <span class="sender">Olven Engineering</span>
+              <span class="bot-tag" style="background:#064E3B;color:#6EE7B7;">FIXED</span>
+              <span class="ts">03:19 AM</span>
+            </div>
+            <div class="msg-text">Killed the naive <span class="inline-code">${spec.before_nodes[1]}</span> path and shipped the deterministic pipeline:</div>
+            <div class="fix-code">${spec.after_nodes.join('  →  ')}<br/>// Result: ${m0.label} = ${m0.value} (${m0.sub}) · ${m1.label} = ${m1.value}</div>
+            <div class="reactions">
+              <div class="react">✓ ${spec.after_badge}</div>
+              <div class="react">${m0.label}: ${m0.value}</div>
+              <div class="react">Saved to runbook</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="bottom-kpis">
-      ${spec.metrics.map(m => `
-        <div class="bk-card">
-          <div class="bk-lbl">${m.label}</div>
-          <div class="bk-val">${m.value}</div>
-          <div class="bk-sub">${m.sub}</div>
-        </div>
-      `).join('')}
-    </div>
+
     <div class="footer">
-      <div>OLVEN TECH · SYSTEMS ARCHITECTURE DOSSIER</div>
-      <div>contact@olventech.com</div>
+      <div>REAL PRODUCTION POSTMORTEM · ${spec.eyebrow.split('·')[0].trim()}</div>
+      <div>olventech.com</div>
     </div>
   </body></html>`;
 }
 
 /**
- * ARCHETYPE 2: Deep Emerald Firewall Matrix + Centerpiece 3-Tier Policy Shield Diagram
+ * GENRE 3 (circuit_breaker_state_machine):
+ * ByteByteGo / Excalidraw Hand-Sketched Whiteboard Architecture
+ * Crisp dot-grid paper + organic SVG whiteboard flow + red crossed-out naive path + yellow marker highlight.
  */
-function renderSecurityPolicyShieldMatrix(spec, p) {
+function renderWhiteboardSketch(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
+  const m0 = spec.metrics[0];
 
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"/><style>
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background: #041410; color: #ECFDF5;
+      background-color: #FAF9F5;
+      background-image: radial-gradient(#CBD5E1 1.6px, transparent 1.6px);
+      background-size: 28px 28px;
+      color: #1E293B;
       font-family: 'Inter', sans-serif;
-      padding: ${isWide ? '38px 48px' : '48px 52px'};
-      display: flex; flex-direction: column; gap: ${isWide ? '18px' : '22px'};
+      padding: ${isWide ? '44px 60px' : '62px 58px'};
+      display: flex; flex-direction: column; justify-content: space-between; gap: ${isWide ? '20px' : '30px'};
       position: relative; overflow: hidden;
     }
-    .matrix-bg {
-      position: absolute; inset: 0;
-      background-image: radial-gradient(rgba(16, 185, 129, 0.22) 1.5px, transparent 1.5px);
-      background-size: 28px 28px; pointer-events: none;
-    }
     .top-bar {
-      position: relative; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 2px solid #10B981; padding-bottom: 14px;
     }
-    .sec-badge {
-      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
-      background: #10B981; color: #041410; padding: 6px 14px; border-radius: 4px;
-    }
-    .title-block {
-      position: relative; z-index: 2;
-      background: linear-gradient(90deg, #06281E 0%, #041410 100%);
-      border-left: 6px solid #F59E0B; padding: 18px 24px; border-radius: 0 12px 12px 0;
-    }
-    .eyebrow {
-      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
-      color: #FBBF24; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px;
+    .sketch-pill {
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      color: #0F172A; background: #FEF08A; border: 2px solid #0F172A;
+      padding: 6px 16px; border-radius: 8px; transform: rotate(-1deg);
+      box-shadow: 3px 3px 0 #0F172A;
     }
     h1 {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '36px' : '42px'}; font-weight: 800; line-height: 1.1; color: #FFFFFF;
+      font-size: ${isWide ? '42px' : '50px'}; line-height: 1.09; font-weight: 800;
+      letter-spacing: -0.03em; color: #0F172A;
     }
-    .subhead { margin-top: 8px; font-size: 17px; color: #A7F3D0; line-height: 1.4; }
-    .firewall-stage {
-      position: relative; z-index: 2; flex: 1;
-      display: grid; grid-template-columns: ${isWide ? '0.9fr 1.2fr 0.9fr' : '1fr'};
-      gap: 16px; align-items: stretch;
+    .hl {
+      background: linear-gradient(180deg, transparent 58%, #FEF08A 58%);
+      padding: 0 6px;
     }
-    .tier-col {
-      border-radius: 14px; padding: 22px 24px;
-      display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+    .board {
+      flex: 1;
+      display: flex; flex-direction: column; justify-content: space-evenly; gap: ${isWide ? '18px' : '28px'};
     }
-    .tier-untrusted {
-      background: #1F0D12; border: 2px dashed #F87171;
+    .lane {
+      background: rgba(255,255,255,0.88);
+      border: 2.5px solid #0F172A; border-radius: 18px;
+      padding: ${isWide ? '22px 28px' : '30px 32px'};
+      position: relative;
+      box-shadow: 6px 6px 0 #0F172A;
     }
-    .tier-shield {
-      background: #FEFCE8; color: #0F172A; border: 4px solid #F59E0B;
-      box-shadow: 0 0 40px rgba(245, 158, 11, 0.25);
+    .lane.bad {
+      border-style: dashed; border-color: #DC2626;
+      background: rgba(254,242,242,0.82); box-shadow: 5px 5px 0 rgba(220,38,38,0.22);
     }
-    .tier-verified {
-      background: #062E22; border: 2px solid #34D399;
+    .lane.good {
+      border-color: #0D9488; background: rgba(240,253,250,0.92);
+      box-shadow: 7px 7px 0 #0D9488;
     }
-    .tier-hdr {
-      font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.15);
+    .lane-top {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: ${isWide ? '16px' : '22px'};
     }
-    .tier-shield .tier-hdr { border-bottom-color: #FDE047; color: #B45309; }
-    .tier-title {
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 21px; font-weight: 800;
+    .lane-title {
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
     }
-    .flow-pills {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+    .lane.bad .lane-title { color: #B91C1C; }
+    .lane.good .lane-title { color: #0F766E; }
+    .lane-badge {
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
+      padding: 5px 14px; border-radius: 999px;
     }
-    .fp {
-      padding: 9px 12px; border-radius: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600;
+    .lane.bad .lane-badge { background: #FEE2E2; color: #B91C1C; border: 1.5px solid #DC2626; }
+    .lane.good .lane-badge { background: #CCFBF1; color: #115E59; border: 1.5px solid #0D9488; }
+    .flow-row {
+      display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      align-items: center; gap: 10px;
     }
-    .tier-untrusted .fp { background: #3B1219; color: #FECACA; border: 1px solid #EF4444; }
-    .tier-shield .fp { background: #0F172A; color: #FEF08A; border: 1px solid #F59E0B; }
-    .tier-verified .fp { background: #041F17; color: #6EE7B7; border: 1px solid #10B981; }
-    .rule-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .rule-list li { font-size: 15px; line-height: 1.4; padding-left: 22px; position: relative; }
-    .tier-untrusted .rule-list li { color: #FECACA; }
-    .tier-untrusted .rule-list li::before { content: "✕"; position: absolute; left: 2px; color: #F87171; font-weight: 800; }
-    .tier-shield .rule-list li { color: #0F172A; font-weight: 500; }
-    .tier-shield .rule-list li::before { content: "🔒"; position: absolute; left: 0; font-size: 13px; }
-    .tier-shield .inline-code { background: #FEF08A; color: #78350F; border: 1px solid #F59E0B; }
-    .tier-untrusted .inline-code { background: #450A0A; color: #FCA5A5; }
-    .kpi-grid-2x2 {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+    .box {
+      background: #FFFFFF; border: 2.5px solid #0F172A; border-radius: 12px;
+      padding: ${isWide ? '16px 14px' : '24px 14px'}; text-align: center;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: ${isWide ? '18px' : '19px'};
+      font-weight: 800; color: #0F172A; line-height: 1.2;
+      box-shadow: 3px 3px 0 rgba(15,23,42,0.18);
     }
-    .kpi-cell {
-      background: #041A13; border: 1.5px solid #10B981; border-radius: 10px; padding: 14px 16px;
+    .lane.bad .box {
+      border-color: #EF4444; color: #7F1D1D;
     }
-    .kc-v { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 28px; font-weight: 800; color: #34D399; }
-    .kc-l { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #A7F3D0; margin-top: 2px; }
-    .kc-s { font-size: 12px; color: #FBBF24; margin-top: 2px; }
+    .lane.bad .box:last-child {
+      background: #FEE2E2; text-decoration: line-through;
+    }
+    .lane.good .box {
+      border-color: #0D9488; color: #0F172A;
+    }
+    .lane.good .box.key {
+      background: #FEF08A; border-color: #0F172A; transform: rotate(-1deg);
+    }
+    .arr {
+      font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 800; color: #0F172A;
+    }
+    .lane.bad .arr { color: #DC2626; }
+    .lane.good .arr { color: #0D9488; }
+    .note-strip {
+      margin-top: ${isWide ? '14px' : '20px'};
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; color: #334155;
+    }
     .footer {
-      position: relative; z-index: 2;
-      display: flex; justify-content: space-between; border-top: 2px solid #10B981; padding-top: 12px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #6EE7B7; font-weight: 700;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700; color: #475569;
     }
   </style></head><body>
-    <div class="matrix-bg"></div>
     <div class="top-bar">
-      <div>${logoForDarkBg}</div>
-      <div class="sec-badge">SECURITY & POLICY GATE · ${spec.doc_id}</div>
+      <div>${logoForLightBg(32)}</div>
+      <div class="sketch-pill">SYSTEM DESIGN WHITEBOARD</div>
     </div>
-    <div class="title-block">
-      <div class="eyebrow">${spec.eyebrow}</div>
-      <h1>${spec.headline}</h1>
-      <div class="subhead">${spec.subhead}</div>
-    </div>
-    <div class="firewall-stage">
-      <div class="tier-col tier-untrusted">
-        <div class="tier-hdr"><span>TIER 1 · UNTRUSTED RUNTIME</span><span>${spec.before_badge}</span></div>
-        <div class="tier-title" style="color:#FCA5A5;">${spec.before_title}</div>
-        <div class="flow-pills">
-          ${spec.before_nodes.map(n => `<div class="fp">${n}</div>`).join('')}
+
+    <h1>${spec.headline} — <span class="hl">${m0.value}</span></h1>
+
+    <div class="board">
+      <div class="lane bad">
+        <div class="lane-top">
+          <div class="lane-title">✕ NAIVE PATTERN (BREAKS UNDER LOAD)</div>
+          <div class="lane-badge">${spec.before_badge}</div>
         </div>
-        <ul class="rule-list">
-          ${spec.before_points.map(pt => `<li>${pt}</li>`).join('')}
-        </ul>
+        <div class="flow-row">
+          ${spec.before_nodes.map((n, i) => `<div class="box">${n}</div>${i < 3 ? '<div class="arr">→</div>' : ''}`).join('')}
+        </div>
+        <div class="note-strip">↳ ${shorten(spec.before_points[0], 115)}</div>
       </div>
-      <div class="tier-col tier-shield">
-        <div class="tier-hdr"><span>TIER 2 · DETERMINISTIC FIREWALL</span><span>${spec.after_badge}</span></div>
-        <div class="tier-title" style="color:#0F172A;">${spec.after_title}</div>
-        <div class="flow-pills">
-          ${spec.after_nodes.map(n => `<div class="fp">${n}</div>`).join('')}
+
+      <div class="lane good">
+        <div class="lane-top">
+          <div class="lane-title">✓ PRODUCTION ARCHITECTURE</div>
+          <div class="lane-badge">${spec.after_badge}</div>
         </div>
-        <ul class="rule-list">
-          ${spec.after_points.map(pt => `<li>${pt}</li>`).join('')}
-        </ul>
-      </div>
-      <div class="tier-col tier-verified">
-        <div class="tier-hdr" style="color:#6EE7B7;"><span>TIER 3 · PRODUCTION TELEMETRY</span><span>90-DAY AUDIT</span></div>
-        <div class="kpi-grid-2x2">
-          ${spec.metrics.map(m => `
-            <div class="kpi-cell">
-              <div class="kc-v">${m.value}</div>
-              <div class="kc-l">${m.label}</div>
-              <div class="kc-s">${m.sub}</div>
-            </div>
-          `).join('')}
+        <div class="flow-row">
+          ${spec.after_nodes.map((n, i) => `<div class="box ${i === 1 || i === 2 ? 'key' : ''}">${n}</div>${i < 3 ? '<div class="arr">→</div>' : ''}`).join('')}
         </div>
+        <div class="note-strip">↳ ${shorten(spec.after_points[0], 115)} · ${m0.label}: <strong>${m0.value}</strong> (${m0.sub})</div>
       </div>
     </div>
+
     <div class="footer">
-      <div>OLVEN TECH · ZERO-TRUST AGENT & API ARCHITECTURE</div>
-      <div>contact@olventech.com</div>
+      <div>SAVE THIS ARCHITECTURE DIAGRAM</div>
+      <div>olventech.com</div>
     </div>
   </body></html>`;
 }
 
 /**
- * ARCHETYPE 3: 2x2 Apple/Linear Keynote Bento Grid on Cool Alabaster + SVG Backoff Curve
+ * GENRE 4 (split_latency_waterfall):
+ * Vercel / Raycast macOS Glass GitHub PR Diff Window
+ * High-saturation ambient studio gradient + floating dark code diff window (red - vs green +).
  */
-function renderCircuitBreakerStateMachine(spec, p) {
+function renderGithubPrDiff(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
+  const m0 = spec.metrics[0];
+  const m1 = spec.metrics[1];
 
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"/><style>
+  const badLines = [
+    `// ${spec.before_title}`,
+    `await callDirectly("${spec.before_nodes[1]}", payload);`,
+    `await writeTarget("${spec.before_nodes[2]}"); // ${spec.before_badge}`
+  ];
+  const goodLines = [
+    `// ${spec.after_title}`,
+    `const gate = await enforce("${spec.after_nodes[1]}", payload);`,
+    `await lockIdempotency("${spec.after_nodes[2]}", gate.key);`,
+    `return commitVerified("${spec.after_nodes[3]}"); // ${spec.after_badge}`
+  ];
+
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background: #E2E8F0; color: #0F172A;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(139,92,246,0.42), transparent 46%),
+        radial-gradient(circle at 86% 24%, rgba(245,158,11,0.34), transparent 44%),
+        radial-gradient(circle at 50% 92%, rgba(16,185,129,0.28), transparent 48%),
+        #0B0817;
+      color: #F8FAFC;
       font-family: 'Inter', sans-serif;
-      padding: ${isWide ? '36px 46px' : '44px 48px'};
-      display: flex; flex-direction: column; gap: 18px;
+      padding: ${isWide ? '44px 68px' : '64px 58px'};
+      display: flex; flex-direction: column; justify-content: space-between; gap: ${isWide ? '22px' : '32px'};
+      position: relative; overflow: hidden;
     }
-    .bento-grid {
-      flex: 1; display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      grid-template-rows: auto 1fr 1fr;
-      gap: 18px;
+    .top-row {
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .tile-header {
-      grid-column: 1 / 3;
-      background: #0B132B; color: #FFFFFF; border-radius: 18px;
-      padding: ${isWide ? '22px 28px' : '28px 34px'};
-      display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center;
+    .pr-pill {
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      background: rgba(168,85,247,0.22); color: #E9D5FF;
+      border: 1px solid rgba(192,132,252,0.45);
+      padding: 7px 16px; border-radius: 999px;
     }
-    .th-top {
-      grid-column: 1 / 3; display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid #1E293B; padding-bottom: 12px; margin-bottom: 4px;
-    }
-    .eyebrow {
-      font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #38BDF8;
-      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; font-weight: 700;
-    }
-    h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: ${isWide ? '34px' : '40px'};
-      font-weight: 800; line-height: 1.1; color: #FFFFFF;
-    }
-    .subhead { margin-top: 8px; font-size: 16.5px; color: #CBD5E1; line-height: 1.38; }
-    .hero-pill-stat {
-      background: #0D9488; color: #FFFFFF; border-radius: 14px; padding: 18px 24px; text-align: center;
-      min-width: 210px;
-    }
-    .hps-v { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 46px; font-weight: 800; line-height: 1; }
-    .hps-l { font-family: 'IBM Plex Mono', monospace; font-size: 12px; margin-top: 6px; color: #CCFBF1; }
-    .bento-tile {
-      border-radius: 18px; padding: 22px 26px;
-      display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
-    }
-    .tile-white { background: #FFFFFF; border: 2px solid #CBD5E1; }
-    .tile-crimson { background: #450A0A; color: #FEF2F2; }
-    .tile-teal { background: #042F2E; color: #F0FDFA; }
-    .tile-indigo { background: #1E1B4B; color: #E0E7FF; }
-    .bt-tag {
-      font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      display: flex; justify-content: space-between;
-    }
-    .bt-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; }
-    .chip-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .chip {
-      padding: 8px 10px; border-radius: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;
-    }
-    .tile-crimson .chip { background: #7F1D1D; color: #FECACA; }
-    .tile-teal .chip { background: #115E59; color: #99F6E4; }
-    .bt-list { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; line-height: 1.38; }
-    .bt-list li { padding-left: 18px; position: relative; }
-    .tile-crimson .bt-list li::before { content: "✕"; position: absolute; left: 0; color: #F87171; font-weight: 700; }
-    .tile-teal .bt-list li::before { content: "✓"; position: absolute; left: 0; color: #2DD4BF; font-weight: 700; }
-    .inline-code { background: rgba(255,255,255,0.15); color: #FEF08A; }
-    .kpi-quad { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; flex: 1; }
-    .kq-box { background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; justify-content: center; }
-    .kq-v { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 28px; font-weight: 800; color: #0F172A; }
-    .kq-l { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #475569; font-weight: 700; }
-    .kq-s { font-size: 12px; color: #0D9488; font-weight: 700; }
-    .footer {
-      display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace;
-      font-size: 13px; font-weight: 700; color: #1E293B;
-    }
-  </style></head><body>
-    <div class="bento-grid">
-      <div class="tile-header">
-        <div class="th-top">
-          <div>${logoForDarkBg}</div>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#38BDF8;">BENTO ARCHITECTURE BRIEF · ${spec.doc_id}</span>
-        </div>
-        <div>
-          <div class="eyebrow">${spec.eyebrow}</div>
-          <h1>${spec.headline}</h1>
-          <div class="subhead">${spec.subhead}</div>
-        </div>
-        <div class="hero-pill-stat">
-          <div class="hps-v">${spec.metrics[0].value}</div>
-          <div class="hps-l">${spec.metrics[0].label} · ${spec.metrics[0].sub}</div>
-        </div>
-      </div>
-
-      <div class="bento-tile tile-crimson">
-        <div class="bt-tag" style="color:#FCA5A5;"><span>01 · FAILURE MODE</span><span>${spec.before_badge}</span></div>
-        <div class="bt-title">${spec.before_title}</div>
-        <div class="chip-row">${spec.before_nodes.map(n => `<div class="chip">${n}</div>`).join('')}</div>
-        <ul class="bt-list">${spec.before_points.map(pt => `<li>${pt}</li>`).join('')}</ul>
-      </div>
-
-      <div class="bento-tile tile-teal">
-        <div class="bt-tag" style="color:#5EEAD4;"><span>02 · RESILIENT ENGINE</span><span>${spec.after_badge}</span></div>
-        <div class="bt-title">${spec.after_title}</div>
-        <div class="chip-row">${spec.after_nodes.map(n => `<div class="chip">${n}</div>`).join('')}</div>
-        <ul class="bt-list">${spec.after_points.map(pt => `<li>${pt}</li>`).join('')}</ul>
-      </div>
-
-      <div class="bento-tile tile-indigo">
-        <div class="bt-tag" style="color:#A5B4FC;"><span>03 · STATE TRANSITION CURVE</span><span>12H SURVIVAL</span></div>
-        <svg viewBox="0 0 500 130" style="width:100%;height:auto;background:#0F172A;border-radius:10px;padding:10px;border:1px solid #312E81;">
-          <line x1="30" y1="105" x2="470" y2="105" stroke="#334155" stroke-width="2"/>
-          <polyline fill="none" stroke="#EF4444" stroke-width="3.5" stroke-dasharray="6,4" points="35,30 95,45 135,100 460,100"/>
-          <polyline fill="none" stroke="#34D399" stroke-width="4" points="35,90 110,78 200,62 310,42 455,22"/>
-          <text x="145" y="92" fill="#F87171" font-family="monospace" font-size="11" font-weight="bold">Legacy 30s Drop Cliff</text>
-          <text x="240" y="32" fill="#34D399" font-family="monospace" font-size="11" font-weight="bold">Write-Ahead Outbox + Ordered Drain (100%)</text>
-        </svg>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#C7D2FE;">
-          State Machine: CLOSED → OPEN (5x HTTP 503) → 60s HEALTH PROBE → ORDERED REPLAY
-        </div>
-      </div>
-
-      <div class="bento-tile tile-white">
-        <div class="bt-tag" style="color:#475569;"><span>04 · VERIFIED PRODUCTION METRICS</span><span>AUDIT LOG</span></div>
-        <div class="kpi-quad">
-          ${spec.metrics.map(m => `
-            <div class="kq-box">
-              <div class="kq-l">${m.label}</div>
-              <div class="kq-v">${m.value}</div>
-              <div class="kq-s">${m.sub}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    </div>
-    <div class="footer">
-      <div>OLVEN TECH · DISTRIBUTED RELIABILITY SYSTEMS</div>
-      <div>contact@olventech.com</div>
-    </div>
-  </body></html>`;
-}
-
-/**
- * ARCHETYPE 4: 50/50 Vertical Split Screen Poster (Left Crimson-Obsidian vs Right Mint-Emerald)
- */
-function renderSplitLatencyWaterfall(spec, p) {
-  const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
-
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"/><style>
-    ${baseFontsCss()}
-    body {
-      width: ${p.width}px; height: ${p.height}px;
-      display: grid; grid-template-columns: 1fr 1fr;
-      font-family: 'Inter', sans-serif; overflow: hidden; position: relative;
-    }
-    .left-half {
-      background: #18090E; color: #FFF1F2;
-      padding: ${isWide ? '40px 42px' : '50px 44px'};
-      display: flex; flex-direction: column; justify-content: space-between;
-      border-right: 4px solid #F59E0B;
-    }
-    .right-half {
-      background: #ECFDF5; color: #064E3B;
-      padding: ${isWide ? '40px 42px' : '50px 44px'};
-      display: flex; flex-direction: column; justify-content: space-between;
-    }
-    .side-tag {
-      font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 700;
-      padding: 6px 12px; border-radius: 6px; display: inline-block;
-    }
-    .left-half .side-tag { background: #7F1D1D; color: #FECACA; }
-    .right-half .side-tag { background: #065F46; color: #A7F3D0; }
     h1 {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '32px' : '37px'}; font-weight: 800; line-height: 1.12;
-      margin-top: 14px;
+      font-size: ${isWide ? '42px' : '52px'}; line-height: 1.07; font-weight: 800;
+      letter-spacing: -0.03em; color: #FFFFFF;
     }
-    .big-contrast-metric {
-      border-radius: 14px; padding: 20px 24px; margin: 14px 0;
+    .mac-win {
+      flex: 1;
+      background: rgba(13, 17, 23, 0.92);
+      border: 1.5px solid rgba(255,255,255,0.16);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 36px 90px rgba(0,0,0,0.62);
+      display: flex; flex-direction: column;
     }
-    .left-half .big-contrast-metric { background: #2E0F18; border: 2px solid #EF4444; }
-    .right-half .big-contrast-metric { background: #064E3B; color: #FFFFFF; box-shadow: 6px 6px 0px #10B981; }
-    .bcm-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 12px; opacity: 0.85; }
-    .bcm-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: ${isWide ? '42px' : '50px'}; font-weight: 800; line-height: 1.05; margin: 4px 0; }
-    .cascade { display: flex; flex-direction: column; gap: 10px; }
-    .c-step {
-      padding: 12px 16px; border-radius: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
+    .mac-bar {
+      background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.10);
+      padding: 15px 24px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .mac-dots { display: flex; gap: 9px; align-items: center; }
+    .dot { width: 13px; height: 13px; border-radius: 50%; }
+    .fname {
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #CBD5E1; margin-left: 14px; font-weight: 600;
+    }
+    .diff-stat {
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+    }
+    .code-body {
+      flex: 1; padding: ${isWide ? '22px 0' : '30px 0'};
+      font-family: 'IBM Plex Mono', monospace; font-size: ${isWide ? '20px' : '22px'}; line-height: 1.75;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .line {
+      padding: 6px 30px; display: flex; gap: 18px; white-space: pre-wrap;
+    }
+    .line.del {
+      background: rgba(248,81,73,0.16); color: #FFA198; border-left: 4px solid #F85149;
+    }
+    .line.add {
+      background: rgba(46,160,67,0.18); color: #7EE787; border-left: 4px solid #3FB950;
+    }
+    .line.ctx { color: #8B949E; border-left: 4px solid transparent; }
+    .sign { font-weight: 800; width: 16px; flex-shrink: 0; }
+    .impact-strip {
       display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 16px; padding: 18px 26px;
     }
-    .left-half .c-step { background: #2A1017; border-left: 4px solid #F87171; color: #FECACA; }
-    .right-half .c-step { background: #D1FAE5; border-left: 4px solid #059669; color: #064E3B; }
-    .pts { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.42; }
-    .pts li { padding-left: 20px; position: relative; }
-    .left-half .pts li::before { content: "✕"; position: absolute; left: 0; color: #F87171; font-weight: 800; }
-    .right-half .pts li::before { content: "✓"; position: absolute; left: 0; color: #059669; font-weight: 800; }
-    .left-half .inline-code { background: #450A0A; color: #FDA4AF; }
-    .right-half .inline-code { background: #A7F3D0; color: #064E3B; }
-    .mini-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .mk { padding: 12px 14px; border-radius: 10px; }
-    .left-half .mk { background: #261016; border: 1px solid #7F1D1D; }
-    .right-half .mk { background: #FFFFFF; border: 2px solid #059669; }
-    .mk-v { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; }
-    .mk-l { font-family: 'IBM Plex Mono', monospace; font-size: 11px; opacity: 0.8; }
+    .imp-left {
+      display: flex; gap: 36px; align-items: center;
+    }
+    .imp-item { display: flex; flex-direction: column; }
+    .imp-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #CBD5E1; font-weight: 700; }
+    .imp-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; font-weight: 800; color: #FDE68A; }
+    .imp-right { font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #E2E8F0; font-weight: 700; }
   </style></head><body>
-    <div class="left-half">
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          ${logoForDarkBg}
-          <span class="side-tag">BEFORE · LEGACY DRIFT</span>
+    <div class="top-row">
+      <div>${logoForDarkBg(32)}</div>
+      <div class="pr-pill">MERGED PR · PRODUCTION HOTFIX</div>
+    </div>
+
+    <h1>${spec.headline}</h1>
+
+    <div class="mac-win">
+      <div class="mac-bar">
+        <div class="mac-dots">
+          <span class="dot" style="background:#FF5F56"></span>
+          <span class="dot" style="background:#FFBD2E"></span>
+          <span class="dot" style="background:#27C93F"></span>
+          <span class="fname">worker/production_gate.ts</span>
         </div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#FDA4AF;letter-spacing:0.08em;">${spec.eyebrow}</div>
-        <h1>${spec.headline}</h1>
+        <div class="diff-stat"><span style="color:#7EE787;">+4</span> <span style="color:#FFA198;">-3</span></div>
       </div>
-      <div class="big-contrast-metric">
-        <div class="bcm-lbl">${spec.before_title}</div>
-        <div class="bcm-val" style="color:#F87171;">${spec.before_badge}</div>
-      </div>
-      <div class="cascade">
-        ${spec.before_nodes.map((n, i) => `<div class="c-step"><span>0${i + 1}. ${n}</span><span>DRIFT</span></div>`).join('')}
-      </div>
-      <ul class="pts">${spec.before_points.map(pt => `<li>${pt}</li>`).join('')}</ul>
-      <div class="mini-kpis">
-        <div class="mk"><div class="mk-l">${spec.metrics[2].label}</div><div class="mk-v" style="color:#FDA4AF;">${spec.metrics[2].value}</div></div>
-        <div class="mk"><div class="mk-l">${spec.metrics[3].label}</div><div class="mk-v" style="color:#FDA4AF;">${spec.metrics[3].value}</div></div>
+      <div class="code-body">
+        ${badLines.map((l) => `<div class="line del"><span class="sign">-</span><span>${l}</span></div>`).join('')}
+        <div class="line ctx"><span class="sign"> </span><span></span></div>
+        ${goodLines.map((l) => `<div class="line add"><span class="sign">+</span><span>${l}</span></div>`).join('')}
       </div>
     </div>
-    <div class="right-half">
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          <span class="side-tag">AFTER · OLVEN TECH ENGINE</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;">${spec.doc_id}</span>
+
+    <div class="impact-strip">
+      <div class="imp-left">
+        <div class="imp-item">
+          <div class="imp-lbl">${m0.label}</div>
+          <div class="imp-val">${m0.value}</div>
         </div>
-        <p style="font-size:17.5px;line-height:1.45;font-weight:600;color:#065F46;margin-top:8px;">${spec.subhead}</p>
+        <div class="imp-item">
+          <div class="imp-lbl">${m1.label}</div>
+          <div class="imp-val" style="color:#6EE7B7;">${m1.value}</div>
+        </div>
       </div>
-      <div class="big-contrast-metric">
-        <div class="bcm-lbl" style="color:#A7F3D0;">${spec.after_title} · ${spec.after_badge}</div>
-        <div class="bcm-val" style="color:#34D399;">${spec.metrics[0].value}</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#ECFDF5;">${spec.metrics[0].label} (${spec.metrics[0].sub})</div>
-      </div>
-      <div class="cascade">
-        ${spec.after_nodes.map((n, i) => `<div class="c-step"><span>0${i + 1}. ${n}</span><span>VERIFIED</span></div>`).join('')}
-      </div>
-      <ul class="pts">${spec.after_points.map(pt => `<li>${pt}</li>`).join('')}</ul>
-      <div class="mini-kpis">
-        <div class="mk"><div class="mk-l">${spec.metrics[0].label}</div><div class="mk-v" style="color:#059669;">${spec.metrics[0].value}</div></div>
-        <div class="mk"><div class="mk-l">${spec.metrics[1].label}</div><div class="mk-v" style="color:#059669;">${spec.metrics[1].value}</div></div>
-      </div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;text-align:right;border-top:2px solid #059669;padding-top:10px;">
-        contact@olventech.com
-      </div>
+      <div class="imp-right">olventech.com</div>
     </div>
   </body></html>`;
 }
 
 /**
- * ARCHETYPE 5: Royal Indigo Header + Lavender-Ivory Database Hash-Diff Table & Slack Alert Card
+ * GENRE 5 (revenue_ledger_reconciliation):
+ * Datadog / Grafana Live Production Telemetry Cliff Chart
+ * Dramatic SVG red failure plateau dropping off a cliff to emerald flatline at "FIX DEPLOYED".
  */
-function renderRevenueLedgerReconciliation(spec, p) {
+function renderTelemetryCrashChart(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
+  const m0 = spec.metrics[0];
+  const m1 = spec.metrics[1];
 
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"/><style>
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background: #EEF2FF; color: #1E1B4B;
+      background:
+        radial-gradient(circle at 84% 16%, rgba(16,185,129,0.16), transparent 46%),
+        #EEF7F4;
+      color: #0F172A;
       font-family: 'Inter', sans-serif;
-      padding: ${isWide ? '38px 48px' : '46px 50px'};
-      display: flex; flex-direction: column; gap: 18px;
+      padding: ${isWide ? '44px 62px' : '62px 58px'};
+      display: flex; flex-direction: column; justify-content: space-between; gap: ${isWide ? '22px' : '30px'};
+      position: relative; overflow: hidden;
     }
-    .indigo-hero {
-      background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
-      color: #FFFFFF; border-radius: 16px; padding: ${isWide ? '22px 28px' : '28px 32px'};
-      box-shadow: 0 12px 28px rgba(49, 46, 129, 0.2);
-    }
-    .ih-top {
+    .top-row {
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid rgba(165, 180, 252, 0.25); padding-bottom: 12px; margin-bottom: 14px;
     }
-    .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #A5B4FC; letter-spacing: 0.08em; margin-bottom: 6px; font-weight: 700; }
-    h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: ${isWide ? '35px' : '41px'}; font-weight: 800; line-height: 1.1; }
-    .subhead { margin-top: 8px; font-size: 16.5px; color: #E0E7FF; line-height: 1.4; }
-    .db-workspace {
-      flex: 1; display: grid; grid-template-columns: ${isWide ? '1.15fr 0.85fr' : '1fr'}; gap: 18px;
+    .tel-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      color: #047857; background: #D1FAE5; border: 1.5px solid #10B981;
+      padding: 7px 16px; border-radius: 999px;
     }
-    .db-table-card {
-      background: #FFFFFF; border: 2.5px solid #312E81; border-radius: 14px; padding: 20px 24px;
-      display: flex; flex-direction: column; gap: 14px;
-      box-shadow: 6px 6px 0px #4F46E5;
+    h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: ${isWide ? '42px' : '50px'}; line-height: 1.08; font-weight: 800;
+      letter-spacing: -0.03em; color: #0F172A;
     }
-    .db-grid {
-      width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;
+    .chart-card {
+      flex: 1;
+      background: #FFFFFF; border: 2px solid #CBD5E1; border-radius: 22px;
+      padding: ${isWide ? '26px 32px' : '34px 36px'};
+      display: flex; flex-direction: column; justify-content: space-between; gap: 18px;
+      box-shadow: 0 24px 60px rgba(15,23,42,0.08);
     }
-    .db-grid th {
-      background: #1E1B4B; color: #E0E7FF; text-align: left; padding: 9px 12px;
+    .chart-head {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #475569; font-weight: 700;
     }
-    .db-grid td {
-      padding: 9px 12px; border-bottom: 1px solid #E2E8F0; color: #0F172A; font-weight: 600;
+    .chart-svg-wrap { flex: 1; display: flex; align-items: center; }
+    .stat-pair {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
     }
-    .status-ok { background: #DCFCE7; color: #15803D; padding: 3px 8px; border-radius: 4px; }
-    .status-skip { background: #F1F5F9; color: #475569; padding: 3px 8px; border-radius: 4px; }
-    .slack-stack {
-      display: flex; flex-direction: column; gap: 14px;
+    .sp {
+      background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 14px;
+      padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;
     }
-    .slack-card {
-      background: #0F172A; color: #F8FAFC; border-radius: 14px; padding: 18px 22px;
-      border-left: 6px solid #10B981; display: flex; flex-direction: column; gap: 8px;
-    }
-    .slack-card.bad { background: #FEF2F2; color: #7F1D1D; border: 2px solid #FCA5A5; border-left: 6px solid #EF4444; }
-    .pts { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; line-height: 1.4; }
-    .pts li { padding-left: 18px; position: relative; }
-    .pts li::before { content: "▸"; position: absolute; left: 0; font-weight: 800; }
-    .inline-code { background: #E0E7FF; color: #1E1B4B; }
-    .slack-card .inline-code { background: #1E293B; color: #38BDF8; }
-    .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .ks-item {
-      background: #1E1B4B; color: #FFFFFF; border-radius: 12px; padding: 14px 18px;
-    }
-    .ks-l { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #A5B4FC; }
-    .ks-v { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 25px; font-weight: 800; color: #34D399; margin: 2px 0; }
-    .ks-s { font-size: 12px; color: #E0E7FF; }
+    .sp.bad { border-color: #FDA4AF; background: #FFF1F2; }
+    .sp.good { border-color: #6EE7B7; background: #ECFDF5; }
+    .sp-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #475569; font-weight: 700; }
+    .sp-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 36px; font-weight: 800; margin-top: 4px; }
     .footer {
-      display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace;
-      font-size: 13px; font-weight: 700; color: #1E1B4B;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #475569; font-weight: 600;
     }
   </style></head><body>
-    <div class="indigo-hero">
-      <div class="ih-top">
-        <div>${logoForDarkBg}</div>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:#4F46E5;padding:5px 12px;border-radius:6px;">CDC & LEDGER STATE · ${spec.doc_id}</span>
-      </div>
-      <div class="eyebrow">${spec.eyebrow}</div>
-      <h1>${spec.headline}</h1>
-      <div class="subhead">${spec.subhead}</div>
+    <div class="top-row">
+      <div>${logoForLightBg(32)}</div>
+      <div class="tel-tag">● LIVE PRODUCTION TELEMETRY</div>
     </div>
-    <div class="db-workspace">
-      <div class="db-table-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;">✓ ${spec.after_title}</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:#DCFCE7;color:#15803D;padding:4px 10px;border-radius:6px;font-weight:700;">${spec.after_badge}</span>
-        </div>
-        <table class="db-grid">
-          <thead><tr><th>STAGE</th><th>PIPELINE NODE</th><th>INVARIANT CHECK</th><th>STATUS</th></tr></thead>
-          <tbody>
-            ${spec.after_nodes.map((n, i) => `
-              <tr>
-                <td>0${i + 1}</td>
-                <td>${n}</td>
-                <td>sha256_state_verified</td>
-                <td><span class="status-ok">COMMITTED</span></td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-        <ul class="pts">
-          ${spec.after_points.map(pt => `<li>${pt}</li>`).join('')}
-        </ul>
+
+    <h1>${spec.headline}</h1>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <span>METRIC: ${m0.label} · ${spec.eyebrow.split('·')[0].trim()}</span>
+        <span style="color:#047857;">▼ ${m0.sub}</span>
       </div>
-      <div class="slack-stack">
-        <div class="slack-card bad">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;">✕ REPLACED LEGACY PIPELINE (${spec.before_badge})</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;">${spec.before_title}</div>
-          <ul class="pts">${spec.before_points.map(pt => `<li>${pt}</li>`).join('')}</ul>
+
+      <div class="chart-svg-wrap">
+        <svg viewBox="0 0 1000 340" style="width:100%; height:100%; max-height:${isWide ? '260px' : '460px'};">
+          <defs>
+            <linearGradient id="redGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#E11D48" stop-opacity="0.34"/>
+              <stop offset="100%" stop-color="#E11D48" stop-opacity="0.02"/>
+            </linearGradient>
+            <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#059669" stop-opacity="0.32"/>
+              <stop offset="100%" stop-color="#059669" stop-opacity="0.02"/>
+            </linearGradient>
+          </defs>
+          <!-- Horizontal gridlines -->
+          <line x1="20" y1="60" x2="980" y2="60" stroke="#E2E8F0" stroke-width="1.5" stroke-dasharray="6 6"/>
+          <line x1="20" y1="145" x2="980" y2="145" stroke="#E2E8F0" stroke-width="1.5" stroke-dasharray="6 6"/>
+          <line x1="20" y1="230" x2="980" y2="230" stroke="#E2E8F0" stroke-width="1.5" stroke-dasharray="6 6"/>
+          <line x1="20" y1="305" x2="980" y2="305" stroke="#94A3B8" stroke-width="2"/>
+
+          <!-- Red failure area + jagged line -->
+          <path d="M20,120 L95,88 L170,132 L245,62 L320,96 L395,54 L470,74 L470,305 L20,305 Z" fill="url(#redGrad)"/>
+          <path d="M20,120 L95,88 L170,132 L245,62 L320,96 L395,54 L470,74" fill="none" stroke="#E11D48" stroke-width="6" stroke-linejoin="round"/>
+
+          <!-- Vertical deploy cliff -->
+          <line x1="470" y1="18" x2="470" y2="305" stroke="#0F172A" stroke-width="3" stroke-dasharray="8 6"/>
+          <rect x="486" y="20" width="210" height="38" rx="9" fill="#0F172A"/>
+          <text x="591" y="44" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="16" font-weight="700" fill="#FEF08A">▼ FIX DEPLOYED</text>
+
+          <!-- Drop + Emerald stable baseline -->
+          <path d="M470,74 L515,274 L600,278 L700,276 L800,280 L900,278 L980,279 L980,305 L470,305 Z" fill="url(#greenGrad)"/>
+          <path d="M470,74 L515,274 L600,278 L700,276 L800,280 L900,278 L980,279" fill="none" stroke="#059669" stroke-width="6" stroke-linejoin="round"/>
+
+          <!-- Labels -->
+          <rect x="38" y="168" width="275" height="38" rx="9" fill="#FFE4E6" stroke="#E11D48" stroke-width="2"/>
+          <text x="175" y="192" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" font-weight="700" fill="#9F1239">${spec.before_badge}</text>
+
+          <rect x="678" y="216" width="275" height="38" rx="9" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
+          <text x="815" y="240" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" font-weight="700" fill="#065F46">${spec.after_badge}</text>
+        </svg>
+      </div>
+
+      <div class="stat-pair">
+        <div class="sp bad">
+          <div>
+            <div class="sp-lbl">BEFORE FIX</div>
+            <div class="sp-val" style="color:#BE123C;">${spec.before_badge}</div>
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#9F1239;font-weight:700;">${spec.before_nodes[1]}</div>
         </div>
-        <div class="slack-card">
-          <div style="display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#34D399;">
-            <span>#revops-production-telemetry · BOT</span>
-            <span style="background:#064E3B;color:#6EE7B7;padding:2px 8px;border-radius:4px;">HTTP 200 OK · 420ms</span>
+        <div class="sp good">
+          <div>
+            <div class="sp-lbl">AFTER FIX (${m0.label})</div>
+            <div class="sp-val" style="color:#047857;">${m0.value}</div>
           </div>
-          <div style="font-size:14.5px;line-height:1.4;color:#E2E8F0;">
-            <strong>CDC Batch Committed:</strong> ${spec.metrics[0].label} = <span style="color:#34D399;font-weight:700;">${spec.metrics[0].value}</span> (${spec.metrics[0].sub}) · ${spec.metrics[1].label}: <span style="color:#38BDF8;font-weight:700;">${spec.metrics[1].value}</span>
-          </div>
-          <div style="background:#020617;border:1px solid #1E293B;border-radius:8px;padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#94A3B8;">
-            {"cursor": "watermark_tx_91842", "unchanged_skipped": "97.4%", "rate_limit_429": 0}
-          </div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#065F46;font-weight:700;">${m1.label}: ${m1.value}</div>
         </div>
       </div>
     </div>
-    <div class="kpi-strip">
-      ${spec.metrics.map(m => `
-        <div class="ks-item">
-          <div class="ks-l">${m.label}</div>
-          <div class="ks-v">${m.value}</div>
-          <div class="ks-s">${m.sub}</div>
-        </div>
-      `).join('')}
-    </div>
+
     <div class="footer">
-      <div>OLVEN TECH · DATA & REVOPS INFRASTRUCTURE</div>
-      <div>contact@olventech.com</div>
+      <div>${shorten(spec.after_points[0], 85)}</div>
+      <div>olventech.com</div>
     </div>
   </body></html>`;
 }
 
 /**
- * ARCHETYPE 6: Warm Terracotta & Sand Split + Financial Reconciliation Balance Sheet
+ * GENRE 6 (cdc_hash_diff_funnel):
+ * High-Contrast Editorial Magazine Split ("WHAT TEAMS BUILD vs. WHAT SURVIVES PROD")
+ * Bold terracotta/obsidian half vs crisp cream paper half, <35 words, massive visual tension.
  */
-function renderCdcHashDiffFunnel(spec, p) {
+function renderContrarianSplit(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
+  const m0 = spec.metrics[0];
 
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"/><style>
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background: #FFFBEB; color: #1C1917;
       font-family: 'Inter', sans-serif;
-      padding: ${isWide ? '38px 48px' : '46px 50px'};
-      display: flex; flex-direction: column; gap: 18px;
+      display: grid;
+      grid-template-columns: ${isWide ? '1fr 1fr' : '1fr'};
+      grid-template-rows: ${isWide ? '1fr' : '1fr 1fr'};
+      position: relative; overflow: hidden;
     }
-    .terracotta-top {
-      background: #7C2D12; color: #FFF7ED; border-radius: 16px;
-      padding: ${isWide ? '22px 28px' : '26px 32px'};
-      border-bottom: 6px solid #EA580C;
+    .half {
+      padding: ${isWide ? '56px 58px' : '58px 66px'};
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative;
     }
-    .tt-bar {
+    .half.dark {
+      background: linear-gradient(145deg, #1E130F 0%, #3A1A0E 100%);
+      color: #FFF7ED;
+    }
+    .half.light {
+      background: #FFFBF5;
+      color: #1C1917;
+    }
+    .kicker {
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .dark .kicker { color: #FB923C; }
+    .light .kicker { color: #059669; }
+    .big-claim {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: ${isWide ? '54px' : '64px'}; line-height: 1.04; font-weight: 800;
+      letter-spacing: -0.035em;
+    }
+    .dark .big-claim {
+      color: #FED7AA; text-decoration: line-through; text-decoration-color: #EA580C; text-decoration-thickness: 6px;
+    }
+    .light .big-claim { color: #0F172A; }
+    .sub-line {
+      font-size: ${isWide ? '22px' : '25px'}; line-height: 1.4; font-weight: 500; margin-top: 16px;
+    }
+    .dark .sub-line { color: #D6D3D1; }
+    .light .sub-line { color: #44403C; }
+    .pill-out {
+      align-self: flex-start;
+      font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 800;
+      padding: 12px 22px; border-radius: 12px;
+    }
+    .dark .pill-out { background: rgba(234,88,12,0.22); color: #FDBA74; border: 2px solid #EA580C; }
+    .light .pill-out { background: #059669; color: #FFFFFF; }
+    .vs-badge {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: 82px; height: 82px; border-radius: 50%;
+      background: #0F172A; color: #FFFFFF; border: 5px solid #FFFBF5;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 26px; font-weight: 800;
+      z-index: 10; box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+    .brand-foot {
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid rgba(254, 215, 170, 0.25); padding-bottom: 12px; margin-bottom: 12px;
-    }
-    .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #FDBA74; letter-spacing: 0.08em; margin-bottom: 6px; font-weight: 700; }
-    h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: ${isWide ? '35px' : '40px'}; font-weight: 800; line-height: 1.1; }
-    .subhead { margin-top: 8px; font-size: 16.5px; color: #FFEDD5; line-height: 1.4; }
-    .audit-body {
-      flex: 1; display: grid; grid-template-columns: ${isWide ? '1fr 1fr' : '1fr'}; gap: 16px;
-    }
-    .audit-sheet {
-      background: #FFFFFF; border: 2.5px solid #1C1917; border-radius: 14px; padding: 20px 24px;
-      box-shadow: 6px 6px 0px #EA580C; display: flex; flex-direction: column; gap: 14px;
-    }
-    .audit-sheet.dark {
-      background: #1C1917; color: #FAF8F5; box-shadow: 6px 6px 0px #16A34A;
-    }
-    .flow-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .fs-box {
-      padding: 9px 10px; border-radius: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700;
-      background: #FEF2F2; border: 1.5px solid #EF4444; color: #991B1B;
-    }
-    .audit-sheet.dark .fs-box { background: #292524; border-color: #22C55E; color: #86EFAC; }
-    .ledger-mini {
-      width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 12px;
-      background: #292524; border-radius: 8px; overflow: hidden;
-    }
-    .ledger-mini th { background: #44403C; color: #FDBA74; text-align: left; padding: 7px 12px; }
-    .ledger-mini td { padding: 7px 12px; border-bottom: 1px solid #44403C; color: #E7E5E4; }
-    .pts { list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 14.8px; line-height: 1.42; }
-    .pts li { padding-left: 20px; position: relative; }
-    .pts li::before { content: "•"; position: absolute; left: 2px; color: #EA580C; font-weight: 800; }
-    .audit-sheet.dark .pts li::before { content: "✓"; color: #22C55E; }
-    .inline-code { background: #FFEDD5; color: #9A3412; }
-    .audit-sheet.dark .inline-code { background: #292524; color: #FDBA74; }
-    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .kr-box {
-      background: #1C1917; color: #FFFBEB; border-radius: 10px; padding: 13px 16px; border-top: 4px solid #EA580C;
-    }
-    .kr-l { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #FDBA74; }
-    .kr-v { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; margin: 2px 0; }
-    .kr-s { font-size: 12px; color: #4ADE80; }
-    .footer {
-      display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace;
-      font-size: 13px; font-weight: 700; color: #7C2D12;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700; color: #57534E;
     }
   </style></head><body>
-    <div class="terracotta-top">
-      <div class="tt-bar">
-        <div>${logoForDarkBg}</div>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:#EA580C;padding:5px 12px;border-radius:6px;font-weight:700;">EXECUTIVE AUDIT · ${spec.doc_id}</span>
+    <div class="vs-badge">VS</div>
+
+    <div class="half dark">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="kicker">✕ WHAT MOST TEAMS BUILD</div>
+        <div>${logoForDarkBg(30)}</div>
       </div>
-      <div class="eyebrow">${spec.eyebrow}</div>
-      <h1>${spec.headline}</h1>
-      <div class="subhead">${spec.subhead}</div>
-    </div>
-    <div class="audit-body">
-      <div class="audit-sheet">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;color:#991B1B;">✕ ${spec.before_title}</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:#FEE2E2;color:#B91C1C;padding:4px 10px;border-radius:6px;font-weight:700;">${spec.before_badge}</span>
-        </div>
-        <div class="flow-steps">${spec.before_nodes.map(n => `<div class="fs-box">${n}</div>`).join('')}</div>
-        <ul class="pts">${spec.before_points.map(pt => `<li>${pt}</li>`).join('')}</ul>
+      <div>
+        <div class="big-claim">${spec.before_title.replace(/^Before:\s*/i, '')}</div>
+        <div class="sub-line">${shorten(spec.before_points[0], 105)}</div>
       </div>
-      <div class="audit-sheet dark">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;color:#86EFAC;">✓ ${spec.after_title}</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:#14532D;color:#86EFAC;padding:4px 10px;border-radius:6px;font-weight:700;">${spec.after_badge}</span>
-        </div>
-        <div class="flow-steps">${spec.after_nodes.map(n => `<div class="fs-box">${n}</div>`).join('')}</div>
-        <table class="ledger-mini">
-          <thead><tr><th>JOURNAL ENTRY</th><th>INVARIANT</th><th>RECONCILED</th></tr></thead>
-          <tbody>
-            <tr><td>payout_batch_cursor_tx</td><td>gross - fee - fx == net_wire</td><td style="color:#4ADE80;font-weight:700;">$0.00 DRIFT</td></tr>
-          </tbody>
-        </table>
-        <ul class="pts">${spec.after_points.map(pt => `<li>${pt}</li>`).join('')}</ul>
+      <div class="pill-out">RESULT: ${spec.before_badge}</div>
+    </div>
+
+    <div class="half light">
+      <div class="kicker">✓ WHAT SURVIVES PRODUCTION</div>
+      <div>
+        <div class="big-claim">${spec.after_title.replace(/^After:\s*/i, '')}</div>
+        <div class="sub-line">${spec.after_nodes.slice(1).join(' → ')}</div>
       </div>
-    </div>
-    <div class="kpi-row">
-      ${spec.metrics.map(m => `
-        <div class="kr-box">
-          <div class="kr-l">${m.label}</div>
-          <div class="kr-v">${m.value}</div>
-          <div class="kr-s">${m.sub}</div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="footer">
-      <div>OLVEN TECH · FINANCIAL & INVENTORY LEDGER ENGINEERING</div>
-      <div>contact@olventech.com</div>
+      <div class="brand-foot">
+        <div class="pill-out">${m0.label}: ${m0.value}</div>
+        <div>olventech.com</div>
+      </div>
     </div>
   </body></html>`;
 }
@@ -980,18 +910,18 @@ function buildHtml(spec, platform) {
   const archetype = selectArchetype(spec);
   switch (archetype) {
     case 'editorial_light_blueprint':
-      return renderEditorialLightBlueprint(spec, platform);
+      return renderBillboardPoster(spec, platform);
     case 'security_policy_shield_matrix':
-      return renderSecurityPolicyShieldMatrix(spec, platform);
+      return renderSlackIncidentStory(spec, platform);
     case 'circuit_breaker_state_machine':
-      return renderCircuitBreakerStateMachine(spec, platform);
+      return renderWhiteboardSketch(spec, platform);
     case 'split_latency_waterfall':
-      return renderSplitLatencyWaterfall(spec, platform);
+      return renderGithubPrDiff(spec, platform);
     case 'revenue_ledger_reconciliation':
-      return renderRevenueLedgerReconciliation(spec, platform);
+      return renderTelemetryCrashChart(spec, platform);
     case 'cdc_hash_diff_funnel':
     default:
-      return renderCdcHashDiffFunnel(spec, platform);
+      return renderContrarianSplit(spec, platform);
   }
 }
 
@@ -1021,7 +951,8 @@ async function main() {
       deviceScaleFactor: 2
     });
     const page = await context.newPage();
-    await page.setContent(buildHtml(spec, p), { waitUntil: 'networkidle' });
+    await page.setContent(buildHtml(spec, p), { waitUntil: 'load' });
+    await page.evaluate(() => document.fonts.ready);
     const outPath = path.join(outDir, p.name);
     await page.screenshot({ path: outPath, type: 'png' });
     await context.close();
@@ -1031,7 +962,7 @@ async function main() {
   await browser.close();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
