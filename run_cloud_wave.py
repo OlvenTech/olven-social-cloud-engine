@@ -9,6 +9,7 @@ and writes the verified package to ./live_out/ for Make.com Scenario 8619522 to 
 """
 import datetime
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -58,6 +59,25 @@ def save_next_cursor(day_num: int, slot: str, seq_index: int, current_media_type
 
 
 def main():
+    # Guard against delayed GitHub Actions schedule crons double-firing right after a wave was already generated
+    event_name = os.environ.get("GITHUB_EVENT_NAME", "")
+    manifest_file = LIVE_OUT_DIR / "manifest.json"
+    if event_name == "schedule" and manifest_file.exists():
+        try:
+            prev = json.loads(manifest_file.read_text(encoding="utf-8"))
+            gen_at = datetime.datetime.strptime(prev["generated_at_utc"], "%Y-%m-%dT%H:%M:%SZ").replace(
+                tzinfo=datetime.timezone.utc
+            )
+            age_mins = (datetime.datetime.now(datetime.timezone.utc) - gen_at).total_seconds() / 60.0
+            if age_mins < 90:
+                print(
+                    f"[SKIP] Wave '{prev.get('day_label')}' was already generated {age_mins:.1f} mins ago "
+                    f"({prev.get('generated_at_utc')}). Skipping duplicate schedule trigger."
+                )
+                sys.exit(0)
+        except Exception as exc:
+            print(f"[WARN] Could not parse previous manifest timestamp: {exc}")
+
     cursor = load_cursor()
     day_num = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].strip() else cursor["day_num"]
     slot = sys.argv[2].strip().capitalize() if len(sys.argv) > 2 and sys.argv[2].strip() else cursor["slot"]
