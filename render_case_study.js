@@ -872,10 +872,10 @@ async function renderCaseStudy(specPath, outDir) {
 
   try {
     for (const p of PLATFORMS) {
-      // 2x supersampled render -> exact native platform pixel grid via Lanczos -> ArtCraft PhotoCraft studio master
+      // 3x Super-Retina supersampled render -> exact native platform pixel grid via Lanczos -> ArtCraft PhotoCraft studio master
       const context = await browser.newContext({
         viewport: { width: p.width, height: p.height },
-        deviceScaleFactor: 2
+        deviceScaleFactor: 3
       });
       const page = await context.newPage();
       const html = buildHtmlForArchetype(spec, p);
@@ -895,13 +895,14 @@ async function renderCaseStudy(specPath, outDir) {
       if (pcCli) {
         execFileSync(pcCli, [
           'run', outPath,
-          '--cmd', 'filter.sharpen.smartSharpen', '--params', '{"amount":38,"radius":0.7,"reduceNoise":12}',
-          '--cmd', 'filter.noise.addNoise', '--params', '{"amount":0.75,"monochromatic":true}',
-          '--cmd', 'image.adjustments.vibrance', '--params', '{"vibrance":6}',
+          '--cmd', 'filter.sharpen.smartSharpen', '--params', '{"amount":46,"radius":0.65,"reduceNoise":14}',
+          '--cmd', 'image.adjustments.brightnessContrast', '--params', '{"brightness":0,"contrast":4}',
+          '--cmd', 'image.adjustments.vibrance', '--params', '{"vibrance":10}',
+          '--cmd', 'filter.noise.addNoise', '--params', '{"amount":0.65,"monochromatic":true}',
           '--out', outPath, '--in-place'
         ], { stdio: 'pipe' });
       }
-      console.log(`Rendered ${p.name} [${arch}, native ${tw}x${th}${pcCli ? ' + PhotoCraft studio master' : ''}] -> ${outDir}`);
+      console.log(`Rendered ${p.name} [${arch}, 3x->${tw}x${th}${pcCli ? ' + PhotoCraft studio master' : ''}] -> ${outDir}`);
     }
     fs.writeFileSync(
       path.join(outDir, 'visual-metadata.json'),
