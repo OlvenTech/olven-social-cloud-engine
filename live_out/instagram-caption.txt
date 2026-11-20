@@ -1,12 +1,12 @@
-Three webhook retries over 30 seconds cannot survive a 45-minute ERP or warehouse API outage.
+Firing per-request metering calls directly to Stripe during traffic spikes drops 3.8% of billable SaaS revenue.
 
-Most standard webhook integrations retry three times and then discard the event. That leaves engineering and ops teams scrambling with CSV exports after every vendor outage.
+When application workers push usage events without a local ledger, HTTP 429 rate limits and container deploys drop billable events before they ever reach the customer invoice.
 
-How we engineered a 1.2M event/month pipeline for 100% automatic recovery at Olven Tech:
-1. Write-ahead payload vault in Postgres stores every signed webhook in 6.4ms before any downstream call is attempted.
-2. Circuit breaker detects vendor 503 outages automatically and pauses delivery instead of exhausting retries.
-3. Self-healing replay worker drains the backlog in strict order with idempotency keys as soon as the vendor API recovers.
+How we rebuilt a 42M event/month metering pipeline at Olven Tech:
+1. Partitioned append-only usage table in Postgres deduplicated by request_id.
+2. Deterministic hourly rollup worker that aggregates usage per tenant and metric window.
+3. Idempotent batch sync to Stripe Billing that reduced API volume by 99.1%.
 
-Result: Zero lost orders across 7.2 million events and zero manual recovery scripts.
+Result: $139,000/year in previously unbilled usage recovered and instant audit logs for enterprise customers.
 
-Email contact@olventech.com to make your integrations outage-proof.
+Email contact@olventech.com to harden your billing infrastructure.

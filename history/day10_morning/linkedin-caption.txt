@@ -1,0 +1,13 @@
+Firing per-request usage events directly from application workers to Stripe Metering quietly leaks 3.8% of billable SaaS overages.
+
+We audited a B2B SaaS platform processing 42 million billable API executions a month. Their application servers sent asynchronous metering calls on every customer request. Whenever traffic spiked on Monday mornings, workers hit rate limits or restarted during deployments, silently dropping 3.8% of billable usage events. Worse, when enterprise finance teams asked for a timestamped breakdown of their monthly overage invoice, engineering had no local ledger to back up the Stripe total.
+
+How we re-architected the usage billing pipeline at Olven Tech:
+
+1. Append-only partitioned usage log: Every billable execution writes a lightweight row to a partitioned Postgres table with a unique constraint on request_id. Retries inside the application never double-count customer usage.
+2. Deterministic hourly rollups: Every hour on the hour, an aggregation worker rolls up raw events into an immutable summary row keyed by (tenant_id, metric_name, hour_bucket_utc).
+3. Idempotent Stripe Billing sync: The worker pushes only the hourly aggregate to Stripe using the composite bucket key as the Stripe idempotency key. That cut outbound billing API traffic by 99.1% while guaranteeing exact-once reporting.
+
+Result: $11,600/month ($139k/year) in previously leaked overage revenue recovered immediately, 0 billing disputes, and 2-second CSV audit exports for enterprise buyers.
+
+Running usage-based or hybrid SaaS billing? Reach us at contact@olventech.com.

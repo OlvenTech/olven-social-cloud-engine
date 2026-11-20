@@ -1,8 +1,6 @@
-Retrying a failed webhook 3 times in 30 seconds does nothing when a downstream ERP or CRM is down for 45 minutes.
+Pushing usage events directly from app workers to Stripe on every request is how SaaS teams lose 3.8% of billable overages to rate limits and deploy restarts.
 
-We built a write-ahead Postgres outbox + circuit breaker for a 1.2M event/mo pipeline:
-- Saves raw signed payload in 6.4ms
-- Pauses queue when vendor returns 503s
-- Auto-replays in strict order when vendor recovers
-
-0 lost records across 7.2M events. (contact@olventech.com)
+We replaced per-event metering (42M events/mo) with a Postgres append-only log + hourly idempotent rollup worker:
+- $139k/yr recovered revenue
+- 99.1% fewer Stripe API calls
+- Full tenant audit logs (contact@olventech.com)

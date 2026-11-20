@@ -1,15 +1,13 @@
-Three fast webhook retries over 30 seconds will silently drop every customer order during a 40-minute ERP brownout.
+Firing per-request usage events directly from application workers to Stripe Metering quietly leaks 3.8% of billable SaaS overages.
 
-In most webhook integrations, the failure pattern is identical: the worker retries three times in 30 seconds, hits the third HTTP 503 error, logs a truncated stack trace to CloudWatch, and drops the payload forever. Then an engineer has to spend four hours pulling raw Stripe or Shopify logs to manually reconstruct the missing records.
+We audited a B2B SaaS platform processing 42 million billable API executions a month. Their application servers sent asynchronous metering calls on every customer request. Whenever traffic spiked on Monday mornings, workers hit rate limits or restarted during deployments, silently dropping 3.8% of billable usage events. Worse, when enterprise finance teams asked for a timestamped breakdown of their monthly overage invoice, engineering had no local ledger to back up the Stripe total.
 
-We rebuilt the event ingestion backbone for an operations team processing 1.2 million webhook events a month that was losing 100 to 300 records every time a downstream vendor had a brownout.
+How we re-architected the usage billing pipeline at Olven Tech:
 
-Our zero-data-loss architecture at Olven Tech:
+1. Append-only partitioned usage log: Every billable execution writes a lightweight row to a partitioned Postgres table with a unique constraint on request_id. Retries inside the application never double-count customer usage.
+2. Deterministic hourly rollups: Every hour on the hour, an aggregation worker rolls up raw events into an immutable summary row keyed by (tenant_id, metric_name, hour_bucket_utc).
+3. Idempotent Stripe Billing sync: The worker pushes only the hourly aggregate to Stripe using the composite bucket key as the Stripe idempotency key. That cut outbound billing API traffic by 99.1% while guaranteeing exact-once reporting.
 
-1. Write-ahead payload vault (6.4ms): Our edge receiver never calls slow downstream APIs synchronously. It verifies the HMAC signature, writes the raw JSON payload and idempotency key to a Postgres outbox table in 6.4 milliseconds, and immediately returns 202 Accepted.
-2. Long-horizon exponential backoff: Instead of burning all retries in 30 seconds, the worker schedules retries across a 12-hour survival curve (10s, 1m, 5m, 20m, 1h, 4h, 12h) with random jitter.
-3. Automatic circuit breaking: If a downstream vendor returns five consecutive 5xx responses, the circuit opens, pausing the queue for that vendor while probing health once per minute. The moment the vendor recovers, the backlog drains cleanly in chronological order without hammering their rate limit.
+Result: $11,600/month ($139k/year) in previously leaked overage revenue recovered immediately, 0 billing disputes, and 2-second CSV audit exports for enterprise buyers.
 
-Over the last 6 months (including two major third-party outages): 0 dropped records out of 7.2M events, and zero hours spent writing manual recovery scripts.
-
-If vendor downtime still causes missing records in your stack, email contact@olventech.com.
+Running usage-based or hybrid SaaS billing? Reach us at contact@olventech.com.
