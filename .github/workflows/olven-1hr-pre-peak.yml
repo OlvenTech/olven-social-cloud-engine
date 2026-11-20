@@ -62,16 +62,17 @@ jobs:
             npx playwright install --with-deps chromium
           fi
 
-      - name: Cache ArtCraft Creative Suite (EffectCraft v0.24.1 + PhotoCraft v0.23.1)
+      - name: Cache ArtCraft Creative Suite (EffectCraft v0.24.1 + PhotoCraft v0.23.1 + LightCraft v0.21.1)
         uses: actions/cache@v4
         with:
           path: ~/.local/artcraft
-          key: artcraft-ec0241-pc0231-${{ runner.os }}-x86_64-v1
+          key: artcraft-suite-ec0241-pc0231-lc0211-${{ runner.os }}-x86_64-v1
 
-      - name: Install ArtCraft EffectCraft & PhotoCraft CLI binaries (if not cached)
+      - name: Install ArtCraft EffectCraft, PhotoCraft & LightCraft CLI binaries (if not cached)
         run: |
           EC_BIN="$HOME/.local/artcraft/effectcraft/effectcraft-0.24.1-linux-x86_64/bin/effectcraft-cli"
           PC_BIN="$HOME/.local/artcraft/photocraft/photocraft-0.23.1-linux-x86_64/bin/photocraft-cli"
+          LC_BIN="$HOME/.local/artcraft/lightcraft/lightcraft-0.21.1-linux-x86_64/bin/lightcraft-cli"
           if [ ! -x "$EC_BIN" ]; then
             mkdir -p "$HOME/.local/artcraft/effectcraft"
             curl -fsSL "https://github.com/storytold/effectcraft/releases/download/v0.24.1/effectcraft-0.24.1-linux-x86_64.tar.gz" \
@@ -82,12 +83,19 @@ jobs:
             curl -fsSL "https://github.com/storytold/photocraft/releases/download/v0.23.1/photocraft-0.23.1-linux-x86_64.tar.gz" \
               | tar -xz -C "$HOME/.local/artcraft/photocraft"
           fi
+          if [ ! -x "$LC_BIN" ]; then
+            mkdir -p "$HOME/.local/artcraft/lightcraft"
+            curl -fsSL "https://github.com/storytold/lightcraft/releases/download/v0.21.1/lightcraft-0.21.1-linux-x86_64.tar.gz" \
+              | tar -xz -C "$HOME/.local/artcraft/lightcraft"
+          fi
           echo "EFFECTCRAFT_CLI=$EC_BIN" >> "$GITHUB_ENV"
           echo "PHOTOCRAFT_CLI=$PC_BIN" >> "$GITHUB_ENV"
+          echo "LIGHTCRAFT_CLI=$LC_BIN" >> "$GITHUB_ENV"
           "$EC_BIN" --version || true
           "$PC_BIN" --version || true
+          "$LC_BIN" --version || true
 
-      - name: Execute Live R&D, ArtCraft EffectCraft/PhotoCraft Render & 3-Layer Anti-Slop Quality Blocker
+      - name: Execute Live R&D, Multi-Tool ArtCraft Suite Render & 3-Layer Anti-Slop Quality Blocker
         run: |
           python3 run_cloud_wave.py "${{ github.event.inputs.day_num }}" "${{ github.event.inputs.slot }}" "${{ github.event.inputs.media_type }}"
 
