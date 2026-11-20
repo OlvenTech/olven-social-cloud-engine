@@ -843,12 +843,27 @@ function detectChromeExecutable() {
   return undefined;
 }
 
+function detectPhotoCraftCli() {
+  const candidates = [
+    process.env.PHOTOCRAFT_CLI,
+    '/home/antigravity/.local/artcraft/photocraft/photocraft-0.23.1-linux-x86_64/bin/photocraft-cli',
+    path.join(process.env.HOME || '', '.local/artcraft/photocraft/photocraft-0.23.1-linux-x86_64/bin/photocraft-cli'),
+    '/usr/local/bin/photocraft-cli',
+    '/usr/bin/photocraft-cli',
+  ].filter(Boolean);
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
 async function renderCaseStudy(specPath, outDir) {
   const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
   const arch = spec.visual_archetype || 'editorial_light_blueprint';
   fs.mkdirSync(outDir, { recursive: true });
 
   const execPath = detectChromeExecutable();
+  const pcCli = detectPhotoCraftCli();
   const browser = await chromium.launch({
     headless: true,
     ...(execPath ? { executablePath: execPath } : {}),
@@ -857,7 +872,7 @@ async function renderCaseStudy(specPath, outDir) {
 
   try {
     for (const p of PLATFORMS) {
-      // 2x supersampled render -> exact native platform pixel grid via Lanczos (prevents IG/LI/FB downscale blur!)
+      // 2x supersampled render -> exact native platform pixel grid via Lanczos -> ArtCraft PhotoCraft studio master
       const context = await browser.newContext({
         viewport: { width: p.width, height: p.height },
         deviceScaleFactor: 2
@@ -874,15 +889,25 @@ async function renderCaseStudy(specPath, outDir) {
       const th = p.targetH || p.height;
       execFileSync('python3', [
         '-c',
-        `from PIL import Image, ImageFilter; im = Image.open(${JSON.stringify(outPath)}).convert("RGB").resize((${tw}, ${th}), Image.Resampling.LANCZOS).filter(ImageFilter.UnsharpMask(radius=0.8, percent=55, threshold=2)); im.save(${JSON.stringify(outPath)}, format="PNG", optimize=True)`
+        `from PIL import Image; im = Image.open(${JSON.stringify(outPath)}).convert("RGB").resize((${tw}, ${th}), Image.Resampling.LANCZOS); im.save(${JSON.stringify(outPath)}, format="PNG", optimize=True)`
       ]);
-      console.log(`Rendered ${p.name} [${arch}, 2x supersampled -> native ${tw}x${th}] -> ${outDir}`);
+
+      if (pcCli) {
+        execFileSync(pcCli, [
+          'run', outPath,
+          '--cmd', 'filter.sharpen.smartSharpen', '--params', '{"amount":38,"radius":0.7,"reduceNoise":12}',
+          '--cmd', 'filter.noise.addNoise', '--params', '{"amount":0.75,"monochromatic":true}',
+          '--cmd', 'image.adjustments.vibrance', '--params', '{"vibrance":6}',
+          '--out', outPath, '--in-place'
+        ], { stdio: 'pipe' });
+      }
+      console.log(`Rendered ${p.name} [${arch}, native ${tw}x${th}${pcCli ? ' + PhotoCraft studio master' : ''}] -> ${outDir}`);
     }
     fs.writeFileSync(
       path.join(outDir, 'visual-metadata.json'),
       JSON.stringify({
         visual_archetype: arch,
-        style_system: 'apple-liquid-glass-native-supersampled',
+        style_system: pcCli ? 'artcraft-photocraft-apple-liquid-glass' : 'apple-liquid-glass-native-supersampled',
         headline: spec.headline,
         rendered_at: new Date().toISOString()
       }, null, 2)
