@@ -54,7 +54,7 @@ jobs:
             DEBIAN_FRONTEND=noninteractive sudo apt-get update -qq
             DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -qq --no-install-recommends ffmpeg
           fi
-          pip install --quiet pillow requests numpy edge-tts
+          pip install --quiet pillow requests
           if [ ! -d node_modules/playwright ]; then
             npm install --no-audit --no-fund
           fi
