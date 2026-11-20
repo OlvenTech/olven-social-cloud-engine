@@ -15,12 +15,14 @@ from zoneinfo import ZoneInfo
 PKT = ZoneInfo("Asia/Karachi")
 
 ARCHETYPE_ROTATION = [
-    "editorial_light_blueprint",
+    "manhattan_swiss_poster",
     "split_latency_waterfall",
+    "iphone_keynote_hardware",
     "security_policy_shield_matrix",
-    "circuit_breaker_state_machine",
-    "revenue_ledger_reconciliation",
+    "editorial_light_blueprint",
     "cdc_hash_diff_funnel",
+    "revenue_ledger_reconciliation",
+    "circuit_breaker_state_machine",
 ]
 
 
