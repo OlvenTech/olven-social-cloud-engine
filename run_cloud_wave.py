@@ -33,14 +33,15 @@ REPO_CDN_BASE = "https://cdn.jsdelivr.net/gh/OlvenTech/olven-social-cloud-engine
 def load_cursor():
     if STATE_FILE.exists():
         data = json.loads(STATE_FILE.read_text(encoding="utf-8"))
-        data.setdefault("media_type", "video")
+        data.setdefault("media_type", "image")
         return data
-    return {"day_num": 9, "slot": "Morning", "seq_index": 11, "media_type": "video"}
+    return {"day_num": 10, "slot": "Evening", "seq_index": 14, "media_type": "image"}
 
 
 def save_next_cursor(day_num: int, slot: str, seq_index: int, current_media_type: str):
     STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    next_media_type = "image" if current_media_type.lower() == "video" else "video"
+    # Automated Reels paused (images-only) until a new Silicon Valley video style is explicitly approved.
+    next_media_type = "image"
     if slot.lower() == "morning":
         next_cursor = {
             "day_num": day_num,
