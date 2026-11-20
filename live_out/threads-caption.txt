@@ -1,6 +1,6 @@
-Pushing usage events directly from app workers to Stripe on every request is how SaaS teams lose 3.8% of billable overages to rate limits and deploy restarts.
+Overwriting 280,000 HubSpot accounts every night at 2 AM is why your CRM hits API rate limits during the workday.
 
-We replaced per-event metering (42M events/mo) with a Postgres append-only log + hourly idempotent rollup worker:
-- $139k/yr recovered revenue
-- 99.1% fewer Stripe API calls
-- Full tenant audit logs (contact@olventech.com)
+We replaced a client's full-table warehouse dump with a SHA-256 row-hash diff worker:
+- Skips 97.4% of unchanged accounts
+- Cuts daily CRM API quota use from 85% to 2.6%
+- Delivers PQL expansion alerts in 45 seconds (contact@olventech.com)

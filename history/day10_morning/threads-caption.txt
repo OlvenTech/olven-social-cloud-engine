@@ -1,6 +1,0 @@
-Pushing usage events directly from app workers to Stripe on every request is how SaaS teams lose 3.8% of billable overages to rate limits and deploy restarts.
-
-We replaced per-event metering (42M events/mo) with a Postgres append-only log + hourly idempotent rollup worker:
-- $139k/yr recovered revenue
-- 99.1% fewer Stripe API calls
-- Full tenant audit logs (contact@olventech.com)

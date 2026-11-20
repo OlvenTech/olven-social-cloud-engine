@@ -1,5 +1,5 @@
-Sending per-request meter events directly from your web workers to Stripe Billing will leak revenue every time a worker restarts or hits a rate limit.
+Overwriting 280,000 HubSpot or Salesforce records every night burns your API quota on unchanged data and delays expansion signals by 24 hours.
 
-We audited a B2B platform handling 42M billable events a month that was losing $11,600 every month in dropped usage calls. By placing a partitioned Postgres usage log and hourly idempotent rollup worker in front of Stripe Billing, we recovered $139k/year in unbilled revenue and cut billing API traffic by 99.1%.
+We rebuilt a 280,000-account warehouse-to-HubSpot pipeline using SHA-256 row-hash diffing and 100-record batch upserts. By syncing only the 2.6% of accounts whose product usage actually changed, daily API quota consumption dropped from 85% to 2.6%, and reps now get expansion alerts in 45 seconds instead of the next morning.
 
-Need audit-grade SaaS billing architecture? Email contact@olventech.com.
+Reach us at contact@olventech.com.

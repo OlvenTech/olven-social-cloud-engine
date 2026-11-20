@@ -1,7 +1,0 @@
-Firing usage events directly from app workers to Stripe loses 3.8% of revenue to rate limits and container restarts.
-
-Our Postgres hourly rollup engine (42M events/mo):
-- 99.1% fewer Stripe API calls
-- $139k/yr recovered
-
-contact@olventech.com

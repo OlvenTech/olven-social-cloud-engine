@@ -1,5 +1,0 @@
-Sending per-request meter events directly from your web workers to Stripe Billing will leak revenue every time a worker restarts or hits a rate limit.
-
-We audited a B2B platform handling 42M billable events a month that was losing $11,600 every month in dropped usage calls. By placing a partitioned Postgres usage log and hourly idempotent rollup worker in front of Stripe Billing, we recovered $139k/year in unbilled revenue and cut billing API traffic by 99.1%.
-
-Need audit-grade SaaS billing architecture? Email contact@olventech.com.
