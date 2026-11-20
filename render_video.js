@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 /**
- * Olven Tech — Apple Liquid Glass & Swiss Kinetic Reel Engine (1080x1920, 30fps, 16.0s).
+ * Olven Tech — ArtCraft EffectCraft (v0.24.1) 3D Cinema Reel Engine (1080x1920, 30fps, 16.0s).
  *
- * Flagship New York / Silicon Valley presentation:
- * - Approved NYC Felt Piano signature audio (3 distinct 16s movements mastered to -14 LUFS).
- * - ZERO AI voiceover, ZERO synthetic SFX, ZERO generic corporate marimba.
- * - Authentic Apple iPhone / macOS Liquid Glass surfaces (frosted blur + 1px specular rim highlights
- *   + soft multi-layer studio shadows + drifting ambient titanium light fields) paired with crisp
- *   Swiss typography (Inter + IBM Plex Mono).
- * - Lossless PNG frame pipeline -> high-profile H.264 (CRF 15) for razor-sharp glass refraction.
+ * True pure-Rust After Effects 3D compositor pipeline:
+ * 1. Renders 5 crystal-clear 2x Retina transparent Apple Liquid Glass Hero Slabs (PNG alpha).
+ * 2. Assembles a native EffectCraft 3D composition (1080x1920, 30fps, 180-deg optical motion blur,
+ *    35mm Cinema Camera, 3D spatial tilt/Z-depth choreography, Apple Easy-Ease 85% velocity curves,
+ *    specular Light Sweep VFX across glass edges, subtle Vignette, and 35mm monochrome Add Grain).
+ * 3. Renders natively at 10 Mbps H.264 in pure Rust (`effectcraft-cli render`) and muxes our
+ *    approved NYC Felt Piano signature soundtrack (`nyc_felt_piano_mvt1-3.mp3`, -14 LUFS) with
+ *    Rec.709 Apple color tags.
  */
 const fs = require('fs');
 const path = require('path');
-const { spawn } = require('child_process');
+const { execFileSync } = require('child_process');
 let chromium;
 try { ({ chromium } = require('playwright')); } catch { ({ chromium } = require('playwright-core')); }
 
@@ -20,7 +21,6 @@ const WIDTH = 1080;
 const HEIGHT = 1920;
 const FPS = 30;
 const DURATION = 16.0;
-const TOTAL_FRAMES = Math.round(DURATION * FPS);
 
 const ASSETS_DIR = path.join(__dirname, 'assets');
 const MUSIC_DIR = path.join(ASSETS_DIR, 'music');
@@ -30,55 +30,40 @@ const THEMES = {
     name: 'apple_porcelain',
     track: 'nyc_felt_piano_mvt1.mp3',
     lightBg: '#F2F0EC',
-    lightOrbA: 'rgba(0, 82, 255, 0.14)',
-    lightOrbB: 'rgba(180, 160, 130, 0.22)',
+    darkBg: '#080A0E',
     lightInk: '#0A0D14',
     lightMuted: '#5C6270',
-    darkBg: '#07080B',
-    darkOrbA: 'rgba(16, 185, 129, 0.20)',
-    darkOrbB: 'rgba(59, 130, 246, 0.18)',
     darkInk: '#F7F8FA',
     darkMuted: '#949BA8',
     accent: '#0052FF',
     accentOnDark: '#34D399',
     alert: '#E11D48',
-    openDark: false,
   },
   titanium_obsidian: {
     name: 'titanium_obsidian',
     track: 'nyc_felt_piano_mvt2.mp3',
     lightBg: '#F4F5F7',
-    lightOrbA: 'rgba(16, 185, 129, 0.15)',
-    lightOrbB: 'rgba(148, 163, 184, 0.24)',
+    darkBg: '#07090D',
     lightInk: '#090B10',
     lightMuted: '#586070',
-    darkBg: '#06070A',
-    darkOrbA: 'rgba(99, 102, 241, 0.22)',
-    darkOrbB: 'rgba(16, 185, 129, 0.16)',
     darkInk: '#F8FAFC',
     darkMuted: '#9098A6',
     accent: '#059669',
     accentOnDark: '#34D399',
     alert: '#F43F5E',
-    openDark: true,
   },
   silver_glass: {
     name: 'silver_glass',
     track: 'nyc_felt_piano_mvt3.mp3',
-    lightBg: '#F6F7FB',
-    lightOrbA: 'rgba(99, 91, 255, 0.15)',
-    lightOrbB: 'rgba(14, 165, 233, 0.14)',
+    lightBg: '#F5F6FA',
+    darkBg: '#081222',
     lightInk: '#0A1F38',
     lightMuted: '#56677C',
-    darkBg: '#081222',
-    darkOrbA: 'rgba(99, 91, 255, 0.25)',
-    darkOrbB: 'rgba(0, 212, 182, 0.18)',
     darkInk: '#FFFFFF',
     darkMuted: '#92A6BE',
     accent: '#635BFF',
     accentOnDark: '#2DD4BF',
     alert: '#E11D48',
-    openDark: false,
   },
 };
 
@@ -112,7 +97,6 @@ function loadTransparentLogoDataUri(inkHex, cutoutHex) {
   const fp = path.join(ASSETS_DIR, 'horizontal_dark.svg');
   if (!fs.existsSync(fp)) return '';
   let svg = fs.readFileSync(fp, 'utf8');
-  // Remove outer black background rect (path1-3) so logo floats seamlessly over glass!
   svg = svg.replace(/<path[^>]*id="path1-3"[^>]*\/>/g, '');
   svg = svg
     .replace(/style="fill:#000000;/g, `style="fill:${cutoutHex};`)
@@ -126,6 +110,20 @@ function detectChromeExecutable() {
     if (fs.existsSync(p)) return p;
   }
   return undefined;
+}
+
+function detectEffectCraftCli() {
+  const candidates = [
+    process.env.EFFECTCRAFT_CLI,
+    '/home/antigravity/.local/artcraft/effectcraft/effectcraft-0.24.1-linux-x86_64/bin/effectcraft-cli',
+    path.join(process.env.HOME || '', '.local/artcraft/effectcraft/effectcraft-0.24.1-linux-x86_64/bin/effectcraft-cli'),
+    '/usr/local/bin/effectcraft-cli',
+    '/usr/bin/effectcraft-cli',
+  ].filter(Boolean);
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return 'effectcraft-cli';
 }
 
 function compileEditorialScript(spec) {
@@ -212,568 +210,222 @@ function compileEditorialScript(spec) {
     diagLines: [diag0, diag1, diag2],
     painKicker,
     archSteps: [
-      { num: '01', title: cleanTag(aNodes[0]), tag: 'IDEMPOTENT' },
-      { num: '02', title: cleanTag(aNodes[1]), tag: 'DETERMINISTIC' },
-      { num: '03', title: cleanTag(aNodes[2]), tag: 'ATOMIC' },
+      { num: '01', title: cleanTag(aNodes[0]) },
+      { num: '02', title: cleanTag(aNodes[1]) },
+      { num: '03', title: cleanTag(aNodes[2]) },
     ],
     archFoot: cleanTag(spec.after_badge || 'Zero lost events · Full audit trail'),
     heroVal: cleanTag(heroMetric.value),
-    heroFontPx: cleanTag(heroMetric.value).length >= 7 ? 156 : (cleanTag(heroMetric.value).length >= 5 ? 182 : 208),
+    heroFontPx: cleanTag(heroMetric.value).length >= 7 ? 148 : (cleanTag(heroMetric.value).length >= 5 ? 174 : 196),
     heroLabel,
     heroSub,
     subA: { val: cleanTag(subA.value), lbl: cleanTag(subA.label).toLowerCase() },
     subB: { val: cleanTag(subB.value), lbl: cleanTag(subB.label).toLowerCase() },
-    ctaLines: ['We engineer', 'revenue-critical', 'backends.'],
   };
 }
 
-function buildHtml(script, theme) {
+/**
+ * Renders 5 transparent-background 2x Retina Apple Liquid Glass Hero Cards (PNG alpha)
+ * to be composited as true 3D spatial layers inside ArtCraft EffectCraft.
+ */
+async function renderTransparentGlassCards(script, theme, workDir) {
   const interB64 = fontBase64('Inter.woff2');
   const monoB64 = fontBase64('IBMPlexMono.woff2');
-  const logoDarkUri = loadTransparentLogoDataUri(theme.darkInk, theme.darkBg);
+  const logoDarkUri = loadTransparentLogoDataUri(theme.darkInk, '#12151C');
 
-  const payload = JSON.stringify({ script, theme, duration: DURATION });
-
-  return `<!doctype html>
-<html><head><meta charset="utf-8" />
-<style>
-  @font-face {
-    font-family: 'Inter';
-    src: url('data:font/woff2;base64,${interB64}') format('woff2');
-    font-weight: 100 900;
-  }
-  @font-face {
-    font-family: 'IBM Plex Mono';
-    src: url('data:font/woff2;base64,${monoB64}') format('woff2');
-    font-weight: 400 700;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    width: ${WIDTH}px;
-    height: ${HEIGHT}px;
-    overflow: hidden;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: geometricPrecision;
-  }
-  .stage {
-    position: relative;
-    width: ${WIDTH}px;
-    height: ${HEIGHT}px;
-    overflow: hidden;
-  }
-
-  /* Soft Apple Studio Light Orbs behind Liquid Glass (drifts subtly, zero neon garishness) */
-  .studio-orb {
-    position: absolute; border-radius: 50%;
-    filter: blur(130px);
-    pointer-events: none; z-index: 1;
-  }
-  .orb-a { width: 760px; height: 760px; top: -120px; right: -160px; }
-  .orb-b { width: 720px; height: 720px; bottom: -140px; left: -180px; }
-
-  /* Subtle top 3px progress hairline */
-  .progress-track {
-    position: absolute; top: 0; left: 0; right: 0; height: 4px;
-    background: rgba(128, 128, 128, 0.14); z-index: 40;
-  }
-  .progress-fill { height: 100%; width: 0%; }
-
-  /* Top Apple iOS/macOS Frosted Glass Status Pill (safely below IG top bar) */
-  .folio-bar {
-    position: absolute; top: 186px; left: 82px; right: 102px;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 18px 28px;
-    border-radius: 999px;
-    backdrop-filter: blur(36px) saturate(190%);
-    -webkit-backdrop-filter: blur(36px) saturate(190%);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 19px; font-weight: 600; letter-spacing: 0.13em;
-    text-transform: uppercase;
-    z-index: 25;
-  }
-  .glass-light {
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.46) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.86);
-    box-shadow:
-      0 34px 80px -20px rgba(15, 23, 42, 0.14),
-      0 10px 26px -8px rgba(15, 23, 42, 0.07),
-      inset 0 1.5px 0 rgba(255, 255, 255, 0.96),
-      inset 0 -1px 0 rgba(15, 23, 42, 0.05);
-  }
-  .glass-dark {
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.04) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow:
-      0 38px 90px -20px rgba(0, 0, 0, 0.65),
-      0 12px 30px -8px rgba(0, 0, 0, 0.40),
-      inset 0 1.5px 0 rgba(255, 255, 255, 0.28),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.04);
-  }
-
-  /* Safe-zone scene container */
-  .scene {
-    position: absolute;
-    top: 290px; left: 82px; right: 102px; bottom: 300px;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    z-index: 10;
-  }
-  .scene.active { display: flex; }
-
-  .mask { overflow: hidden; padding-bottom: 8px; }
-  .rise { display: block; will-change: transform, opacity; }
-
-  /* Apple Liquid Glass Hero Card (macOS / iPhone Titanium Squircle) */
-  .apple-glass-card {
-    position: relative;
-    border-radius: 40px;
-    padding: 64px 58px;
-    backdrop-filter: blur(42px) saturate(195%);
-    -webkit-backdrop-filter: blur(42px) saturate(195%);
-    overflow: hidden;
-  }
-  /* Subtle diagonal glass specular reflection sheen */
-  .apple-glass-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 42%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 100%);
-    pointer-events: none;
-  }
-
-  /* macOS Window Traffic Lights (authentic subtle Apple chrome) */
-  .mac-chrome {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 42px;
-  }
-  .mac-dots { display: flex; gap: 11px; align-items: center; }
-  .mdot { width: 14px; height: 14px; border-radius: 50%; }
-  .md-r { background: #FF5F57; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); }
-  .md-y { background: #FEBC2E; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); }
-  .md-g { background: #28C840; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); }
-  .mac-title {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 19px; font-weight: 600; letter-spacing: 0.1em;
-    text-transform: uppercase; opacity: 0.65;
-  }
-
-  /* SCENE 0: APPLE LIQUID GLASS PAIN HOOK */
-  .hook-pill {
-    display: inline-flex; align-items: center; gap: 12px;
-    padding: 12px 22px; border-radius: 999px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 20px; font-weight: 600; letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 40px; width: fit-content;
-  }
-  .pulse-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .hook-line {
-    font-size: 92px; font-weight: 800; line-height: 1.03;
-    letter-spacing: -0.048em;
-  }
-  .hook-accent {
-    font-size: 104px; font-weight: 850; line-height: 1.02;
-    letter-spacing: -0.052em;
-    margin-top: 8px; transform-origin: left center;
-  }
-  .hook-foot-bar {
-    margin-top: 46px; padding-top: 30px;
-    border-top: 1px solid rgba(128, 128, 128, 0.20);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 23px; font-weight: 500; letter-spacing: 0.02em;
-  }
-
-  /* SCENE 1: macOS FROSTED GLASS INCIDENT SHEET */
-  .diag-wrap { display: flex; flex-direction: column; gap: 22px; }
-  .diag-item {
-    position: relative; display: inline-block; width: fit-content;
-    font-size: 64px; font-weight: 800; line-height: 1.1;
-    letter-spacing: -0.042em;
-  }
-  .strike-bar {
-    position: absolute; left: 0; top: 53%; height: 6px; width: 0%;
-    background: ${theme.alert}; border-radius: 4px;
-  }
-  .diag-kicker {
-    margin-top: 36px; padding-top: 28px;
-    border-top: 1px solid rgba(128, 128, 128, 0.22);
-    font-size: 40px; font-weight: 800; letter-spacing: -0.03em;
-    line-height: 1.18;
-  }
-
-  /* SCENE 2: SPACE-BLACK TITANIUM GLASS LAYERS */
-  .arch-title {
-    font-size: 58px; font-weight: 800; letter-spacing: -0.042em;
-    line-height: 1.06; margin-bottom: 42px;
-  }
-  .arch-stack { display: flex; flex-direction: column; gap: 22px; }
-  .arch-glass-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 34px 38px; border-radius: 28px;
-    backdrop-filter: blur(36px) saturate(185%);
-    -webkit-backdrop-filter: blur(36px) saturate(185%);
-  }
-  .arch-left { display: flex; align-items: baseline; gap: 26px; }
-  .arch-num {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 24px; font-weight: 700; letter-spacing: 0.06em;
-  }
-  .arch-step {
-    font-size: 40px; font-weight: 750; letter-spacing: -0.03em;
-    line-height: 1.12;
-  }
-  .arch-foot {
-    margin-top: 38px; display: flex; align-items: center; gap: 14px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 24px; font-weight: 600; letter-spacing: 0.04em;
-  }
-  .live-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-
-  /* SCENE 3: APPLE GLASS HERO METRIC CARD */
-  .proof-eyebrow {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 22px; font-weight: 600; letter-spacing: 0.14em;
-    text-transform: uppercase; margin-bottom: 22px;
-  }
-  .proof-hero {
-    font-size: ${script.heroFontPx}px; font-weight: 850; line-height: 0.96;
-    letter-spacing: -0.056em; font-variant-numeric: tabular-nums;
-    transform-origin: left center;
-  }
-  .proof-label {
-    margin-top: 24px; font-size: 46px; font-weight: 800;
-    letter-spacing: -0.038em; line-height: 1.08;
-  }
-  .proof-sub {
-    margin-top: 12px; font-size: 27px; font-weight: 500;
-  }
-  .proof-pills {
-    margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
-  }
-  .proof-pill {
-    padding: 32px 34px; border-radius: 30px;
-    backdrop-filter: blur(36px) saturate(190%);
-    -webkit-backdrop-filter: blur(36px) saturate(190%);
-  }
-  .proof-cell-val {
-    font-size: 48px; font-weight: 800; letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-  }
-  .proof-cell-lbl {
-    margin-top: 8px; font-family: 'IBM Plex Mono', monospace;
-    font-size: 19px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  /* SCENE 4: SPACE-BLACK TITANIUM FLAGSHIP CLOSE */
-  .cta-line {
-    font-size: 82px; font-weight: 800; line-height: 1.04;
-    letter-spacing: -0.046em;
-  }
-  .cta-glass-dock {
-    margin-top: 52px; padding: 34px 40px; border-radius: 34px;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 20px;
-    backdrop-filter: blur(40px) saturate(190%);
-    -webkit-backdrop-filter: blur(40px) saturate(190%);
-  }
-  .cta-logo { height: 54px; width: auto; display: block; }
-  .cta-pill {
-    display: inline-block; padding: 18px 34px; border-radius: 999px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 24px; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .cta-url {
-    margin-top: 30px; padding-left: 8px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 23px; font-weight: 500; letter-spacing: 0.06em;
-  }
-</style>
-</head>
-<body>
-  <div class="stage" id="stage">
-    <div class="studio-orb orb-a" id="orbA"></div>
-    <div class="studio-orb orb-b" id="orbB"></div>
-    <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
-
-    <div class="folio-bar" id="folio">
-      <span id="folioLeft">OLVEN TECH · ${esc(script.domainShort)}</span>
-      <span id="folioRight">01 / 05</span>
-    </div>
-
-    <!-- SCENE 0: APPLE LIQUID GLASS PAIN HOOK (0.0s - 2.5s) -->
-    <div class="scene active" id="s0">
-      <div class="apple-glass-card" id="s0Card">
-        <div class="hook-pill" id="s0Pill">
-          <span class="pulse-dot" id="s0Dot"></span>
-          <span>PRODUCTION AUDIT</span>
-        </div>
-        <div class="mask"><span class="rise hook-line" id="s0L1">${esc(script.hookL1)}</span></div>
-        <div class="mask"><span class="rise hook-line" id="s0L2">${esc(script.hookL2)}</span></div>
-        <div class="mask"><span class="rise hook-accent" id="s0L3">${esc(script.hookAccent)}</span></div>
-        <div class="hook-foot-bar" id="s0Foot">${esc(script.hookFoot)}</div>
-      </div>
-    </div>
-
-    <!-- SCENE 1: macOS LIQUID GLASS DIAGNOSIS WINDOW (2.5s - 6.0s) -->
-    <div class="scene" id="s1">
-      <div class="apple-glass-card" id="s1Card">
-        <div class="mac-chrome">
-          <div class="mac-dots">
-            <span class="mdot md-r"></span><span class="mdot md-y"></span><span class="mdot md-g"></span>
-          </div>
-          <span class="mac-title">incident-trace.log</span>
-        </div>
-        <div class="diag-wrap">
-          <div class="mask">
-            <span class="rise diag-item" id="d0">
-              ${esc(script.diagLines[0])}
-              <span class="strike-bar" id="strikeBar"></span>
-            </span>
-          </div>
-          <div class="mask"><span class="rise diag-item" id="d1">${esc(script.diagLines[1])}</span></div>
-          <div class="mask"><span class="rise diag-item" id="d2">${esc(script.diagLines[2])}</span></div>
-        </div>
-        <div class="mask"><span class="rise diag-kicker" id="dKick">${esc(script.painKicker)}</span></div>
-      </div>
-    </div>
-
-    <!-- SCENE 2: SPACE-BLACK TITANIUM GLASS LAYERS (6.0s - 10.0s) -->
-    <div class="scene" id="s2">
-      <div class="mask"><span class="rise arch-title" id="aTitle">How we rebuilt it.</span></div>
-      <div class="arch-stack">
-        ${script.archSteps.map((st, idx) => `
-          <div class="arch-glass-row glass-dark" id="aRow${idx}">
-            <div class="arch-left">
-              <span class="arch-num" id="aNum${idx}">${st.num}</span>
-              <span class="arch-step">${esc(st.title)}</span>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-      <div class="arch-foot" id="aFoot">
-        <span class="live-dot" id="aDot"></span>
-        <span>${esc(script.archFoot)}</span>
-      </div>
-    </div>
-
-    <!-- SCENE 3: APPLE PORCELAIN LIQUID GLASS HERO METRIC (10.0s - 13.0s) -->
-    <div class="scene" id="s3">
-      <div class="apple-glass-card glass-light" id="pCard">
-        <div class="proof-eyebrow" id="pEye">VERIFIED PRODUCTION RESULT</div>
-        <div class="proof-hero" id="pHero">${esc(script.heroVal)}</div>
-        <div class="mask"><span class="rise proof-label" id="pLbl">${esc(script.heroLabel)}.</span></div>
-        <div class="mask"><span class="rise proof-sub" id="pSub">${esc(script.heroSub)}</span></div>
-      </div>
-      <div class="proof-pills" id="pGrid">
-        <div class="proof-pill glass-light">
-          <div class="proof-cell-val">${esc(script.subA.val)}</div>
-          <div class="proof-cell-lbl" id="pSubALbl">${esc(script.subA.lbl)}</div>
-        </div>
-        <div class="proof-pill glass-light">
-          <div class="proof-cell-val">${esc(script.subB.val)}</div>
-          <div class="proof-cell-lbl" id="pSubBLbl">${esc(script.subB.lbl)}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SCENE 4: SPACE-BLACK TITANIUM FLAGSHIP CLOSE (13.0s - 16.0s) -->
-    <div class="scene" id="s4">
-      <div class="mask"><span class="rise cta-line" id="c0">${esc(script.ctaLines[0])}</span></div>
-      <div class="mask"><span class="rise cta-line" id="c1">${esc(script.ctaLines[1])}</span></div>
-      <div class="mask"><span class="rise cta-line" id="c2">${esc(script.ctaLines[2])}</span></div>
-      <div class="cta-glass-dock glass-dark" id="cBrand">
-        ${logoDarkUri ? `<img class="cta-logo" src="${logoDarkUri}" alt="Olven Tech" />` : `<div style="font-size:42px;font-weight:800;">Olven Tech</div>`}
-        <span class="cta-pill" id="cPill">DM "AUDIT"</span>
-      </div>
-      <div class="cta-url" id="cUrl">OLVENTECH.COM  ·  NEW YORK</div>
-    </div>
-  </div>
-
-  <script>
-    const CFG = ${payload};
-    const T = CFG.theme;
-    const DUR = CFG.duration;
-
-    const CUTS = [0.0, 2.5, 6.0, 10.0, 13.0, 16.0];
-    const FOLIO_LABELS = [
-      'OLVEN TECH · ' + CFG.script.domainShort,
-      'ROOT CAUSE · DIAGNOSIS',
-      'THE FIX · ARCHITECTURE',
-      'VERIFIED · PRODUCTION PROOF',
-      'OLVEN TECH · NEW YORK'
-    ];
-
-    const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
-    const appleEase = (x) => 1 - Math.pow(1 - clamp(x), 4);
-
-    const heroRaw = String(CFG.script.heroVal);
-    const numMatch = heroRaw.match(/(-?\\d+(?:\\.\\d+)?)/);
-    const heroNum = numMatch ? parseFloat(numMatch[1]) : null;
-    const heroDec = numMatch && numMatch[1].includes('.') ? numMatch[1].split('.')[1].length : 0;
-
-    function applyPolarity(isDark) {
-      const stage = document.getElementById('stage');
-      const folio = document.getElementById('folio');
-      const prog = document.getElementById('prog');
-      const orbA = document.getElementById('orbA');
-      const orbB = document.getElementById('orbB');
-
-      const bg = isDark ? T.darkBg : T.lightBg;
-      const ink = isDark ? T.darkInk : T.lightInk;
-      const muted = isDark ? T.darkMuted : T.lightMuted;
-      const accent = isDark ? T.accentOnDark : T.accent;
-
-      stage.style.background = bg;
-      stage.style.color = ink;
-      orbA.style.background = isDark ? T.darkOrbA : T.lightOrbA;
-      orbB.style.background = isDark ? T.darkOrbB : T.lightOrbB;
-
-      folio.className = 'folio-bar ' + (isDark ? 'glass-dark' : 'glass-light');
-      folio.style.color = muted;
-      prog.style.background = accent;
-
-      const s0Card = document.getElementById('s0Card');
-      s0Card.className = 'apple-glass-card ' + (isDark ? 'glass-dark' : 'glass-light');
-      const s1Card = document.getElementById('s1Card');
-      s1Card.className = 'apple-glass-card ' + (isDark ? 'glass-dark' : 'glass-light');
-
-      const s0Pill = document.getElementById('s0Pill');
-      s0Pill.style.background = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(10,13,20,0.06)';
-      s0Pill.style.color = muted;
-      document.getElementById('s0Dot').style.background = T.alert;
-      document.getElementById('s0L3').style.color = accent;
-      document.getElementById('s0Foot').style.color = muted;
-
-      document.getElementById('d0').style.color = muted;
-      document.getElementById('dKick').style.color = T.alert;
-
-      for (let i = 0; i < 3; i++) {
-        document.getElementById('aNum' + i).style.color = T.accentOnDark;
-      }
-      document.getElementById('aFoot').style.color = T.accentOnDark;
-      document.getElementById('aDot').style.background = T.accentOnDark;
-
-      document.getElementById('pEye').style.color = T.lightMuted;
-      document.getElementById('pHero').style.color = T.accent;
-      document.getElementById('pSub').style.color = T.lightMuted;
-      document.getElementById('pSubALbl').style.color = T.lightMuted;
-      document.getElementById('pSubBLbl').style.color = T.lightMuted;
-
-      document.getElementById('c2').style.color = T.accentOnDark;
-      document.getElementById('cPill').style.background = '#FFFFFF';
-      document.getElementById('cPill').style.color = '#07080B';
-      document.getElementById('cUrl').style.color = T.darkMuted;
+  const baseCss = `
+    @font-face { font-family: 'Inter'; src: url('data:font/woff2;base64,${interB64}') format('woff2'); font-weight: 100 900; }
+    @font-face { font-family: 'IBM Plex Mono'; src: url('data:font/woff2;base64,${monoB64}') format('woff2'); font-weight: 400 700; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 960px; height: 1420px; background: transparent; overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      display: flex; flex-direction: column; justify-content: center; padding: 36px;
     }
-
-    function rise(id, localT, delay, dur = 0.36) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const p = appleEase((localT - delay) / dur);
-      el.style.transform = 'translateY(' + ((1 - p) * 112).toFixed(1) + '%)';
-      el.style.opacity = clamp(p * 1.4).toFixed(3);
+    .folio {
+      margin-bottom: 34px; padding: 16px 28px; border-radius: 999px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600;
+      letter-spacing: 0.13em; text-transform: uppercase;
     }
+    .gl-light {
+      background: linear-gradient(155deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.74) 100%);
+      border: 1.5px solid rgba(255,255,255,0.98);
+      box-shadow:
+        0 34px 76px -18px rgba(15, 23, 42, 0.22),
+        0 10px 26px -8px rgba(15, 23, 42, 0.10),
+        inset 0 2px 0 rgba(255,255,255,1.0),
+        inset 0 -1px 0 rgba(15,23,42,0.06);
+      color: ${theme.lightInk};
+    }
+    .gl-dark {
+      background: linear-gradient(155deg, rgba(26, 30, 39, 0.92) 0%, rgba(12, 15, 21, 0.86) 100%);
+      border: 1.5px solid rgba(255,255,255,0.20);
+      box-shadow:
+        0 40px 88px -18px rgba(0, 0, 0, 0.78),
+        0 14px 32px -10px rgba(0, 0, 0, 0.50),
+        inset 0 1.5px 0 rgba(255,255,255,0.34),
+        inset 0 -1px 0 rgba(255,255,255,0.06);
+      color: ${theme.darkInk};
+    }
+    .card {
+      position: relative; border-radius: 40px; padding: 60px 56px; overflow: hidden;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 38%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0) 100%);
+      pointer-events: none;
+    }
+    .mac-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
+    .dots { display: flex; gap: 11px; }
+    .dot { width: 14px; height: 14px; border-radius: 50%; }
+    .dr { background: #FF5F57; } .dy { background: #FEBC2E; } .dg { background: #28C840; }
+    .mtitle { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600; letter-spacing: 0.1em; opacity: 0.62; text-transform: uppercase; }
+  `;
 
-    window.__renderFrame = function(t) {
-      document.getElementById('prog').style.width = (clamp(t / DUR) * 100).toFixed(2) + '%';
+  const cardsHtml = [
+    // CARD 0: Apple Porcelain Liquid Glass Pain Hook
+    `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
+      .pill { display:inline-flex; align-items:center; gap:12px; padding:11px 22px; border-radius:999px; background:rgba(10,13,20,0.06); font-family:'IBM Plex Mono',monospace; font-size:19px; font-weight:600; letter-spacing:0.1em; color:${theme.lightMuted}; margin-bottom:38px; }
+      .pdot { width:10px; height:10px; border-radius:50%; background:${theme.alert}; }
+      .h { font-size:88px; font-weight:850; line-height:1.03; letter-spacing:-0.048em; }
+      .ha { font-size:98px; font-weight:850; line-height:1.02; letter-spacing:-0.052em; color:${theme.accent}; margin-top:8px; }
+      .ft { margin-top:44px; padding-top:28px; border-top:1px solid rgba(10,13,20,0.12); font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:500; color:${theme.lightMuted}; }
+    </style></head><body>
+      <div class="folio gl-light" style="color:${theme.lightMuted};"><span>OLVEN TECH · ${esc(script.domainShort)}</span><span>01 / 05</span></div>
+      <div class="card gl-light">
+        <div class="pill"><span class="pdot"></span><span>PRODUCTION AUDIT</span></div>
+        <div class="h">${esc(script.hookL1)}</div>
+        <div class="h">${esc(script.hookL2)}</div>
+        <div class="ha">${esc(script.hookAccent)}</div>
+        <div class="ft">${esc(script.hookFoot)}</div>
+      </div>
+    </body></html>`,
 
-      // Subtle slow studio light drift behind the frosted glass
-      const ox = Math.sin(t * 0.45) * 44;
-      const oy = Math.cos(t * 0.35) * 32;
-      document.getElementById('orbA').style.transform = 'translate(' + ox.toFixed(1) + 'px,' + oy.toFixed(1) + 'px)';
-      document.getElementById('orbB').style.transform = 'translate(' + (-ox * 0.8).toFixed(1) + 'px,' + (-oy * 0.8).toFixed(1) + 'px)';
+    // CARD 1: macOS Sequoia Frosted Glass Diagnosis Window
+    `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
+      .dl { font-size:60px; font-weight:800; line-height:1.12; letter-spacing:-0.042em; margin-bottom:20px; }
+      .dl0 { color:${theme.lightMuted}; text-decoration:line-through; text-decoration-color:${theme.alert}; text-decoration-thickness:5px; }
+      .kick { margin-top:34px; padding-top:28px; border-top:1px solid rgba(10,13,20,0.14); font-size:38px; font-weight:800; color:${theme.alert}; letter-spacing:-0.03em; }
+    </style></head><body>
+      <div class="folio gl-light" style="color:${theme.lightMuted};"><span>ROOT CAUSE · DIAGNOSIS</span><span>02 / 05</span></div>
+      <div class="card gl-light">
+        <div class="mac-bar"><div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span class="mtitle">incident-trace.log</span></div>
+        <div class="dl dl0">${esc(script.diagLines[0])}</div>
+        <div class="dl">${esc(script.diagLines[1])}</div>
+        <div class="dl">${esc(script.diagLines[2])}</div>
+        <div class="kick">${esc(script.painKicker)}</div>
+      </div>
+    </body></html>`,
 
-      let si = 4;
-      for (let i = 0; i < 5; i++) {
-        if (t < CUTS[i + 1]) { si = i; break; }
-      }
-      const lt = Math.max(0, t - CUTS[si]);
+    // CARD 2: Space-Black Titanium Architecture Glass Stack
+    `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
+      .t { font-size:56px; font-weight:800; letter-spacing:-0.042em; color:${theme.darkInk}; margin-bottom:36px; }
+      .row { display:flex; align-items:baseline; gap:26px; padding:32px 36px; border-radius:26px; margin-bottom:20px; }
+      .num { font-family:'IBM Plex Mono',monospace; font-size:24px; font-weight:700; color:${theme.accentOnDark}; }
+      .st { font-size:38px; font-weight:750; letter-spacing:-0.03em; color:${theme.darkInk}; }
+      .af { margin-top:28px; display:flex; align-items:center; gap:14px; font-family:'IBM Plex Mono',monospace; font-size:23px; font-weight:600; color:${theme.accentOnDark}; }
+      .ad { width:12px; height:12px; border-radius:50%; background:${theme.accentOnDark}; }
+    </style></head><body>
+      <div class="folio gl-dark" style="color:${theme.darkMuted};"><span>THE FIX · ARCHITECTURE</span><span>03 / 05</span></div>
+      <div class="t">How we rebuilt it.</div>
+      ${script.archSteps.map((s) => `<div class="row gl-dark"><span class="num">${s.num}</span><span class="st">${esc(s.title)}</span></div>`).join('')}
+      <div class="af"><span class="ad"></span><span>${esc(script.archFoot)}</span></div>
+    </body></html>`,
 
-      let isDark;
-      if (si === 0 || si === 1) isDark = T.openDark;
-      else if (si === 2) isDark = true;
-      else if (si === 3) isDark = false;
-      else isDark = true;
+    // CARD 3: Apple Porcelain Liquid Glass Hero Metric
+    `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
+      .ey { font-family:'IBM Plex Mono',monospace; font-size:21px; font-weight:600; letter-spacing:0.14em; color:${theme.lightMuted}; margin-bottom:18px; }
+      .hn { font-size:${script.heroFontPx}px; font-weight:850; line-height:0.95; letter-spacing:-0.056em; color:${theme.accent}; font-variant-numeric:tabular-nums; }
+      .hl { margin-top:24px; font-size:44px; font-weight:800; letter-spacing:-0.036em; }
+      .hs { margin-top:10px; font-size:26px; font-weight:500; color:${theme.lightMuted}; }
+      .grid { margin-top:28px; display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+      .pill { padding:30px 32px; border-radius:30px; }
+      .pv { font-size:46px; font-weight:850; letter-spacing:-0.04em; font-variant-numeric:tabular-nums; }
+      .pl { margin-top:8px; font-family:'IBM Plex Mono',monospace; font-size:18px; font-weight:600; color:${theme.lightMuted}; letter-spacing:0.08em; text-transform:uppercase; }
+    </style></head><body>
+      <div class="folio gl-light" style="color:${theme.lightMuted};"><span>VERIFIED · PRODUCTION PROOF</span><span>04 / 05</span></div>
+      <div class="card gl-light">
+        <div class="ey">VERIFIED PRODUCTION RESULT</div>
+        <div class="hn">${esc(script.heroVal)}</div>
+        <div class="hl">${esc(script.heroLabel)}.</div>
+        <div class="hs">${esc(script.heroSub)}</div>
+      </div>
+      <div class="grid">
+        <div class="pill gl-light"><div class="pv">${esc(script.subA.val)}</div><div class="pl">${esc(script.subA.lbl)}</div></div>
+        <div class="pill gl-light"><div class="pv">${esc(script.subB.val)}</div><div class="pl">${esc(script.subB.lbl)}</div></div>
+      </div>
+    </body></html>`,
 
-      applyPolarity(isDark);
-      document.getElementById('folioLeft').textContent = FOLIO_LABELS[si];
-      document.getElementById('folioRight').textContent = '0' + (si + 1) + ' / 05';
+    // CARD 4: Space-Black Titanium Flagship Close
+    `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
+      .cl { font-size:80px; font-weight:850; line-height:1.04; letter-spacing:-0.046em; color:${theme.darkInk}; }
+      .ca { color:${theme.accentOnDark}; }
+      .dock { margin-top:52px; padding:34px 40px; border-radius:34px; display:flex; align-items:center; justify-content:space-between; }
+      .logo { height:50px; width:auto; display:block; }
+      .btn { padding:18px 34px; border-radius:999px; background:#FFFFFF; color:#080A0E; font-family:'IBM Plex Mono',monospace; font-size:23px; font-weight:700; letter-spacing:0.08em; }
+      .url { margin-top:28px; padding-left:10px; font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:500; letter-spacing:0.08em; color:${theme.darkMuted}; }
+    </style></head><body>
+      <div class="folio gl-dark" style="color:${theme.darkMuted};"><span>OLVEN TECH · NEW YORK</span><span>05 / 05</span></div>
+      <div class="cl">We engineer</div>
+      <div class="cl">revenue-critical</div>
+      <div class="cl ca">backends.</div>
+      <div class="dock gl-dark">
+        ${logoDarkUri ? `<img class="logo" src="${logoDarkUri}" alt="Olven Tech" />` : `<div style="font-size:40px;font-weight:800;">Olven Tech</div>`}
+        <span class="btn">DM "AUDIT"</span>
+      </div>
+      <div class="url">OLVENTECH.COM  ·  NEW YORK</div>
+    </body></html>`,
+  ];
 
-      for (let i = 0; i < 5; i++) {
-        document.getElementById('s' + i).classList.toggle('active', i === si);
-      }
+  const execPath = detectChromeExecutable();
+  const browser = await chromium.launch({
+    headless: true,
+    ...(execPath ? { executablePath: execPath } : {}),
+    args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  });
 
-      if (si === 0) {
-        // Frame 0 stays 100% opaque & razor-sharp for Instagram grid cover
-        document.getElementById('s0L1').style.transform = 'translateY(0%)';
-        document.getElementById('s0L1').style.opacity = '1';
-        document.getElementById('s0L2').style.transform = 'translateY(0%)';
-        document.getElementById('s0L2').style.opacity = '1';
-        const settle = 1.03 - 0.03 * appleEase(lt / 0.55);
-        document.getElementById('s0L3').style.transform = 'scale(' + settle.toFixed(4) + ')';
-        document.getElementById('s0L3').style.opacity = '1';
-        const cardScale = 1.0 + 0.014 * appleEase(lt / 2.4);
-        document.getElementById('s0Card').style.transform = 'scale(' + cardScale.toFixed(4) + ')';
-      } else if (si === 1) {
-        const cp = appleEase(lt / 0.34);
-        const s1c = document.getElementById('s1Card');
-        s1c.style.opacity = cp.toFixed(3);
-        s1c.style.transform = 'translateY(' + ((1 - cp) * 32).toFixed(1) + 'px)';
-        rise('d0', lt, 0.06, 0.34);
-        rise('d1', lt, 0.72, 0.34);
-        rise('d2', lt, 1.45, 0.34);
-        const sp = appleEase((lt - 2.10) / 0.38);
-        document.getElementById('strikeBar').style.width = (sp * 100).toFixed(1) + '%';
-        rise('dKick', lt, 2.25, 0.38);
-      } else if (si === 2) {
-        rise('aTitle', lt, 0.00, 0.34);
-        for (let k = 0; k < 3; k++) {
-          const row = document.getElementById('aRow' + k);
-          const p = appleEase((lt - (0.42 + k * 0.82)) / 0.40);
-          row.style.opacity = p.toFixed(3);
-          row.style.transform = 'translateY(' + ((1 - p) * 34).toFixed(1) + 'px) scale(' + (0.97 + 0.03 * p).toFixed(4) + ')';
-        }
-        const fp = appleEase((lt - 3.00) / 0.36);
-        const foot = document.getElementById('aFoot');
-        foot.style.opacity = fp.toFixed(3);
-        foot.style.transform = 'translateY(' + ((1 - fp) * 18).toFixed(1) + 'px)';
-      } else if (si === 3) {
-        const cp = appleEase(lt / 0.38);
-        const pCard = document.getElementById('pCard');
-        pCard.style.opacity = cp.toFixed(3);
-        pCard.style.transform = 'translateY(' + ((1 - cp) * 28).toFixed(1) + 'px)';
-        const hp = appleEase(lt / 0.56);
-        const heroEl = document.getElementById('pHero');
-        const sc = 1.05 - 0.05 * hp;
-        heroEl.style.transform = 'scale(' + sc.toFixed(4) + ')';
-        if (heroNum !== null) {
-          const cur = heroNum * hp;
-          const fmt = heroDec > 0 ? cur.toFixed(heroDec) : Math.round(cur).toString();
-          heroEl.textContent = heroRaw.replace(numMatch[1], fmt);
-        }
-        rise('pLbl', lt, 0.24, 0.36);
-        rise('pSub', lt, 0.42, 0.36);
-        const gp = appleEase((lt - 0.80) / 0.44);
-        const gEl = document.getElementById('pGrid');
-        gEl.style.opacity = gp.toFixed(3);
-        gEl.style.transform = 'translateY(' + ((1 - gp) * 26).toFixed(1) + 'px)';
-      } else if (si === 4) {
-        rise('c0', lt, 0.00, 0.34);
-        rise('c1', lt, 0.24, 0.34);
-        rise('c2', lt, 0.48, 0.36);
-        const bp = appleEase((lt - 0.88) / 0.44);
-        const bEl = document.getElementById('cBrand');
-        bEl.style.opacity = bp.toFixed(3);
-        bEl.style.transform = 'translateY(' + ((1 - bp) * 28).toFixed(1) + 'px) scale(' + (0.98 + 0.02 * bp).toFixed(4) + ')';
-        const up = appleEase((lt - 1.24) / 0.38);
-        document.getElementById('cUrl').style.opacity = up.toFixed(3);
-      }
-    };
-    window.__renderFrame(0);
-  </script>
-</body></html>`;
+  const paths = [];
+  try {
+    const context = await browser.newContext({
+      viewport: { width: 960, height: 1420 },
+      deviceScaleFactor: 2, // 1920x2840 ultra-sharp 3D texture cards!
+    });
+    const page = await context.newPage();
+    for (let i = 0; i < cardsHtml.length; i++) {
+      await page.setContent(cardsHtml[i], { waitUntil: 'load' });
+      await page.evaluate(() => document.fonts.ready);
+      const outPng = path.join(workDir, `card_${i}.png`);
+      await page.screenshot({ path: outPng, type: 'png', omitBackground: true });
+      paths.push(outPng);
+    }
+    await context.close();
+  } finally {
+    await browser.close();
+  }
+  return paths;
+}
+
+/**
+ * Helper to append keyframe + Apple 85% Easy-Ease velocity commands for an EffectCraft property.
+ */
+function addAnimatedProp(cmds, layer, propPath, keyframes) {
+  for (const [time, value] of keyframes) {
+    cmds.push({
+      command: 'prop.addKey',
+      params: { layer, path: propPath, time, timeBase: 'comp', value },
+    });
+  }
+  cmds.push({
+    command: 'keys.select',
+    params: {
+      keys: keyframes.map(([time]) => ({ layer, prop: propPath, time, timeBase: 'comp' })),
+      add: false,
+    },
+  });
+  cmds.push({ command: 'keys.easyEase', params: { which: 'both' } });
+  cmds.push({ command: 'keys.velocity', params: { inInfluence: 82, outInfluence: 82 } });
 }
 
 async function renderWalkthroughVideo(specPath, outDir, themeOverride = null) {
@@ -783,91 +435,206 @@ async function renderWalkthroughVideo(specPath, outDir, themeOverride = null) {
   const theme = THEMES[themeKey] || THEMES.apple_porcelain;
 
   fs.mkdirSync(outDir, { recursive: true });
-  const script = compileEditorialScript(spec);
-  const html = buildHtml(script, theme);
+  const workDir = path.join(outDir, '_ec_work');
+  fs.mkdirSync(workDir, { recursive: true });
 
   const trackPath = path.join(MUSIC_DIR, theme.track);
   if (!fs.existsSync(trackPath)) {
     throw new Error(`Missing NYC Felt Piano track: ${trackPath}`);
   }
-  const outMp4 = path.join(outDir, 'walkthrough-video.mp4');
 
-  const execPath = detectChromeExecutable();
-  const browser = await chromium.launch({
-    headless: true,
-    ...(execPath ? { executablePath: execPath } : {}),
-    args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-  });
+  const t0 = Date.now();
+  const script = compileEditorialScript(spec);
 
-  try {
-    const context = await browser.newContext({
-      viewport: { width: WIDTH, height: HEIGHT },
-      deviceScaleFactor: 1,
-    });
-    const page = await context.newPage();
-    await page.setContent(html, { waitUntil: 'load' });
-    await page.evaluate(() => document.fonts.ready);
+  // 1) Render 5 transparent 2x Retina Apple Liquid Glass Hero Cards
+  const cardPaths = await renderTransparentGlassCards(script, theme, workDir);
 
-    // Lossless PNG frame pipe -> 8-12 Mbps Rec.709 broadcast-mastered H.264 with anti-banding dither
-    const ffArgs = [
-      '-y', '-v', 'error',
-      '-f', 'image2pipe',
-      '-vcodec', 'png',
-      '-framerate', String(FPS),
-      '-i', '-',
-      '-i', trackPath,
-      '-map', '0:v:0',
-      '-map', '1:a:0',
-      '-vf', 'noise=alls=1:allf=t,format=yuv420p',
-      '-c:v', 'libx264',
-      '-profile:v', 'high',
-      '-level', '4.2',
-      '-preset', 'medium',
-      '-b:v', '8M',
-      '-maxrate', '12M',
-      '-bufsize', '16M',
-      '-g', String(FPS),
-      '-keyint_min', String(FPS),
-      '-colorspace', 'bt709',
-      '-color_primaries', 'bt709',
-      '-color_trc', 'bt709',
-      '-c:a', 'aac',
-      '-b:a', '192k',
-      '-ar', '48000',
-      '-movflags', '+faststart',
-      '-t', String(DURATION),
-      outMp4,
-    ];
+  // 2) Build native ArtCraft EffectCraft 3D Cinema Composition (1080x1920, 30fps, 180-deg motion blur)
+  const lightStart = theme.name === 'silver_glass' ? [0.992, 0.994, 1.0, 1.0] : [0.994, 0.990, 0.982, 1.0];
+  const lightEnd = theme.name === 'silver_glass' ? [0.898, 0.910, 0.945, 1.0] : [0.892, 0.888, 0.880, 1.0];
+  const darkStart = theme.name === 'silver_glass' ? [0.085, 0.130, 0.215, 1.0] : [0.095, 0.112, 0.155, 1.0];
+  const darkEnd = [0.024, 0.030, 0.044, 1.0];
 
-    const ff = spawn('ffmpeg', ffArgs, { stdio: ['pipe', 'inherit', 'inherit'] });
-    const ffDone = new Promise((resolve, reject) => {
-      ff.on('error', reject);
-      ff.on('close', (code) =>
-        code === 0 ? resolve() : reject(new Error(`ffmpeg exited with code ${code}`))
-      );
-    });
-
-    const t0 = Date.now();
-    for (let f = 0; f < TOTAL_FRAMES; f++) {
-      const t = f / FPS;
-      await page.evaluate((timeSec) => window.__renderFrame(timeSec), t);
-      const buf = await page.screenshot({ type: 'png' });
-      if (!ff.stdin.write(buf)) {
-        await new Promise((r) => ff.stdin.once('drain', r));
-      }
+  const addStudioBackdrop = (name, startColor, endColor, inT = null, outT = null) => {
+    cmds.push({ command: 'layer.newSolid', params: { name, color: theme.darkBg, width: WIDTH, height: HEIGHT } });
+    if (inT !== null && outT !== null) {
+      cmds.push({ command: 'layer.timing', params: { layers: [name], in: inT, out: outT } });
     }
-    ff.stdin.end();
-    await ffDone;
-    await context.close();
+    cmds.push({ command: 'effect.apply', params: { effect: 'ec.generate.gradientramp', layers: [name] } });
+    cmds.push({ command: 'prop.set', params: { layer: name, path: 'effects/#1/shape', value: 1 } });
+    cmds.push({ command: 'prop.set', params: { layer: name, path: 'effects/#1/start', value: [0.5, 0.34] } });
+    cmds.push({ command: 'prop.set', params: { layer: name, path: 'effects/#1/end', value: [0.5, 1.08] } });
+    cmds.push({ command: 'prop.set', params: { layer: name, path: 'effects/#1/startColor', value: startColor } });
+    cmds.push({ command: 'prop.set', params: { layer: name, path: 'effects/#1/endColor', value: endColor } });
+    cmds.push({ command: 'prop.set', params: { layer: name, path: 'effects/#1/scatter', value: 26.0 } });
+  };
 
-    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
-    const mb = (fs.statSync(outMp4).size / (1024 * 1024)).toFixed(2);
-    console.log(
-      `[OK] Rendered Apple Glass Reel (${theme.name} / ${theme.track}, ${TOTAL_FRAMES} PNG frames @ ${FPS}fps in ${elapsed}s, ${mb} MB) -> ${outMp4}`
-    );
-  } finally {
-    await browser.close();
+  const cmds = [
+    {
+      command: 'comp.new',
+      params: {
+        name: 'Main',
+        width: WIDTH,
+        height: HEIGHT,
+        frameRate: FPS,
+        duration: DURATION,
+        background: theme.lightBg,
+        shutterAngle: 180,
+        shutterPhase: 0, // Strictly forward shutter [t, t + 0.5 frame]: guarantees zero Frame 0 pre-start ghosting
+        motionBlurSamples: 8,
+        renderer: 'classic3D',
+        open: true,
+      },
+    },
+  ];
+
+  // Polarity-flip Apple Keynote softbox backdrops (Light Porcelain for Scenes 0, 1, 3; Space-Black Titanium for Scenes 2, 4)
+  addStudioBackdrop('BgLight', lightStart, lightEnd, -0.5, 16.5);
+  addStudioBackdrop('BgDark2', darkStart, darkEnd, 6.0, 10.0);
+  addStudioBackdrop('BgDark4', darkStart, darkEnd, 13.0, 16.5);
+
+  // Real 35mm Cinema Camera framed so 960px 2x Retina glass slabs fill ~925px boldly across 1080px mobile width
+  cmds.push({
+    command: 'layer.newCamera',
+    params: {
+      name: 'HeroCam',
+      preset: '35mm',
+      position: [540, 960, -1095],
+      poi: [540, 960, 0],
+    },
+  });
+  cmds.push({ command: 'layer.timing', params: { layers: ['HeroCam'], in: -0.5, out: 16.5 } });
+
+  // Camera subtle Keynote breathing push-in & micro spatial drift (held steady at t=0..0.15 for tack-sharp cover)
+  addAnimatedProp(cmds, 'HeroCam', 'transform/position', [
+    [0.0, [540, 960, -1095]],
+    [0.15, [540, 960, -1095]],
+    [6.0, [548, 956, -1068]],
+    [10.0, [532, 963, -1076]],
+    [16.0, [540, 960, -1042]],
+  ]);
+
+  // Choreograph all 5 3D Apple Liquid Glass Cards (scale 50% because cards are 2x Retina 1920x2840 -> 960x1420 world units)
+  const cardChoreo = [
+    {
+      name: 'Card0', idx: 0, inT: -0.5, outT: 2.85,
+      // Frame 0 starts dead-center, zero velocity, tack-sharp for IG/Reels grid thumbnail!
+      pos: [[0.0, [540, 940, 0]], [0.15, [540, 940, 0]], [2.25, [540, 940, -48]], [2.80, [110, 940, -390]]],
+      rotY: [[0.0, 0], [0.15, 0], [2.25, -5.0], [2.80, -24]],
+      rotX: [[0.0, 0], [0.15, 0], [2.25, 1.4]],
+      op: [[0.0, 100], [2.30, 100], [2.78, 0]],
+      sweep: [[0.25, [0.05, 0.15]], [2.15, [0.95, 0.85]]],
+      sweepInt: 28,
+    },
+    {
+      name: 'Card1', idx: 1, inT: 2.55, outT: 6.15,
+      pos: [[2.55, [890, 960, 440]], [3.15, [540, 940, 0]], [5.55, [540, 940, -45]], [6.08, [540, 620, -380]]],
+      rotY: [[2.55, 22], [3.15, 2.2], [5.55, -3.5], [6.08, -14]],
+      rotX: [[2.55, -7], [3.15, 0], [5.55, 1.4], [6.08, 16]],
+      op: [[2.55, 0], [2.95, 100], [5.65, 100], [6.05, 0]],
+      sweep: [[3.0, [0.0, 0.2]], [5.45, [1.0, 0.82]]],
+      sweepInt: 30,
+    },
+    {
+      name: 'Card2', idx: 2, inT: 5.95, outT: 10.15,
+      pos: [[5.95, [540, 1200, 420]], [6.55, [540, 945, 0]], [9.50, [540, 945, -50]], [10.05, [540, 720, -370]]],
+      rotY: [[5.95, -14], [6.55, -2.2], [9.50, 3.8], [10.05, 16]],
+      rotX: [[5.95, 16], [6.55, 0.8], [9.50, -1.4], [10.05, -14]],
+      op: [[5.95, 0], [6.30, 100], [9.60, 100], [10.02, 0]],
+      sweep: [[6.4, [0.0, 0.25]], [9.4, [1.0, 0.78]]],
+      sweepInt: 40,
+    },
+    {
+      name: 'Card3', idx: 3, inT: 9.95, outT: 13.15,
+      pos: [[9.95, [540, 945, 520]], [10.55, [540, 945, -10]], [12.55, [540, 945, -60]], [13.08, [910, 945, -390]]],
+      rotY: [[9.95, -18], [10.55, -1.8], [12.55, 3.4], [13.08, 22]],
+      rotX: [[9.95, 7], [10.55, 0], [12.55, -1.0]],
+      op: [[9.95, 0], [10.30, 100], [12.62, 100], [13.02, 0]],
+      sweep: [[10.4, [0.05, 0.2]], [12.5, [0.95, 0.85]]],
+      sweepInt: 32,
+    },
+    {
+      name: 'Card4', idx: 4, inT: 12.95, outT: 16.5,
+      pos: [[12.95, [540, 1140, 390]], [13.60, [540, 950, 0]], [16.0, [540, 950, -32]]],
+      rotY: [[12.95, 13], [13.60, 1.0], [16.0, -1.5]],
+      rotX: [[12.95, 13], [13.60, 0], [16.0, 0]],
+      op: [[12.95, 0], [13.35, 100], [16.0, 100]],
+      sweep: [[13.5, [0.0, 0.3]], [15.6, [1.0, 0.75]]],
+      sweepInt: 38,
+    },
+  ];
+
+  for (const c of cardChoreo) {
+    cmds.push({ command: 'file.import', params: { paths: [cardPaths[c.idx]], addToComp: true } });
+    cmds.push({ command: 'layer.rename', params: { layer: '#1', name: c.name } });
+    cmds.push({ command: 'layer.setSwitch', params: { layers: [c.name], switch: 'threeD', value: true } });
+    cmds.push({ command: 'layer.setSwitch', params: { layers: [c.name], switch: 'motionBlur', value: true } });
+    cmds.push({ command: 'layer.timing', params: { layers: [c.name], in: c.inT, out: c.outT } });
+    cmds.push({ command: 'prop.set', params: { layer: c.name, path: 'transform/scale', value: [50, 50, 50] } });
+
+    addAnimatedProp(cmds, c.name, 'transform/position', c.pos);
+    addAnimatedProp(cmds, c.name, 'transform/rotationY', c.rotY);
+    addAnimatedProp(cmds, c.name, 'transform/rotationX', c.rotX);
+    addAnimatedProp(cmds, c.name, 'transform/opacity', c.op);
+
+    // Apply real EffectCraft specular glass Light Sweep across every 3D Apple Liquid Glass slab!
+    cmds.push({ command: 'effect.apply', params: { effect: 'ec.generate.cclightsweep', layers: [c.name] } });
+    cmds.push({ command: 'prop.set', params: { layer: c.name, path: 'effects/#1/direction', value: -28.0 } });
+    cmds.push({ command: 'prop.set', params: { layer: c.name, path: 'effects/#1/width', value: 84.0 } });
+    cmds.push({ command: 'prop.set', params: { layer: c.name, path: 'effects/#1/sweepIntensity', value: c.sweepInt } });
+    cmds.push({ command: 'prop.set', params: { layer: c.name, path: 'effects/#1/edgeIntensity', value: 78.0 } });
+    cmds.push({ command: 'prop.set', params: { layer: c.name, path: 'effects/#1/edgeThickness', value: 2.0 } });
+    addAnimatedProp(cmds, c.name, 'effects/#1/center', c.sweep);
   }
+
+  // Top Adjustment Layer: subtle Apple studio Vignette + real 35mm monochrome anti-banding Grain!
+  cmds.push({ command: 'layer.newAdjustment', params: { name: 'CinemaGrade' } });
+  cmds.push({ command: 'effect.apply', params: { effect: 'ec.stylize.ccvignette', layers: ['CinemaGrade'] } });
+  cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#1/amount', value: 12.0 } });
+  cmds.push({ command: 'effect.apply', params: { effect: 'ec.noise.addgrain', layers: ['CinemaGrade'] } });
+  cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#2/viewingMode', value: 2 } });
+  cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#2/tweaking/intensity', value: 0.14 } });
+  cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#2/color/monochromatic', value: true } });
+
+  const cmdsPath = path.join(workDir, 'build_comp.json');
+  const projPath = path.join(workDir, 'olven_reel.ecproj');
+  const rawMp4 = path.join(workDir, 'video_silent.mp4');
+  const outMp4 = path.join(outDir, 'walkthrough-video.mp4');
+  fs.writeFileSync(cmdsPath, JSON.stringify(cmds, null, 2));
+
+  const ecCli = detectEffectCraftCli();
+  execFileSync(ecCli, ['--empty', 'run', '--commands', cmdsPath, '--save-as', projPath], { stdio: 'pipe' });
+  execFileSync(ecCli, [
+    '--project', projPath,
+    'render', '--comp', 'Main',
+    '--out', rawMp4,
+    '--format', 'h264',
+    '--fps', String(FPS),
+    '--bitrate', '10000',
+    '--quality', 'best',
+    '--audio', 'off',
+  ], { stdio: 'inherit' });
+
+  // 3) Mux our approved NYC Felt Piano studio soundtrack + Rec.709 color tags (stream copy video — 0 quality loss!)
+  execFileSync('ffmpeg', [
+    '-y', '-v', 'error',
+    '-i', rawMp4,
+    '-i', trackPath,
+    '-map', '0:v:0', '-map', '1:a:0',
+    '-c:v', 'copy',
+    '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
+    '-movflags', '+faststart',
+    '-t', String(DURATION),
+    outMp4,
+  ], { stdio: 'inherit' });
+
+  fs.rmSync(workDir, { recursive: true, force: true });
+
+  const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+  const mb = (fs.statSync(outMp4).size / (1024 * 1024)).toFixed(2);
+  console.log(
+    `[OK] Rendered ArtCraft EffectCraft 3D Cinema Reel (${theme.name} / ${theme.track}, 10Mbps H.264 in ${elapsed}s, ${mb} MB) -> ${outMp4}`
+  );
 }
 
 if (require.main === module) {
