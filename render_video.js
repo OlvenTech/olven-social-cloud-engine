@@ -1,20 +1,21 @@
 #!/usr/bin/env node
 /**
- * Olven Tech — ArtCraft EffectCraft (v0.24.1) Multi-Plane 3D Cinema Director Engine
+ * Olven Tech — ArtCraft EffectCraft (v0.24.1) 6-Format Manhattan Cinema Director Engine
  * (1080x1920, 30fps, 16.0s, 14 Mbps H.264 Rec.709 + NYC Felt Piano).
  *
- * Breaks completely free of still-image templates with 4 distinct Cinema Director worlds:
- *   1. electric_cobalt_editorial — SoHo NYC / Stripe Press (Klein Cobalt, Acid Lime, iPhone 16 Pro 3D bezel)
- *   2. tokyo_vermilion_kinetic   — Teenage Engineering / Industrial Hardware (Ceramic, Graphite, Full-Bleed Signal Vermilion)
- *   3. pro_display_obsidian      — Apple Pro Display XDR / Linear (Anodized Carbon, Emerald/Cyan, Alpine White flash cut)
- *   4. visionos_aurora_spatial   — Apple Vision Pro Spatial Glass (Sapphire-Violet Aurora, Frosted Pearl, Spatial Pill)
+ * Breaks completely out of static slideshow boxes by rotating automatically across
+ * 6 distinct New York / Cupertino / Tokyo Cinema Formats, each with different
+ * visual design, animation physics, and video-editing skills:
+ *   1. manhattan_kinetic_slam   — Full-bleed Klein Cobalt kinetic type (unboxed) + iPhone 16 Pro 3D + Radial Zoom-Burst
+ *   2. before_after_card_flip   — Pro Display XDR Dark + True 3D Card-Flip & Linear-Wipe Slice Reveal + Alpine White Flash
+ *   3. tokyo_vermilion_hardware — Teenage Engineering Industrial + Mechanical Hard-Cut Slams + Full-Bleed Signal Vermilion
+ *   4. visionos_lightwipe_spatial — Apple Vision Pro Spatial Glass + Luminous Optical LightWipe Transitions
+ *   5. nyc_wallstreet_noir      — Leica Obsidian & Newsprint Ivory + Champagne Gold + Lateral Whip-Pan 3D Camera
+ *   6. executive_roi_teardown   — Conversion-First Manhattan Boardroom Teardown + macOS Dark Terminal + Optical Bloom
  *
- * True 3-Plane Optical 3D Parallax inside native ArtCraft EffectCraft:
- *   - Z = +360 : Architectural Background Depth Plane (oversized index typography / crosshairs / telemetry grids / orbital rings)
- *   - Z =    0 : 2x Retina (1920x2840) Hero Hardware / Editorial Glass Slab + specular Light Sweep VFX
- *   - Z = -190 : 2x Retina Foreground Floating 3D Glass Chip with delayed spring physics + optical Drop Shadow
- *   + Sweeping 35mm Cinema Camera orbital parallax, 150-deg cinema shutter (shutterPhase 0 = tack-sharp Frame 0 cover),
- *     radial Apple Keynote softbox lighting with float32 scatter, subtle vignette, and 35mm monochrome anti-banding grain.
+ * Every film uses True 3-Plane Optical 3D Parallax (Z=+360 Depth, Z=0 Hero, Z=-190 Floating Chip),
+ * sweeping 35mm Cinema Camera, forward shutterPhase=0 (tack-sharp Frame 0 IG/Reels cover),
+ * float32 anti-banding radial softbox domes, subtle Lumetri/vignette cinema grade, and 35mm monochrome grain.
  */
 const fs = require('fs');
 const path = require('path');
@@ -31,55 +32,43 @@ const ASSETS_DIR = path.join(__dirname, 'assets');
 const MUSIC_DIR = path.join(ASSETS_DIR, 'music');
 
 const DIRECTORS = {
-  electric_cobalt_editorial: {
-    name: 'electric_cobalt_editorial',
-    label: 'NYC EDITORIAL · COBALT',
+  manhattan_kinetic_slam: {
+    name: 'manhattan_kinetic_slam',
+    label: 'MANHATTAN · KINETIC',
     track: 'nyc_felt_piano_mvt1.mp3',
-    // Per-scene radial softbox domes [startRGBA, endRGBA]
+    editSkill: 'radial_zoom_burst', // Uses ec.blur.ccradialfast optical zoom-burst on scene cuts!
+    unboxedHook: true,              // Full-bleed colossal kinetic type straight on Klein Cobalt!
+    unboxedProof: false,
     domes: [
-      [[0.075, 0.215, 0.960, 1.0], [0.020, 0.055, 0.320, 1.0]], // Scene 0: Deep International Klein Cobalt
+      [[0.080, 0.225, 0.980, 1.0], [0.020, 0.055, 0.340, 1.0]], // Scene 0: International Klein Cobalt
       [[0.988, 0.978, 0.955, 1.0], [0.895, 0.878, 0.840, 1.0]], // Scene 1: Warm Editorial Alabaster
-      [[0.055, 0.110, 0.280, 1.0], [0.018, 0.025, 0.055, 1.0]], // Scene 2: Midnight Cobalt Obsidian
+      [[0.055, 0.115, 0.300, 1.0], [0.018, 0.025, 0.055, 1.0]], // Scene 2: Midnight Cobalt Obsidian
       [[0.992, 0.984, 0.962, 1.0], [0.910, 0.892, 0.850, 1.0]], // Scene 3: Warm Swiss Cream
-      [[0.065, 0.175, 0.720, 1.0], [0.016, 0.032, 0.125, 1.0]], // Scene 4: Electric Cobalt Close
+      [[0.065, 0.175, 0.740, 1.0], [0.016, 0.032, 0.125, 1.0]], // Scene 4: Electric Cobalt Close
     ],
     sceneDark: [true, false, true, false, true],
     accent: '#0A28FF',
-    accentBright: '#B8FF3B', // Acid lime editorial pop on dark cobalt
+    accentBright: '#B8FF3B',
     alert: '#FF3B30',
     heroNumColor: '#0A28FF',
     depthMotif: 'editorial_numerals',
     deviceMode: 'iphone',
+    ctaHeadline: ['We engineer', 'revenue-critical', 'backends.'],
+    ctaSub: 'OLVENTECH.COM · MANHATTAN, NY',
   },
 
-  tokyo_vermilion_kinetic: {
-    name: 'tokyo_vermilion_kinetic',
-    label: 'INDUSTRIAL · VERMILION',
+  before_after_card_flip: {
+    name: 'before_after_card_flip',
+    label: 'ARCHITECTURE · FLIP',
     track: 'nyc_felt_piano_mvt2.mp3',
-    domes: [
-      [[0.975, 0.965, 0.942, 1.0], [0.880, 0.865, 0.835, 1.0]], // Scene 0: Warm Ceramic Off-White
-      [[0.120, 0.130, 0.155, 1.0], [0.042, 0.046, 0.058, 1.0]], // Scene 1: Anodized Slate Hardware
-      [[0.095, 0.102, 0.120, 1.0], [0.030, 0.034, 0.042, 1.0]], // Scene 2: Matte Graphite Spec
-      [[1.000, 0.340, 0.125, 1.0], [0.760, 0.135, 0.020, 1.0]], // Scene 3: FULL-BLEED SIGNAL VERMILION IMPACT!!
-      [[0.105, 0.112, 0.130, 1.0], [0.032, 0.036, 0.045, 1.0]], // Scene 4: Matte Graphite Close
-    ],
-    sceneDark: [false, true, true, true, true],
-    accent: '#FF451A',
-    accentBright: '#FF5C33',
-    alert: '#FF451A',
-    heroNumColor: '#FFFFFF', // Pure white on full-bleed Signal Vermilion!
-    depthMotif: 'industrial_crosshair',
-    deviceMode: 'hardware_plate',
-  },
-
-  pro_display_obsidian: {
-    name: 'pro_display_obsidian',
-    label: 'PRO DISPLAY · OBSIDIAN',
-    track: 'nyc_felt_piano_mvt2.mp3',
+    editSkill: 'card_flip_linear_wipe', // True 3D 90-deg flip + ec.transition.linearwipe architectural slice!
+    unboxedHook: false,
+    unboxedProof: false,
+    opticalGlow: true,
     domes: [
       [[0.045, 0.165, 0.145, 1.0], [0.018, 0.026, 0.038, 1.0]], // Scene 0: Emerald-Lit Carbon
       [[0.080, 0.105, 0.165, 1.0], [0.022, 0.028, 0.044, 1.0]], // Scene 1: Midnight Telemetry
-      [[0.038, 0.140, 0.195, 1.0], [0.016, 0.024, 0.040, 1.0]], // Scene 2: Optical Cyan-Obsidian
+      [[0.038, 0.145, 0.200, 1.0], [0.016, 0.024, 0.040, 1.0]], // Scene 2: Optical Cyan-Obsidian
       [[0.995, 0.998, 1.000, 1.0], [0.895, 0.925, 0.945, 1.0]], // Scene 3: BLAZING ALPINE WHITE FLASH CUT!
       [[0.048, 0.135, 0.170, 1.0], [0.016, 0.022, 0.035, 1.0]], // Scene 4: Pro Display Obsidian Close
     ],
@@ -90,12 +79,42 @@ const DIRECTORS = {
     heroNumColor: '#059669',
     depthMotif: 'telemetry_dotgrid',
     deviceMode: 'macos_dark_terminal',
+    ctaHeadline: ['Ship systems', 'that never', 'lose a dollar.'],
+    ctaSub: 'OLVENTECH.COM · MANHATTAN, NY',
   },
 
-  visionos_aurora_spatial: {
-    name: 'visionos_aurora_spatial',
+  tokyo_vermilion_hardware: {
+    name: 'tokyo_vermilion_hardware',
+    label: 'INDUSTRIAL · VERMILION',
+    track: 'nyc_felt_piano_mvt2.mp3',
+    editSkill: 'mechanical_elevator_snap', // Ultra-crisp 94% influence mechanical vertical hard-cut snaps!
+    unboxedHook: false,
+    unboxedProof: true,                    // Full-bleed Signal Vermilion typography explosion!
+    domes: [
+      [[0.975, 0.965, 0.942, 1.0], [0.880, 0.865, 0.835, 1.0]], // Scene 0: Warm Ceramic Off-White
+      [[0.120, 0.130, 0.155, 1.0], [0.042, 0.046, 0.058, 1.0]], // Scene 1: Anodized Slate Hardware
+      [[0.095, 0.102, 0.120, 1.0], [0.030, 0.034, 0.042, 1.0]], // Scene 2: Matte Graphite Spec
+      [[1.000, 0.335, 0.120, 1.0], [0.760, 0.130, 0.020, 1.0]], // Scene 3: FULL-BLEED SIGNAL VERMILION!!
+      [[0.105, 0.112, 0.130, 1.0], [0.032, 0.036, 0.045, 1.0]], // Scene 4: Matte Graphite Close
+    ],
+    sceneDark: [false, true, true, true, true],
+    accent: '#FF451A',
+    accentBright: '#FF5C33',
+    alert: '#FF451A',
+    heroNumColor: '#FFFFFF',
+    depthMotif: 'industrial_crosshair',
+    deviceMode: 'hardware_plate',
+    ctaHeadline: ['Built for', 'zero-leak', 'production.'],
+    ctaSub: 'OLVENTECH.COM · NEW YORK',
+  },
+
+  visionos_lightwipe_spatial: {
+    name: 'visionos_lightwipe_spatial',
     label: 'VISIONOS · SPATIAL',
     track: 'nyc_felt_piano_mvt3.mp3',
+    editSkill: 'optical_light_wipe', // Luminous ec.transition.cclightwipe optical beam transitions!
+    unboxedHook: false,
+    unboxedProof: false,
     domes: [
       [[0.140, 0.105, 0.360, 1.0], [0.032, 0.036, 0.095, 1.0]], // Scene 0: Midnight Spatial Violet
       [[0.960, 0.968, 1.000, 1.0], [0.855, 0.875, 0.965, 1.0]], // Scene 1: Frosted Pearl Mist
@@ -110,24 +129,70 @@ const DIRECTORS = {
     heroNumColor: '#5B3DF5',
     depthMotif: 'spatial_rings',
     deviceMode: 'visionos_glass',
+    ctaHeadline: ['Precision', 'software', 'architecture.'],
+    ctaSub: 'OLVENTECH.COM · MANHATTAN, NY',
+  },
+
+  nyc_wallstreet_noir: {
+    name: 'nyc_wallstreet_noir',
+    label: 'MANHATTAN · NOIR',
+    track: 'nyc_felt_piano_mvt1.mp3',
+    editSkill: 'lateral_whip_pan', // Wide horizontal whip-pan 3D camera choreography!
+    unboxedHook: true,             // Pure Bloomberg / Leica editorial print typography on pitch obsidian!
+    unboxedProof: true,            // Pure monumental black & gold typography on warm Manhattan newsprint!
+    domes: [
+      [[0.075, 0.072, 0.068, 1.0], [0.018, 0.018, 0.020, 1.0]], // Scene 0: Leica Pitch Obsidian
+      [[0.975, 0.965, 0.938, 1.0], [0.885, 0.870, 0.830, 1.0]], // Scene 1: Manhattan Newsprint Ivory
+      [[0.082, 0.078, 0.070, 1.0], [0.020, 0.020, 0.022, 1.0]], // Scene 2: Warm Carbon Obsidian
+      [[0.985, 0.974, 0.945, 1.0], [0.900, 0.882, 0.838, 1.0]], // Scene 3: Warm Luxury Newsprint
+      [[0.070, 0.068, 0.064, 1.0], [0.015, 0.015, 0.018, 1.0]], // Scene 4: Leica Noir Gold Close
+    ],
+    sceneDark: [true, false, true, false, true],
+    accent: '#0B0D12',
+    accentBright: '#F5C451', // Manhattan Champagne Gold
+    alert: '#D92D20',
+    heroNumColor: '#0B0D12',
+    depthMotif: 'editorial_numerals',
+    deviceMode: 'iphone',
+    ctaHeadline: ['Manhattan', 'systems', 'engineering.'],
+    ctaSub: 'BOOK AN AUDIT · OLVENTECH.COM',
+  },
+
+  executive_roi_teardown: {
+    name: 'executive_roi_teardown',
+    label: 'CTO TEARDOWN · ROI',
+    track: 'nyc_felt_piano_mvt3.mp3',
+    editSkill: 'optical_light_wipe', // Luminous light-wipe + optical emerald bloom on ROI numbers!
+    unboxedHook: true,               // Bold pattern-interrupt boardroom loss opener!
+    unboxedProof: false,
+    opticalGlow: true,
+    domes: [
+      [[0.145, 0.048, 0.068, 1.0], [0.022, 0.018, 0.025, 1.0]], // Scene 0: Deep Studio Burgundy-Carbon Alert
+      [[0.068, 0.082, 0.122, 1.0], [0.020, 0.024, 0.036, 1.0]], // Scene 1: Dark Incident Terminal
+      [[0.035, 0.125, 0.110, 1.0], [0.014, 0.024, 0.028, 1.0]], // Scene 2: Deep Emerald Architecture
+      [[0.988, 0.992, 0.990, 1.0], [0.895, 0.920, 0.910, 1.0]], // Scene 3: Crisp Boardroom White ROI Proof
+      [[0.048, 0.062, 0.095, 1.0], [0.014, 0.018, 0.028, 1.0]], // Scene 4: Executive Slate Close
+    ],
+    sceneDark: [true, true, true, false, true],
+    accent: '#059669',
+    accentBright: '#34D399',
+    alert: '#FB7185',
+    heroNumColor: '#059669',
+    depthMotif: 'telemetry_dotgrid',
+    deviceMode: 'macos_dark_terminal',
+    ctaHeadline: ['Book a 15-min', 'architecture', 'audit.'],
+    ctaSub: 'OLVENTECH.COM · MANHATTAN, NY',
   },
 };
 
 const DIRECTOR_ORDER = [
-  'electric_cobalt_editorial',
-  'tokyo_vermilion_kinetic',
-  'pro_display_obsidian',
-  'visionos_aurora_spatial',
+  'manhattan_kinetic_slam',
+  'nyc_wallstreet_noir',
+  'before_after_card_flip',
+  'tokyo_vermilion_hardware',
+  'visionos_lightwipe_spatial',
+  'executive_roi_teardown',
 ];
-
-const ARCHETYPE_TO_DIRECTOR = {
-  editorial_light_blueprint: 'electric_cobalt_editorial',
-  security_policy_shield_matrix: 'tokyo_vermilion_kinetic',
-  circuit_breaker_state_machine: 'visionos_aurora_spatial',
-  split_latency_waterfall: 'pro_display_obsidian',
-  revenue_ledger_reconciliation: 'electric_cobalt_editorial',
-  cdc_hash_diff_funnel: 'tokyo_vermilion_kinetic',
-};
 
 function esc(s) {
   return String(s || '')
@@ -225,6 +290,14 @@ function compileEditorialScript(spec) {
     hookL1 = 'Failed webhooks';
     hookL2 = 'quietly drop';
     hookAccent = badBadge || 'live orders.';
+  } else if (/\b(kafka|queue|backpressure|dead-letter|dlq)\b/.test(hlLower)) {
+    hookL1 = 'Unbounded queues';
+    hookL2 = 'trigger silent';
+    hookAccent = 'cascading outages.';
+  } else if (/\b(soc-2|soc2|audit|compliance|ledger)\b/.test(hlLower)) {
+    hookL1 = 'Mutable logs';
+    hookL2 = 'fail enterprise';
+    hookAccent = 'SOC-2 audits.';
   } else {
     const words = hl.split(/\s+/);
     hookL1 = words.slice(0, 2).join(' ');
@@ -232,7 +305,7 @@ function compileEditorialScript(spec) {
     hookAccent = m0.value;
   }
 
-  if (hookAccent.length > 17) hookAccent = m0.value;
+  if (hookAccent.length > 18) hookAccent = m0.value;
   if (!/[.!?%]$/.test(hookAccent) && !hookAccent.includes('/')) hookAccent = hookAccent + '.';
 
   let heroMetric = m0;
@@ -273,7 +346,7 @@ function compileEditorialScript(spec) {
     ],
     archFoot: cleanTag(spec.after_badge || 'Zero lost events · Full audit trail'),
     heroVal: cleanTag(heroMetric.value),
-    heroFontPx: cleanTag(heroMetric.value).length >= 7 ? 154 : (cleanTag(heroMetric.value).length >= 5 ? 182 : 208),
+    heroFontPx: cleanTag(heroMetric.value).length >= 7 ? 156 : (cleanTag(heroMetric.value).length >= 5 ? 186 : 214),
     heroLabel,
     heroSub,
     subA: { val: cleanTag(subA.value), lbl: cleanTag(subA.label).toLowerCase() },
@@ -281,13 +354,10 @@ function compileEditorialScript(spec) {
   };
 }
 
-/**
- * Generates HTML for the Z = +360 Background Depth Plane (oversized parallax motifs).
- */
 function buildDepthPlaneHtml(idx, dir, interB64, monoB64) {
   const isDark = dir.sceneDark[idx];
   const stroke = isDark ? 'rgba(255,255,255,0.11)' : 'rgba(10,14,26,0.085)';
-  const ghostInk = isDark ? 'rgba(255,255,255,0.075)' : 'rgba(10,14,26,0.058)';
+  const ghostInk = isDark ? 'rgba(255,255,255,0.072)' : 'rgba(10,14,26,0.056)';
   const accentGlow = isDark ? dir.accentBright : dir.accent;
   const num = `0${idx + 1}`;
 
@@ -296,7 +366,7 @@ function buildDepthPlaneHtml(idx, dir, interB64, monoB64) {
     inner = `
       <div style="position:absolute;top:110px;right:48px;font-family:'Inter',sans-serif;font-weight:900;font-size:440px;line-height:0.82;letter-spacing:-0.06em;color:${ghostInk};">${num}</div>
       <div style="position:absolute;inset:76px;border:1.5px solid ${stroke};border-radius:42px;"></div>
-      <div style="position:absolute;bottom:110px;left:96px;font-family:'IBM Plex Mono',monospace;font-size:20px;letter-spacing:0.22em;color:${stroke};">OLVEN // NEW YORK · ${dir.label}</div>
+      <div style="position:absolute;bottom:110px;left:96px;font-family:'IBM Plex Mono',monospace;font-size:20px;letter-spacing:0.22em;color:${stroke};">OLVEN // MANHATTAN · ${dir.label}</div>
     `;
   } else if (dir.depthMotif === 'industrial_crosshair') {
     inner = `
@@ -305,7 +375,7 @@ function buildDepthPlaneHtml(idx, dir, interB64, monoB64) {
       <div style="position:absolute;top:64px;right:64px;font-family:'IBM Plex Mono',monospace;font-size:38px;color:${stroke};">+</div>
       <div style="position:absolute;bottom:64px;left:64px;font-family:'IBM Plex Mono',monospace;font-size:38px;color:${stroke};">+</div>
       <div style="position:absolute;bottom:64px;right:64px;font-family:'IBM Plex Mono',monospace;font-size:38px;color:${stroke};">+</div>
-      <div style="position:absolute;top:130px;left:108px;font-family:'IBM Plex Mono',monospace;font-size:22px;letter-spacing:0.26em;color:${stroke};">SPEC-${num} // PRODUCTION</div>
+      <div style="position:absolute;top:130px;left:108px;font-family:'IBM Plex Mono',monospace;font-size:22px;letter-spacing:0.26em;color:${stroke};">SPEC-${num} // MANHATTAN</div>
       <div style="position:absolute;bottom:140px;right:108px;font-family:'Inter',sans-serif;font-weight:900;font-size:310px;line-height:0.8;color:${ghostInk};">${num}</div>
     `;
   } else if (dir.depthMotif === 'telemetry_dotgrid') {
@@ -313,15 +383,14 @@ function buildDepthPlaneHtml(idx, dir, interB64, monoB64) {
       <div style="position:absolute;inset:60px;background-image:radial-gradient(${stroke} 2.2px, transparent 2.2px);background-size:44px 44px;"></div>
       <div style="position:absolute;top:170px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,${accentGlow}44,transparent);"></div>
       <div style="position:absolute;bottom:170px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,${accentGlow}44,transparent);"></div>
-      <div style="position:absolute;top:116px;right:84px;font-family:'IBM Plex Mono',monospace;font-size:22px;letter-spacing:0.2em;color:${stroke};">TELEMETRY // ${num}</div>
+      <div style="position:absolute;top:116px;right:84px;font-family:'IBM Plex Mono',monospace;font-size:22px;letter-spacing:0.2em;color:${stroke};">OLVEN // ${num}</div>
     `;
   } else {
-    // spatial_rings (VisionOS)
     inner = `
       <div style="position:absolute;top:50%;left:50%;width:980px;height:980px;transform:translate(-50%,-50%);border-radius:50%;border:1.5px solid ${stroke};"></div>
       <div style="position:absolute;top:50%;left:50%;width:720px;height:720px;transform:translate(-50%,-50%);border-radius:50%;border:1.5px solid ${stroke};"></div>
-      <div style="position:absolute;top:50%;left:50%;width:1240px;height:1240px;transform:translate(-50%,-50%);border-radius:50%;border:1px dashed ${stroke};"></div>
-      <div style="position:absolute;top:120px;left:88px;font-family:'IBM Plex Mono',monospace;font-size:21px;letter-spacing:0.22em;color:${stroke};">SPATIAL LAYER · ${num}</div>
+      <div style="position:absolute;top:50%;left:50%;width:1240px;height:1240px;transform:translate(-50%,-50%);border-radius:50%;border:1.5px dashed ${stroke};"></div>
+      <div style="position:absolute;top:120px;left:88px;font-family:'IBM Plex Mono',monospace;font-size:21px;letter-spacing:0.22em;color:${stroke};">SPATIAL · ${num}</div>
     `;
   }
 
@@ -333,12 +402,11 @@ function buildDepthPlaneHtml(idx, dir, interB64, monoB64) {
   </style></head><body>${inner}</body></html>`;
 }
 
-/**
- * Generates HTML for the Z = -190 Foreground Floating 3D Parallax Glass Chip!
- */
 function buildForegroundChipHtml(idx, script, dir, interB64, monoB64) {
   const isDark = dir.sceneDark[idx];
-  const isVermilionImpact = dir.name === 'tokyo_vermilion_kinetic' && idx === 3;
+  const isVermilionImpact = dir.name === 'tokyo_vermilion_hardware' && idx === 3;
+  const isNoir = dir.name === 'nyc_wallstreet_noir';
+  const isCobalt = dir.name === 'manhattan_kinetic_slam';
 
   const chipCss = `
     @font-face { font-family: 'Inter'; src: url('data:font/woff2;base64,${interB64}') format('woff2'); font-weight: 100 900; }
@@ -352,7 +420,7 @@ function buildForegroundChipHtml(idx, script, dir, interB64, monoB64) {
     .pill {
       display: inline-flex; align-items: center; gap: 18px;
       padding: 24px 40px; border-radius: 999px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace; font-size: 25px; font-weight: 700;
       letter-spacing: 0.1em; text-transform: uppercase;
     }
     .glass-dark {
@@ -384,37 +452,33 @@ function buildForegroundChipHtml(idx, script, dir, interB64, monoB64) {
 
   let body = '';
   if (idx === 0) {
-    const cls = dir.name === 'electric_cobalt_editorial' ? 'glass-accent' : (isDark ? 'glass-dark' : 'glass-light');
-    const dotColor = dir.name === 'electric_cobalt_editorial' ? '#080A10' : dir.alert;
-    body = `<div class="pill ${cls}"><span class="dot" style="background:${dotColor};"></span><span>LIVE PROD AUDIT · ${esc(script.domainShort)}</span></div>`;
+    const cls = (isCobalt || isNoir) ? 'glass-accent' : (isDark ? 'glass-dark' : 'glass-light');
+    const dotColor = (isCobalt || isNoir) ? '#080A10' : dir.alert;
+    body = `<div class="pill ${cls}"><span class="dot" style="background:${dotColor};"></span><span>CASE STUDY · ${esc(script.domainShort)}</span></div>`;
   } else if (idx === 1) {
     body = `<div class="pill glass-dark" style="border-color:${dir.alert}88;"><span class="dot" style="background:${dir.alert};"></span><span style="color:#FFE4E6;">${esc(script.painKicker.replace(/\.$/, ''))}</span></div>`;
   } else if (idx === 2) {
     body = `<div class="pill glass-dark" style="border-color:${dir.accentBright}88;"><span class="dot" style="background:${dir.accentBright};"></span><span style="color:${dir.accentBright};">${esc(script.archFoot)}</span></div>`;
   } else if (idx === 3) {
-    const cardCls = isVermilionImpact ? 'glass-dark' : (isDark ? 'glass-dark' : 'glass-light');
+    const cardCls = (isVermilionImpact || isNoir) ? 'glass-dark' : (isDark ? 'glass-dark' : 'glass-light');
     body = `
       <div class="dual">
         <div class="mini ${cardCls}"><div class="mv">${esc(script.subA.val)}</div><div class="ml">${esc(script.subA.lbl)}</div></div>
         <div class="mini ${cardCls}"><div class="mv">${esc(script.subB.val)}</div><div class="ml">${esc(script.subB.lbl)}</div></div>
       </div>`;
   } else {
-    const ctaBg = dir.name === 'electric_cobalt_editorial' ? dir.accentBright : (dir.name === 'tokyo_vermilion_kinetic' ? '#FF451A' : '#FFFFFF');
-    const ctaInk = dir.name === 'tokyo_vermilion_kinetic' ? '#FFFFFF' : '#07090E';
-    body = `<div class="pill" style="background:${ctaBg};color:${ctaInk};border:2px solid rgba(255,255,255,0.6);padding:26px 54px;font-size:30px;"><span>DM "AUDIT"</span><span>→</span></div>`;
+    const ctaBg = (isCobalt || isNoir) ? dir.accentBright : (dir.name === 'tokyo_vermilion_hardware' ? '#FF451A' : '#FFFFFF');
+    const ctaInk = dir.name === 'tokyo_vermilion_hardware' ? '#FFFFFF' : '#07090E';
+    body = `<div class="pill" style="background:${ctaBg};color:${ctaInk};border:2px solid rgba(255,255,255,0.6);padding:26px 56px;font-size:30px;"><span>DM "AUDIT"</span><span>→</span></div>`;
   }
 
   return `<!doctype html><html><head><meta charset="utf-8"><style>${chipCss}</style></head><body>${body}</body></html>`;
 }
 
-/**
- * Generates HTML for the 5 Hero 2x Retina Slabs (Z = 0), customized per Cinema Director!
- */
 function buildHeroCardsHtml(script, dir, interB64, monoB64) {
   const logoLightUri = loadTransparentLogoDataUri('#F8FAFC', '#10141E');
-  const isVermilion = dir.name === 'tokyo_vermilion_kinetic';
-  const isCobalt = dir.name === 'electric_cobalt_editorial';
-  const isVision = dir.name === 'visionos_aurora_spatial';
+  const isVermilion = dir.name === 'tokyo_vermilion_hardware';
+  const isVision = dir.name === 'visionos_lightwipe_spatial';
 
   const baseCss = `
     @font-face { font-family: 'Inter'; src: url('data:font/woff2;base64,${interB64}') format('woff2'); font-weight: 100 900; }
@@ -450,28 +514,31 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
       background: linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 100%);
       pointer-events: none;
     }
+    .unboxed { background: transparent !important; border: none !important; box-shadow: none !important; padding: 24px 12px !important; }
+    .unboxed::before { display: none !important; }
     .tag-row {
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 36px; font-family: 'IBM Plex Mono', monospace;
-      font-size: 19px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.72;
+      font-size: 19px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.75;
     }
   `;
 
-  // SCENE 0: High-Personality Editorial Hook (distinct per Director!)
+  // SCENE 0: Full-bleed Kinetic Editorial Type (unboxed for Manhattan Kinetic, Noir, Executive ROI!) OR Sculpted Glass Slab
   const s0Dark = dir.sceneDark[0];
-  const s0CardCls = isVision ? 'slab-vision' : (s0Dark ? 'slab-dark' : 'slab-light');
+  const s0CardCls = dir.unboxedHook ? 'unboxed' : (isVision ? 'slab-vision' : (s0Dark ? 'slab-dark' : 'slab-light'));
+  const s0Ink = s0Dark ? '#FFFFFF' : '#090C14';
   const s0Accent = s0Dark ? dir.accentBright : dir.accent;
   const scene0 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
-    .h { font-size: 94px; font-weight: 880; line-height: 1.0; letter-spacing: -0.052em; }
+    .h { font-size: ${dir.unboxedHook ? '114px' : '94px'}; font-weight: 900; line-height: 0.98; letter-spacing: -0.056em; color: ${s0Ink}; }
     .ha {
-      display: inline-block; margin-top: 16px;
-      font-size: 108px; font-weight: 900; line-height: 0.98; letter-spacing: -0.056em;
+      display: inline-block; margin-top: 18px;
+      font-size: ${dir.unboxedHook ? '122px' : '108px'}; font-weight: 900; line-height: 0.96; letter-spacing: -0.058em;
       color: ${s0Accent};
     }
-    .bar { margin-top: 42px; height: 5px; width: 120px; border-radius: 99px; background: ${s0Accent}; }
-    .ft { margin-top: 26px; font-family: 'IBM Plex Mono', monospace; font-size: 23px; font-weight: 600; opacity: 0.76; }
+    .bar { margin-top: 42px; height: 6px; width: 136px; border-radius: 99px; background: ${s0Accent}; }
+    .ft { margin-top: 26px; font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 600; color: ${s0Ink}; opacity: 0.78; }
   </style></head><body>
-    <div class="card ${s0CardCls}" style="${isCobalt ? 'background:linear-gradient(155deg,rgba(12,24,72,0.78),rgba(5,10,32,0.88));border-color:rgba(184,255,59,0.42);' : ''}">
+    <div class="card ${s0CardCls}" style="color:${s0Ink};">
       <div class="tag-row"><span>OLVEN TECH · ${esc(dir.label)}</span><span>01 / 05</span></div>
       <div class="h">${esc(script.hookL1)}</div>
       <div class="h">${esc(script.hookL2)}</div>
@@ -484,7 +551,6 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
   // SCENE 1: Distinct Hardware / Device Persona per Director!
   let scene1 = '';
   if (dir.deviceMode === 'iphone') {
-    // Sculpted Apple iPhone 16 Pro Titanium Bezel + Dynamic Island!
     scene1 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
       .iphone {
         margin: 0 auto; width: 690px; border-radius: 92px; padding: 22px;
@@ -526,7 +592,6 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
       </div></div>
     </body></html>`;
   } else {
-    // macOS Sequoia Dark Terminal / Industrial Hardware Plate / VisionOS Window
     const s1Dark = dir.sceneDark[1];
     const s1Cls = s1Dark ? 'slab-dark' : 'slab-light';
     const muted = s1Dark ? '#94A3B8' : '#586070';
@@ -550,7 +615,7 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
     </body></html>`;
   }
 
-  // SCENE 2: 3D Architectural System Rebuild Stack (with glowing vertical flow connectors!)
+  // SCENE 2: 3D Architectural System Rebuild Stack
   const s2Cls = isVision ? 'slab-vision' : 'slab-dark';
   const scene2 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
     .ey { font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:700; letter-spacing:0.16em; color:${dir.accentBright}; margin-bottom:18px; }
@@ -574,23 +639,21 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
     `).join('')}
   </body></html>`;
 
-  // SCENE 3: Monumental Proof Explosion! (Note: sub-metric pills float separately in Z = -190 foreground!)
-  const isFullVermilion = dir.name === 'tokyo_vermilion_kinetic';
-  const s3CardCls = isFullVermilion ? '' : (dir.sceneDark[3] ? 'slab-dark' : 'slab-light');
+  // SCENE 3: Monumental Proof Explosion! (Unboxed full-bleed on Vermilion & WallStreet Noir!)
+  const s3Dark = dir.sceneDark[3];
+  const s3Cls = dir.unboxedProof ? 'unboxed' : (s3Dark ? 'slab-dark' : 'slab-light');
+  const s3Ink = s3Dark ? '#FFFFFF' : '#090C14';
   const scene3 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
-    .v-card {
-      ${isFullVermilion ? 'background:transparent;border:none;box-shadow:none;color:#FFFFFF;padding:24px 10px;' : ''}
-    }
-    ${isFullVermilion ? '.v-card::before { display: none; }' : ''}
-    .ey { font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:700; letter-spacing:0.16em; opacity:0.75; margin-bottom:22px; }
+    .ey { font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:700; letter-spacing:0.16em; opacity:0.74; margin-bottom:22px; color:${s3Ink}; }
     .hn {
-      font-size:${script.heroFontPx}px; font-weight:900; line-height:0.92;
-      letter-spacing:-0.06em; color:${dir.heroNumColor}; font-variant-numeric:tabular-nums;
+      font-size:${dir.unboxedProof ? Math.min(230, script.heroFontPx + 24) : script.heroFontPx}px;
+      font-weight:900; line-height:0.90; letter-spacing:-0.062em;
+      color:${dir.heroNumColor}; font-variant-numeric:tabular-nums;
     }
-    .hl { margin-top:28px; font-size:50px; font-weight:850; letter-spacing:-0.038em; }
-    .hs { margin-top:12px; font-size:29px; font-weight:550; opacity:0.78; }
+    .hl { margin-top:28px; font-size:52px; font-weight:860; letter-spacing:-0.04em; color:${s3Ink}; }
+    .hs { margin-top:12px; font-size:29px; font-weight:550; opacity:0.78; color:${s3Ink}; }
   </style></head><body>
-    <div class="card ${s3CardCls} v-card">
+    <div class="card ${s3Cls}">
       <div class="ey">VERIFIED PRODUCTION PROOF · 04 / 05</div>
       <div class="hn">${esc(script.heroVal)}</div>
       <div class="hl">${esc(script.heroLabel)}.</div>
@@ -598,36 +661,33 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
     </div>
   </body></html>`;
 
-  // SCENE 4: Flagship Olven Tech Outro (CTA pill floats independently at Z = -190!)
+  // SCENE 4: High-Status Manhattan Flagship Outro
   const s4Cls = isVision ? 'slab-vision' : 'slab-dark';
+  const [c1, c2, c3] = dir.ctaHeadline || ['We engineer', 'revenue-critical', 'backends.'];
   const scene4 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
     .ey { font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:700; letter-spacing:0.16em; color:${dir.accentBright}; margin-bottom:24px; }
-    .cl { font-size:84px; font-weight:890; line-height:1.02; letter-spacing:-0.048em; color:#FFFFFF; }
+    .cl { font-size:88px; font-weight:900; line-height:1.0; letter-spacing:-0.05em; color:#FFFFFF; }
     .ca { color:${dir.accentBright}; }
     .brand {
       margin-top:52px; padding:34px 42px; border-radius:${isVermilion ? '18px' : '32px'};
       display:flex; align-items:center; justify-content:space-between;
     }
     .logo { height:52px; width:auto; display:block; }
-    .city { font-family:'IBM Plex Mono',monospace; font-size:21px; font-weight:600; letter-spacing:0.12em; color:rgba(255,255,255,0.72); }
+    .city { font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:700; letter-spacing:0.12em; color:rgba(255,255,255,0.78); }
   </style></head><body>
-    <div class="ey">OLVEN TECH · ENTERPRISE SYSTEMS · 05 / 05</div>
-    <div class="cl">We engineer</div>
-    <div class="cl">revenue-critical</div>
-    <div class="cl ca">backends.</div>
+    <div class="ey">OLVEN TECH · NEW YORK · 05 / 05</div>
+    <div class="cl">${esc(c1)}</div>
+    <div class="cl">${esc(c2)}</div>
+    <div class="cl ca">${esc(c3)}</div>
     <div class="brand ${s4Cls}">
       ${logoLightUri ? `<img class="logo" src="${logoLightUri}" alt="Olven Tech" />` : `<div style="font-size:40px;font-weight:800;">Olven Tech</div>`}
-      <span class="city">NEW YORK</span>
+      <span class="city">${esc(dir.ctaSub || 'MANHATTAN, NY')}</span>
     </div>
   </body></html>`;
 
   return [scene0, scene1, scene2, scene3, scene4];
 }
 
-/**
- * Renders all 3 Z-planes (5 Background Depth PNGs, 5 Hero Glass Slabs, 5 Foreground Floating Chips)
- * in a single fast headless Chromium session at 2x Retina sharpness.
- */
 async function renderMultiPlaneAssets(script, dir, workDir) {
   const interB64 = fontBase64('Inter.woff2');
   const monoB64 = fontBase64('IBMPlexMono.woff2');
@@ -642,7 +702,6 @@ async function renderMultiPlaneAssets(script, dir, workDir) {
 
   const assets = { depths: [], heroes: [], chips: [] };
   try {
-    // 1) Background Depth Planes (1080x1920 transparent)
     const ctxDepth = await browser.newContext({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
     const pDepth = await ctxDepth.newPage();
     for (let i = 0; i < 5; i++) {
@@ -654,7 +713,6 @@ async function renderMultiPlaneAssets(script, dir, workDir) {
     }
     await ctxDepth.close();
 
-    // 2) Hero Slabs (2x Retina 1920x2840 transparent)
     const ctxHero = await browser.newContext({ viewport: { width: 960, height: 1420 }, deviceScaleFactor: 2 });
     const pHero = await ctxHero.newPage();
     for (let i = 0; i < 5; i++) {
@@ -666,7 +724,6 @@ async function renderMultiPlaneAssets(script, dir, workDir) {
     }
     await ctxHero.close();
 
-    // 3) Foreground Floating 3D Chips (2x Retina 1920x680 transparent)
     const ctxChip = await browser.newContext({ viewport: { width: 960, height: 340 }, deviceScaleFactor: 2 });
     const pChip = await ctxChip.newPage();
     for (let i = 0; i < 5; i++) {
@@ -703,18 +760,100 @@ function addAnimatedProp(cmds, layer, propPath, keyframes, influence = 84) {
 
 function pickDirector(spec, directorOverride) {
   if (directorOverride && DIRECTORS[directorOverride]) return DIRECTORS[directorOverride];
-  const arch = spec.visual_archetype || '';
-  if (ARCHETYPE_TO_DIRECTOR[arch]) return DIRECTORS[ARCHETYPE_TO_DIRECTOR[arch]];
-  // Deterministic hash fallback across all 4 cinema directors
-  const str = String(spec.headline || 'olven');
+  // Rotate cleanly through ALL 6 Manhattan Cinema Directors across consecutive waves via OLVEN_SEQ_INDEX!
+  if (process.env.OLVEN_SEQ_INDEX !== undefined && process.env.OLVEN_SEQ_INDEX !== '') {
+    const idx = Math.abs(parseInt(process.env.OLVEN_SEQ_INDEX, 10) || 0);
+    return DIRECTORS[DIRECTOR_ORDER[idx % DIRECTOR_ORDER.length]];
+  }
+  const str = String(spec.headline || 'olven') + String(spec.doc_id || '');
   let h = 0;
   for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
   return DIRECTORS[DIRECTOR_ORDER[h % DIRECTOR_ORDER.length]];
 }
 
+/**
+ * Generates bespoke 3D camera + scene motion choreography based on the Director's editing skill!
+ */
+function buildChoreographyForSkill(skill) {
+  if (skill === 'card_flip_linear_wipe') {
+    // True 3D Card-Flip (90-deg turn on exit/entry) + Architectural Linear-Wipe Slice Reveal!
+    return {
+      influence: 88,
+      camKeys: [
+        [0.0, [540, 960, -1085]], [0.18, [540, 960, -1085]],
+        [3.1, [540, 960, -1025]], [6.3, [540, 960, -1105]],
+        [10.4, [540, 960, -1015]], [13.4, [540, 960, -1075]], [16.0, [540, 960, -1010]],
+      ],
+      scenes: [
+        { idx: 0, inT: -0.5, outT: 2.85, heroPos: [[0.0, [540, 900, 0]], [0.18, [540, 900, 0]], [2.35, [540, 900, -45]], [2.80, [540, 900, 120]]], heroRotY: [[0.0, 0], [0.18, 0], [2.35, -4], [2.80, 92]], heroRotX: [[0.0, 0], [2.35, 0]], heroOp: [[0.0, 100], [2.62, 100], [2.80, 0]], chipPos: [[0.0, [540, 1345, -185]], [0.18, [540, 1345, -185]], [2.35, [540, 1338, -220]], [2.78, [540, 1460, -80]]], chipOp: [[0.0, 100], [2.45, 100], [2.76, 0]], sweep: [[0.25, [0.05, 0.15]], [2.2, [0.95, 0.85]]], sweepInt: 28 },
+        { idx: 1, inT: 2.65, outT: 6.12, heroPos: [[2.65, [540, 900, 120]], [3.12, [540, 900, 0]], [5.60, [540, 900, -45]], [6.08, [540, 900, 90]]], heroRotY: [[2.65, -92], [3.12, 0], [5.60, 4], [6.08, 92]], heroRotX: [[2.65, 0], [5.60, 0]], heroOp: [[2.65, 0], [2.85, 100], [5.85, 100], [6.08, 0]], chipPos: [[2.85, [540, 1490, -100]], [3.30, [540, 1375, -185]], [5.60, [540, 1368, -220]], [6.05, [540, 1490, -100]]], chipOp: [[2.85, 0], [3.15, 100], [5.65, 100], [6.02, 0]], sweep: [[3.1, [0.0, 0.2]], [5.5, [1.0, 0.82]]], sweepInt: 28 },
+        { idx: 2, inT: 5.95, outT: 10.12, linearWipeIn: [5.98, 6.52], heroPos: [[5.95, [540, 895, 60]], [6.50, [540, 895, 0]], [9.55, [540, 895, -50]], [10.08, [540, 895, 100]]], heroRotY: [[5.95, -8], [6.50, 0], [9.55, -3], [10.08, -90]], heroRotX: [[5.95, 0], [9.55, 0]], heroOp: [[5.95, 100], [9.82, 100], [10.08, 0]], chipPos: [[6.20, [540, 1520, -100]], [6.70, [540, 1385, -185]], [9.55, [540, 1378, -220]], [10.04, [540, 1520, -100]]], chipOp: [[6.20, 0], [6.50, 100], [9.60, 100], [10.00, 0]], sweep: [[6.45, [0.0, 0.22]], [9.4, [1.0, 0.80]]], sweepInt: 34 },
+        { idx: 3, inT: 9.95, outT: 13.12, heroPos: [[9.95, [540, 835, 380]], [10.45, [540, 835, -10]], [12.60, [540, 835, -62]], [13.08, [540, 835, 120]]], heroRotY: [[9.95, 88], [10.45, 0], [12.60, 3], [13.08, 90]], heroRotX: [[9.95, 0], [12.60, 0]], heroOp: [[9.95, 0], [10.22, 100], [12.82, 100], [13.08, 0]], chipPos: [[10.15, [540, 1480, -80]], [10.65, [540, 1310, -185]], [12.60, [540, 1300, -225]], [13.05, [540, 1480, -80]]], chipOp: [[10.15, 0], [10.45, 100], [12.65, 100], [13.02, 0]], sweep: [[10.4, [0.05, 0.18]], [12.5, [0.95, 0.85]]], sweepInt: 26 },
+        { idx: 4, inT: 12.95, outT: 16.5, heroPos: [[12.95, [540, 875, 220]], [13.50, [540, 875, 0]], [16.0, [540, 875, -40]]], heroRotY: [[12.95, -88], [13.50, 0], [16.0, -2]], heroRotX: [[12.95, 0], [16.0, 0]], heroOp: [[12.95, 0], [13.25, 100], [16.0, 100]], chipPos: [[13.20, [540, 1520, -80]], [13.75, [540, 1370, -195]], [16.0, [540, 1362, -235]]], chipOp: [[13.20, 0], [13.52, 100], [16.0, 100]], sweep: [[13.5, [0.0, 0.25]], [15.65, [1.0, 0.78]]], sweepInt: 34 },
+      ],
+    };
+  }
+
+  if (skill === 'lateral_whip_pan') {
+    // Bold horizontal Leica Whip-Pan camera sweeps across scenes!
+    return {
+      influence: 90,
+      camKeys: [
+        [0.0, [540, 960, -1085]], [0.18, [540, 960, -1085]],
+        [2.75, [660, 955, -1050]], [6.05, [420, 965, -1065]],
+        [10.05, [650, 952, -1040]], [13.05, [440, 965, -1060]], [16.0, [540, 960, -1025]],
+      ],
+      scenes: [
+        { idx: 0, inT: -0.5, outT: 2.86, heroPos: [[0.0, [540, 900, 0]], [0.18, [540, 900, 0]], [2.30, [540, 900, -35]], [2.82, [-420, 900, -180]]], heroRotY: [[0.0, 0], [0.18, 0], [2.30, -4], [2.82, -22]], heroRotX: [[0.0, 0], [2.30, 0]], heroOp: [[0.0, 100], [2.42, 100], [2.82, 0]], chipPos: [[0.0, [540, 1345, -185]], [0.18, [540, 1345, -185]], [2.30, [520, 1340, -215]], [2.80, [-520, 1340, -300]]], chipOp: [[0.0, 100], [2.38, 100], [2.78, 0]], sweep: [[0.25, [0.05, 0.15]], [2.2, [0.95, 0.85]]], sweepInt: 26 },
+        { idx: 1, inT: 2.58, outT: 6.14, heroPos: [[2.58, [1480, 900, -120]], [3.08, [540, 900, 0]], [5.60, [540, 900, -40]], [6.10, [-420, 900, -180]]], heroRotY: [[2.58, 22], [3.08, 2], [5.60, -3], [6.10, -22]], heroRotX: [[2.58, 0], [5.60, 0]], heroOp: [[2.58, 0], [2.90, 100], [5.72, 100], [6.08, 0]], chipPos: [[2.74, [1520, 1375, -240]], [3.26, [540, 1375, -185]], [5.60, [555, 1370, -215]], [6.06, [-520, 1370, -300]]], chipOp: [[2.74, 0], [3.06, 100], [5.68, 100], [6.04, 0]], sweep: [[3.05, [0.0, 0.2]], [5.45, [1.0, 0.82]]], sweepInt: 26 },
+        { idx: 2, inT: 5.95, outT: 10.14, heroPos: [[5.95, [1480, 895, -120]], [6.46, [540, 895, 0]], [9.55, [540, 895, -45]], [10.08, [-420, 895, -180]]], heroRotY: [[5.95, 22], [6.46, -2], [9.55, 3], [10.08, -22]], heroRotX: [[5.95, 0], [9.55, 0]], heroOp: [[5.95, 0], [6.28, 100], [9.68, 100], [10.06, 0]], chipPos: [[6.14, [1520, 1385, -240]], [6.66, [540, 1385, -185]], [9.55, [525, 1380, -220]], [10.05, [-520, 1380, -300]]], chipOp: [[6.14, 0], [6.46, 100], [9.64, 100], [10.02, 0]], sweep: [[6.45, [0.0, 0.22]], [9.4, [1.0, 0.80]]], sweepInt: 32 },
+        { idx: 3, inT: 9.95, outT: 13.14, heroPos: [[9.95, [1480, 835, -120]], [10.46, [540, 835, -10]], [12.60, [540, 835, -55]], [13.10, [-420, 835, -180]]], heroRotY: [[9.95, 20], [10.46, 0], [12.60, 3], [13.10, -22]], heroRotX: [[9.95, 0], [12.60, 0]], heroOp: [[9.95, 0], [10.26, 100], [12.70, 100], [13.06, 0]], chipPos: [[10.12, [1520, 1310, -240]], [10.64, [540, 1310, -185]], [12.60, [555, 1300, -225]], [13.06, [-520, 1300, -300]]], chipOp: [[10.12, 0], [10.44, 100], [12.66, 100], [13.02, 0]], sweep: [[10.4, [0.05, 0.18]], [12.5, [0.95, 0.85]]], sweepInt: 24 },
+        { idx: 4, inT: 12.95, outT: 16.5, heroPos: [[12.95, [1480, 875, -100]], [13.48, [540, 875, 0]], [16.0, [540, 875, -36]]], heroRotY: [[12.95, 20], [13.48, 0], [16.0, -2]], heroRotX: [[12.95, 0], [16.0, 0]], heroOp: [[12.95, 0], [13.28, 100], [16.0, 100]], chipPos: [[13.16, [1520, 1370, -240]], [13.70, [540, 1370, -195]], [16.0, [540, 1362, -235]]], chipOp: [[13.16, 0], [13.48, 100], [16.0, 100]], sweep: [[13.5, [0.0, 0.25]], [15.65, [1.0, 0.78]]], sweepInt: 32 },
+      ],
+    };
+  }
+
+  if (skill === 'mechanical_elevator_snap') {
+    // Teenage Engineering vertical mechanical elevator slams (ultra-snappy 94% influence!)
+    return {
+      influence: 94,
+      camKeys: [
+        [0.0, [540, 960, -1085]], [0.18, [540, 960, -1085]],
+        [6.0, [555, 950, -1055]], [10.0, [525, 968, -1035]], [16.0, [540, 960, -1020]],
+      ],
+      scenes: [
+        { idx: 0, inT: -0.5, outT: 2.84, heroPos: [[0.0, [540, 900, 0]], [0.18, [540, 900, 0]], [2.42, [540, 900, -35]], [2.80, [540, -180, -120]]], heroRotY: [[0.0, 0], [2.42, 0]], heroRotX: [[0.0, 0], [2.42, 0], [2.80, 18]], heroOp: [[0.0, 100], [2.52, 100], [2.80, 0]], chipPos: [[0.0, [540, 1345, -185]], [0.18, [540, 1345, -185]], [2.42, [540, 1340, -210]], [2.78, [540, 320, -260]]], chipOp: [[0.0, 100], [2.48, 100], [2.76, 0]], sweep: [[0.25, [0.05, 0.15]], [2.2, [0.95, 0.85]]], sweepInt: 26 },
+        { idx: 1, inT: 2.62, outT: 6.12, heroPos: [[2.62, [540, 1980, -80]], [3.00, [540, 900, 0]], [5.68, [540, 900, -38]], [6.08, [540, -180, -120]]], heroRotY: [[2.62, 0], [5.68, 0]], heroRotX: [[2.62, -18], [3.00, 0], [5.68, 0], [6.08, 18]], heroOp: [[2.62, 0], [2.84, 100], [5.76, 100], [6.06, 0]], chipPos: [[2.76, [540, 2150, -185]], [3.16, [540, 1375, -185]], [5.68, [540, 1368, -215]], [6.04, [540, 320, -260]]], chipOp: [[2.76, 0], [2.98, 100], [5.72, 100], [6.02, 0]], sweep: [[3.05, [0.0, 0.2]], [5.45, [1.0, 0.82]]], sweepInt: 26 },
+        { idx: 2, inT: 5.95, outT: 10.12, heroPos: [[5.95, [540, 1980, -80]], [6.34, [540, 895, 0]], [9.62, [540, 895, -42]], [10.06, [540, -180, -120]]], heroRotY: [[5.95, 0], [9.62, 0]], heroRotX: [[5.95, -18], [6.34, 0], [9.62, 0], [10.06, 18]], heroOp: [[5.95, 0], [6.18, 100], [9.72, 100], [10.04, 0]], chipPos: [[6.10, [540, 2150, -185]], [6.50, [540, 1385, -185]], [9.62, [540, 1378, -220]], [10.02, [540, 320, -260]]], chipOp: [[6.10, 0], [6.32, 100], [9.68, 100], [9.98, 0]], sweep: [[6.45, [0.0, 0.22]], [9.4, [1.0, 0.80]]], sweepInt: 32 },
+        { idx: 3, inT: 9.95, outT: 13.12, heroPos: [[9.95, [540, 1980, -80]], [10.34, [540, 835, -10]], [12.66, [540, 835, -55]], [13.08, [540, -180, -120]]], heroRotY: [[9.95, 0], [12.66, 0]], heroRotX: [[9.95, -16], [10.34, 0], [12.66, 0], [13.08, 18]], heroOp: [[9.95, 0], [10.16, 100], [12.74, 100], [13.04, 0]], chipPos: [[10.10, [540, 2100, -185]], [10.50, [540, 1310, -185]], [12.66, [540, 1300, -225]], [13.04, [540, 320, -260]]], chipOp: [[10.10, 0], [10.32, 100], [12.70, 100], [13.00, 0]], sweep: [[10.4, [0.05, 0.18]], [12.5, [0.95, 0.85]]], sweepInt: 20 },
+        { idx: 4, inT: 12.95, outT: 16.5, heroPos: [[12.95, [540, 1980, -80]], [13.38, [540, 875, 0]], [16.0, [540, 875, -35]]], heroRotY: [[12.95, 0], [16.0, 0]], heroRotX: [[12.95, -16], [13.38, 0], [16.0, 0]], heroOp: [[12.95, 0], [13.18, 100], [16.0, 100]], chipPos: [[13.12, [540, 2120, -195]], [13.56, [540, 1370, -195]], [16.0, [540, 1362, -230]]], chipOp: [[13.12, 0], [13.38, 100], [16.0, 100]], sweep: [[13.5, [0.0, 0.25]], [15.65, [1.0, 0.78]]], sweepInt: 32 },
+      ],
+    };
+  }
+
+  // Default: Orbital 3D Depth Swoops (used by radial_zoom_burst & optical_light_wipe!)
+  const useLightWipe = skill === 'optical_light_wipe';
+  return {
+    influence: 84,
+    camKeys: [
+      [0.0, [540, 960, -1085]], [0.18, [540, 960, -1085]],
+      [2.70, [605, 945, -1045]], [6.00, [475, 972, -1065]],
+      [10.00, [595, 948, -1035]], [13.00, [490, 968, -1058]], [16.00, [540, 960, -1020]],
+    ],
+    scenes: [
+      { idx: 0, inT: -0.5, outT: 2.90, heroPos: [[0.0, [540, 900, 0]], [0.18, [540, 900, 0]], [2.25, [540, 900, -45]], [2.82, [60, 900, -420]]], heroRotY: [[0.0, 0], [0.18, 0], [2.25, -6.5], [2.82, -28]], heroRotX: [[0.0, 0], [0.18, 0], [2.25, 1.8]], heroOp: [[0.0, 100], [2.32, 100], [2.80, 0]], chipPos: [[0.0, [540, 1345, -185]], [0.18, [540, 1345, -185]], [2.25, [525, 1338, -225]], [2.80, [-40, 1338, -560]]], chipOp: [[0.0, 100], [2.28, 100], [2.76, 0]], sweep: [[0.25, [0.05, 0.15]], [2.20, [0.95, 0.85]]], sweepInt: 28 },
+      { idx: 1, inT: 2.55, outT: 6.18, lightWipeIn: useLightWipe ? [2.58, 3.10] : null, heroPos: [[2.55, [920, 920, 480]], [3.15, [540, 900, 0]], [5.55, [540, 900, -48]], [6.10, [540, 560, -420]]], heroRotY: [[2.55, 26], [3.15, 3.5], [5.55, -4.5], [6.10, -18]], heroRotX: [[2.55, -9], [3.15, 0], [5.55, 1.6], [6.10, 18]], heroOp: [[2.55, useLightWipe ? 100 : 0], [2.95, 100], [5.65, 100], [6.06, 0]], chipPos: [[2.72, [960, 1405, 180]], [3.35, [540, 1375, -185]], [5.55, [555, 1368, -220]], [6.06, [540, 1060, -540]]], chipOp: [[2.72, 0], [3.12, 100], [5.62, 100], [6.02, 0]], sweep: [[3.05, [0.0, 0.2]], [5.45, [1.0, 0.82]]], sweepInt: 26 },
+      { idx: 2, inT: 5.95, outT: 10.18, lightWipeIn: useLightWipe ? [5.98, 6.50] : null, heroPos: [[5.95, [540, 1240, 440]], [6.55, [540, 895, 0]], [9.50, [540, 895, -52]], [10.08, [540, 680, -400]]], heroRotY: [[5.95, -16], [6.55, -3.2], [9.50, 4.8], [10.08, 19]], heroRotX: [[5.95, 18], [6.55, 1.0], [9.50, -1.6], [10.08, -16]], heroOp: [[5.95, useLightWipe ? 100 : 0], [6.30, 100], [9.60, 100], [10.04, 0]], chipPos: [[6.15, [540, 1620, 160]], [6.78, [540, 1385, -185]], [9.50, [525, 1378, -225]], [10.04, [540, 1180, -540]]], chipOp: [[6.15, 0], [6.52, 100], [9.56, 100], [9.98, 0]], sweep: [[6.45, [0.0, 0.22]], [9.40, [1.0, 0.80]]], sweepInt: 34 },
+      { idx: 3, inT: 9.95, outT: 13.18, lightWipeIn: useLightWipe ? [9.98, 10.50] : null, heroPos: [[9.95, [540, 860, 560]], [10.55, [540, 835, -10]], [12.55, [540, 835, -62]], [13.10, [940, 835, -420]]], heroRotY: [[9.95, -20], [10.55, -2.5], [12.55, 4.2], [13.10, 26]], heroRotX: [[9.95, 8], [10.55, 0], [12.55, -1.2]], heroOp: [[9.95, useLightWipe ? 100 : 0], [10.30, 100], [12.62, 100], [13.04, 0]], chipPos: [[10.12, [540, 1540, 140]], [10.72, [540, 1310, -185]], [12.55, [555, 1300, -225]], [13.06, [980, 1300, -550]]], chipOp: [[10.12, 0], [10.48, 100], [12.60, 100], [13.02, 0]], sweep: [[10.40, [0.05, 0.18]], [12.50, [0.95, 0.85]]], sweepInt: 28 },
+      { idx: 4, inT: 12.95, outT: 16.5, heroPos: [[12.95, [540, 1180, 420]], [13.60, [540, 875, 0]], [16.0, [540, 875, -38]]], heroRotY: [[12.95, 16], [13.60, 1.5], [16.0, -2.2]], heroRotX: [[12.95, 15], [13.60, 0], [16.0, 0]], heroOp: [[12.95, 0], [13.35, 100], [16.0, 100]], chipPos: [[13.18, [540, 1560, 120]], [13.85, [540, 1370, -195]], [16.0, [540, 1362, -235]]], chipOp: [[13.18, 0], [13.55, 100], [16.0, 100]], sweep: [[13.50, [0.0, 0.25]], [15.65, [1.0, 0.78]]], sweepInt: 34 },
+    ],
+  };
+}
+
 async function renderWalkthroughVideo(specPath, outDir, directorOverride = null) {
   const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
   const dir = pickDirector(spec, directorOverride);
+  const choreoPlan = buildChoreographyForSkill(dir.editSkill);
 
   fs.mkdirSync(outDir, { recursive: true });
   const workDir = path.join(outDir, '_ec_work');
@@ -727,11 +866,8 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
 
   const t0 = Date.now();
   const script = compileEditorialScript(spec);
-
-  // 1) Render all 3 Z-planes (15 transparent Retina PNGs)
   const assets = await renderMultiPlaneAssets(script, dir, workDir);
 
-  // 2) Build native ArtCraft EffectCraft Multi-Plane 3D Cinema Composition
   const cmds = [
     {
       command: 'comp.new',
@@ -743,7 +879,7 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
         duration: DURATION,
         background: '#080A0E',
         shutterAngle: 150,
-        shutterPhase: 0, // Strictly forward shutter -> 100% tack-sharp Frame 0 cover thumbnail
+        shutterPhase: 0,
         motionBlurSamples: 6,
         renderer: 'classic3D',
         open: true,
@@ -751,7 +887,6 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     },
   ];
 
-  // Per-scene Apple Keynote Radial Softbox Domes (with float32 anti-banding scatter!)
   const sceneBounds = [
     [-0.5, 2.75],
     [2.75, 6.05],
@@ -774,88 +909,14 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/scatter', value: 30.0 } });
   }
 
-  // Sweeping 35mm Cinema Camera — genuine orbital parallax across Z=+360, Z=0, Z=-190!
   cmds.push({
     command: 'layer.newCamera',
-    params: {
-      name: 'HeroCam',
-      preset: '35mm',
-      position: [540, 960, -1085],
-      poi: [540, 960, 0],
-    },
+    params: { name: 'HeroCam', preset: '35mm', position: [540, 960, -1085], poi: [540, 960, 0] },
   });
   cmds.push({ command: 'layer.timing', params: { layers: ['HeroCam'], in: -0.5, out: 16.5 } });
+  addAnimatedProp(cmds, 'HeroCam', 'transform/position', choreoPlan.camKeys, 78);
 
-  addAnimatedProp(cmds, 'HeroCam', 'transform/position', [
-    [0.0, [540, 960, -1085]],
-    [0.18, [540, 960, -1085]],
-    [2.70, [605, 945, -1045]],
-    [6.00, [475, 972, -1065]],
-    [10.00, [595, 948, -1035]],
-    [13.00, [490, 968, -1058]],
-    [16.00, [540, 960, -1020]],
-  ], 75);
-
-  // Choreograph all 5 Scenes across 3 True 3D Depth Planes (Depth Z=+360, Hero Z=0, Foreground Chip Z=-190)
-  const choreo = [
-    {
-      idx: 0, inT: -0.5, outT: 2.90,
-      heroPos: [[0.0, [540, 900, 0]], [0.18, [540, 900, 0]], [2.25, [540, 900, -45]], [2.82, [60, 900, -420]]],
-      heroRotY: [[0.0, 0], [0.18, 0], [2.25, -6.5], [2.82, -28]],
-      heroRotX: [[0.0, 0], [0.18, 0], [2.25, 1.8]],
-      heroOp: [[0.0, 100], [2.32, 100], [2.80, 0]],
-      chipPos: [[0.0, [540, 1345, -185]], [0.18, [540, 1345, -185]], [2.25, [525, 1338, -225]], [2.80, [-40, 1338, -560]]],
-      chipOp: [[0.0, 100], [2.28, 100], [2.76, 0]],
-      sweep: [[0.25, [0.05, 0.15]], [2.20, [0.95, 0.85]]],
-      sweepInt: 34,
-    },
-    {
-      idx: 1, inT: 2.55, outT: 6.18,
-      heroPos: [[2.55, [920, 920, 480]], [3.15, [540, 900, 0]], [5.55, [540, 900, -48]], [6.10, [540, 560, -420]]],
-      heroRotY: [[2.55, 26], [3.15, 3.5], [5.55, -4.5], [6.10, -18]],
-      heroRotX: [[2.55, -9], [3.15, 0], [5.55, 1.6], [6.10, 18]],
-      heroOp: [[2.55, 0], [2.95, 100], [5.65, 100], [6.06, 0]],
-      chipPos: [[2.72, [960, 1405, 180]], [3.35, [540, 1375, -185]], [5.55, [555, 1368, -220]], [6.06, [540, 1060, -540]]],
-      chipOp: [[2.72, 0], [3.12, 100], [5.62, 100], [6.02, 0]],
-      sweep: [[3.05, [0.0, 0.2]], [5.45, [1.0, 0.82]]],
-      sweepInt: 32,
-    },
-    {
-      idx: 2, inT: 5.95, outT: 10.18,
-      heroPos: [[5.95, [540, 1240, 440]], [6.55, [540, 895, 0]], [9.50, [540, 895, -52]], [10.08, [540, 680, -400]]],
-      heroRotY: [[5.95, -16], [6.55, -3.2], [9.50, 4.8], [10.08, 19]],
-      heroRotX: [[5.95, 18], [6.55, 1.0], [9.50, -1.6], [10.08, -16]],
-      heroOp: [[5.95, 0], [6.30, 100], [9.60, 100], [10.04, 0]],
-      chipPos: [[6.15, [540, 1620, 160]], [6.78, [540, 1385, -185]], [9.50, [525, 1378, -225]], [10.04, [540, 1180, -540]]],
-      chipOp: [[6.15, 0], [6.52, 100], [9.56, 100], [9.98, 0]],
-      sweep: [[6.45, [0.0, 0.22]], [9.40, [1.0, 0.80]]],
-      sweepInt: 44,
-    },
-    {
-      idx: 3, inT: 9.95, outT: 13.18,
-      heroPos: [[9.95, [540, 860, 560]], [10.55, [540, 835, -10]], [12.55, [540, 835, -62]], [13.10, [940, 835, -420]]],
-      heroRotY: [[9.95, -20], [10.55, -2.5], [12.55, 4.2], [13.10, 26]],
-      heroRotX: [[9.95, 8], [10.55, 0], [12.55, -1.2]],
-      heroOp: [[9.95, 0], [10.30, 100], [12.62, 100], [13.04, 0]],
-      chipPos: [[10.12, [540, 1540, 140]], [10.72, [540, 1310, -185]], [12.55, [555, 1300, -225]], [13.06, [980, 1300, -550]]],
-      chipOp: [[10.12, 0], [10.48, 100], [12.60, 100], [13.02, 0]],
-      sweep: [[10.40, [0.05, 0.18]], [12.50, [0.95, 0.85]]],
-      sweepInt: 34,
-    },
-    {
-      idx: 4, inT: 12.95, outT: 16.5,
-      heroPos: [[12.95, [540, 1180, 420]], [13.60, [540, 875, 0]], [16.0, [540, 875, -38]]],
-      heroRotY: [[12.95, 16], [13.60, 1.5], [16.0, -2.2]],
-      heroRotX: [[12.95, 15], [13.60, 0], [16.0, 0]],
-      heroOp: [[12.95, 0], [13.35, 100], [16.0, 100]],
-      chipPos: [[13.18, [540, 1560, 120]], [13.85, [540, 1370, -195]], [16.0, [540, 1362, -235]]],
-      chipOp: [[13.18, 0], [13.55, 100], [16.0, 100]],
-      sweep: [[13.50, [0.0, 0.25]], [15.65, [1.0, 0.78]]],
-      sweepInt: 44,
-    },
-  ];
-
-  for (const c of choreo) {
+  for (const c of choreoPlan.scenes) {
     // PLANE 1: Background Architectural Depth Plane (Z = +360)
     const dName = `Depth_${c.idx}`;
     const [bIn, bOut] = sceneBounds[c.idx];
@@ -866,7 +927,7 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     cmds.push({ command: 'prop.set', params: { layer: dName, path: 'transform/scale', value: [134, 134, 134] } });
     cmds.push({ command: 'prop.set', params: { layer: dName, path: 'transform/position', value: [540, 960, 360] } });
 
-    // PLANE 2: Hero 2x Retina Glass/Hardware Slab (Z = 0) + Specular Light Sweep
+    // PLANE 2: Hero 2x Retina Glass/Hardware/Editorial Slab (Z = 0)
     const hName = `Hero_${c.idx}`;
     cmds.push({ command: 'file.import', params: { paths: [assets.heroes[c.idx]], addToComp: true } });
     cmds.push({ command: 'layer.rename', params: { layer: '#1', name: hName } });
@@ -875,20 +936,51 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     cmds.push({ command: 'layer.timing', params: { layers: [hName], in: c.inT, out: c.outT } });
     cmds.push({ command: 'prop.set', params: { layer: hName, path: 'transform/scale', value: [50, 50, 50] } });
 
-    addAnimatedProp(cmds, hName, 'transform/position', c.heroPos);
-    addAnimatedProp(cmds, hName, 'transform/rotationY', c.heroRotY);
-    addAnimatedProp(cmds, hName, 'transform/rotationX', c.heroRotX);
-    addAnimatedProp(cmds, hName, 'transform/opacity', c.heroOp);
+    addAnimatedProp(cmds, hName, 'transform/position', c.heroPos, choreoPlan.influence);
+    addAnimatedProp(cmds, hName, 'transform/rotationY', c.heroRotY, choreoPlan.influence);
+    addAnimatedProp(cmds, hName, 'transform/rotationX', c.heroRotX, choreoPlan.influence);
+    addAnimatedProp(cmds, hName, 'transform/opacity', c.heroOp, 75);
 
-    cmds.push({ command: 'effect.apply', params: { effect: 'ec.generate.cclightsweep', layers: [hName] } });
-    cmds.push({ command: 'prop.set', params: { layer: hName, path: 'effects/#1/direction', value: -26.0 } });
-    cmds.push({ command: 'prop.set', params: { layer: hName, path: 'effects/#1/width', value: 76.0 } });
-    cmds.push({ command: 'prop.set', params: { layer: hName, path: 'effects/#1/sweepIntensity', value: Math.round(c.sweepInt * 0.72) } });
-    cmds.push({ command: 'prop.set', params: { layer: hName, path: 'effects/#1/edgeIntensity', value: 48.0 } });
-    cmds.push({ command: 'prop.set', params: { layer: hName, path: 'effects/#1/edgeThickness', value: 1.8 } });
-    addAnimatedProp(cmds, hName, 'effects/#1/center', c.sweep);
+    let effIdx = 0;
+    // Effect 1: Sapphire Specular Light Sweep (skip on unboxed matte typography so text stays crisp!)
+    const skipSweep = (c.idx === 0 && dir.unboxedHook) || (c.idx === 3 && dir.unboxedProof);
+    if (!skipSweep) {
+      effIdx += 1;
+      cmds.push({ command: 'effect.apply', params: { effect: 'ec.generate.cclightsweep', layers: [hName] } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/direction`, value: -26.0 } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/width`, value: 76.0 } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/sweepIntensity`, value: c.sweepInt } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/edgeIntensity`, value: 48.0 } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/edgeThickness`, value: 1.8 } });
+      addAnimatedProp(cmds, hName, `effects/#${effIdx}/center`, c.sweep);
+    }
 
-    // PLANE 3: Foreground Floating 3D Depth Chip (Z = -190!) + Real Optical Drop Shadow!
+    // Skill-specific Video-Editing Transitions inside EffectCraft!
+    if (c.linearWipeIn) {
+      effIdx += 1;
+      const [tA, tB] = c.linearWipeIn;
+      cmds.push({ command: 'effect.apply', params: { effect: 'ec.transition.linearwipe', layers: [hName] } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/angle`, value: -72.0 } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/feather`, value: 36.0 } });
+      addAnimatedProp(cmds, hName, `effects/#${effIdx}/completion`, [[tA, 100.0], [tB, 0.0]], 85);
+    }
+    if (c.lightWipeIn) {
+      effIdx += 1;
+      const [tA, tB] = c.lightWipeIn;
+      cmds.push({ command: 'effect.apply', params: { effect: 'ec.transition.cclightwipe', layers: [hName] } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/intensity`, value: 115.0 } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/colorFromSource`, value: true } });
+      addAnimatedProp(cmds, hName, `effects/#${effIdx}/completion`, [[tA, 100.0], [tB, 0.0]], 85);
+    }
+    if (dir.opticalGlow && (c.idx === 2 || c.idx === 4)) {
+      effIdx += 1;
+      cmds.push({ command: 'effect.apply', params: { effect: 'ec.stylize.glow', layers: [hName] } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/threshold`, value: 78.0 } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/radius`, value: 22.0 } });
+      cmds.push({ command: 'prop.set', params: { layer: hName, path: `effects/#${effIdx}/intensity`, value: 0.45 } });
+    }
+
+    // PLANE 3: Foreground Floating 3D Depth Chip (Z = -190!) + Optical Drop Shadow
     const fName = `FgChip_${c.idx}`;
     cmds.push({ command: 'file.import', params: { paths: [assets.chips[c.idx]], addToComp: true } });
     cmds.push({ command: 'layer.rename', params: { layer: '#1', name: fName } });
@@ -897,9 +989,9 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     cmds.push({ command: 'layer.timing', params: { layers: [fName], in: c.inT, out: c.outT } });
     cmds.push({ command: 'prop.set', params: { layer: fName, path: 'transform/scale', value: [44, 44, 44] } });
 
-    addAnimatedProp(cmds, fName, 'transform/position', c.chipPos, 86);
-    addAnimatedProp(cmds, fName, 'transform/rotationY', c.heroRotY.map(([t, v]) => [t, v * 0.72]), 84);
-    addAnimatedProp(cmds, fName, 'transform/opacity', c.chipOp);
+    addAnimatedProp(cmds, fName, 'transform/position', c.chipPos, choreoPlan.influence);
+    addAnimatedProp(cmds, fName, 'transform/rotationY', c.heroRotY.map(([t, v]) => [t, v * 0.65]), choreoPlan.influence);
+    addAnimatedProp(cmds, fName, 'transform/opacity', c.chipOp, 75);
 
     cmds.push({ command: 'effect.apply', params: { effect: 'ec.perspective.dropshadow', layers: [fName] } });
     cmds.push({ command: 'prop.set', params: { layer: fName, path: 'effects/#1/opacity', value: 42.0 } });
@@ -907,7 +999,8 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     cmds.push({ command: 'prop.set', params: { layer: fName, path: 'effects/#1/softness', value: 52.0 } });
   }
 
-  // Top Cinema Grade Adjustment Layer: subtle optical vignette + 35mm monochrome anti-banding grain
+  // Top Cinema Grade Adjustment Layer:
+  // Vignette + 35mm Monochrome Anti-Banding Grain + Optional Radial Zoom-Burst Whip-Cuts!
   cmds.push({ command: 'layer.newAdjustment', params: { name: 'CinemaGrade' } });
   cmds.push({ command: 'effect.apply', params: { effect: 'ec.stylize.ccvignette', layers: ['CinemaGrade'] } });
   cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#1/amount', value: 14.0 } });
@@ -915,6 +1008,17 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
   cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#2/viewingMode', value: 2 } });
   cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#2/tweaking/intensity', value: 0.14 } });
   cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#2/color/monochromatic', value: true } });
+
+  if (dir.editSkill === 'radial_zoom_burst') {
+    // Optical Radial Fast Blur whip-zoom pulse strictly across scene cut boundaries (0 at Frame 0!)
+    cmds.push({ command: 'effect.apply', params: { effect: 'ec.blur.ccradialfast', layers: ['CinemaGrade'] } });
+    addAnimatedProp(cmds, 'CinemaGrade', 'effects/#3/amount', [
+      [0.0, 0.0], [2.52, 0.0], [2.75, 42.0], [3.05, 0.0],
+      [5.82, 0.0], [6.05, 44.0], [6.36, 0.0],
+      [9.82, 0.0], [10.05, 44.0], [10.36, 0.0],
+      [12.82, 0.0], [13.05, 40.0], [13.38, 0.0], [16.0, 0.0],
+    ], 70);
+  }
 
   const cmdsPath = path.join(workDir, 'build_comp.json');
   const projPath = path.join(workDir, 'olven_reel.ecproj');
@@ -935,7 +1039,7 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     '--audio', 'off',
   ], { stdio: 'inherit' });
 
-  // 3) Mux approved NYC Felt Piano studio soundtrack + explicit Rec.709 color tags (0 video re-encoding loss!)
+  // Mux approved NYC Felt Piano + Rec.709 color space tags (stream copy video — 0 quality loss!)
   execFileSync('ffmpeg', [
     '-y', '-v', 'error',
     '-i', rawMp4,
@@ -954,7 +1058,7 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
   const mb = (fs.statSync(outMp4).size / (1024 * 1024)).toFixed(2);
   console.log(
-    `[OK] Rendered ArtCraft EffectCraft Multi-Plane 3D Reel [${dir.name} / ${dir.track}, 14Mbps H.264 Rec.709 in ${elapsed}s, ${mb} MB] -> ${outMp4}`
+    `[OK] Rendered ArtCraft EffectCraft 3D Reel [${dir.name} | skill=${dir.editSkill} | ${dir.track}, 14Mbps Rec.709 in ${elapsed}s, ${mb} MB] -> ${outMp4}`
   );
 }
 
@@ -970,4 +1074,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { renderWalkthroughVideo, DIRECTORS };
+module.exports = { renderWalkthroughVideo, DIRECTORS, DIRECTOR_ORDER };
