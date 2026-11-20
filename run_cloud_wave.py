@@ -131,7 +131,8 @@ def main():
         raise RuntimeError(f"3-Layer Quality Gate blocked {day_label} after {max_attempts} self-healing attempts.")
 
     if media_type == "video":
-        print(f"[5/6] Rendering 9:16 (1080x1920) 30fps studio motion Reel [archetype={spec.get('visual_archetype')}]...")
+        print(f"[5/6] Rendering 9:16 (1080x1920) 30fps ArtCraft EffectCraft 3D Cinema Reel [seq={seq_index}, archetype={spec.get('visual_archetype')}]...")
+        os.environ["OLVEN_SEQ_INDEX"] = str(seq_index)
         run_cmd(["node", str(BASE_DIR / "render_video.js"), str(spec_path), str(wave_dir)])
     else:
         print(f"[5/6] Image wave ({day_label}) — skipping Reel render (next wave will auto-alternate to video).")
