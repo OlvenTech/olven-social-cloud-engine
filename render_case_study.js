@@ -1,40 +1,40 @@
 #!/usr/bin/env node
 /**
- * Olven Tech — High-Retention Silicon Valley Visual Engine (2x Retina)
+ * Olven Tech — Apple iPhone / macOS Liquid Glass Visual Engine (True 2x Retina PNG)
  *
- * 6 radically distinct, scroll-stopping visual genres engineered for high dwell time,
- * saves, and shares (zero repetitive "Before/After + 4 KPI box" slide templates):
+ * 6 radically distinct, high-retention flagship genres engineered for enterprise
+ * New York / Silicon Valley presentation & delivery:
  *
- *  1. editorial_light_blueprint     — Apple / Stripe Press Minimalist Giant-Stat Billboard (70% whitespace)
- *  2. security_policy_shield_matrix — Authentic Slack #prod-incidents War-Room Thread Card
- *  3. circuit_breaker_state_machine — ByteByteGo / Excalidraw Hand-Sketched Whiteboard Architecture
- *  4. split_latency_waterfall       — Vercel / Raycast macOS Glass GitHub PR Diff Window
- *  5. revenue_ledger_reconciliation — Datadog / Grafana Live Telemetry Cliff Chart
- *  6. cdc_hash_diff_funnel          — High-Contrast Editorial Magazine Split ("Naive vs. Prod")
+ *  1. editorial_light_blueprint     — Apple Porcelain Liquid Glass Hero Metric Sheet (Light)
+ *  2. security_policy_shield_matrix — macOS Sequoia Space-Black Glass Slack #prod-incidents Window (Dark)
+ *  3. circuit_breaker_state_machine — iPadOS / macOS Frosted Glass Architecture Freeform Studio (Light)
+ *  4. split_latency_waterfall       — macOS Obsidian Liquid Glass GitHub PR Diff Window (Dark)
+ *  5. revenue_ledger_reconciliation — Apple Glacier Frosted Glass Live Telemetry Sheet (Light)
+ *  6. cdc_hash_diff_funnel          — Apple Keynote Twin Titanium Glass Split ("Legacy vs. Prod") (Split)
  */
 const fs = require('fs');
 const path = require('path');
 
-const PLAYWRIGHT_PATH = fs.existsSync(path.join(__dirname, 'node_modules/playwright-core'))
-  ? path.join(__dirname, 'node_modules/playwright-core')
-  : '/home/antigravity/.npm/_npx/e41f203b7505f1fb/node_modules/playwright-core';
-const { chromium } = require(PLAYWRIGHT_PATH);
+let chromium;
+try { ({ chromium } = require('playwright')); } catch {
+  const localCore = path.join(__dirname, 'node_modules/playwright-core');
+  ({ chromium } = require(fs.existsSync(localCore) ? localCore : '/home/antigravity/.npm/_npx/e41f203b7505f1fb/node_modules/playwright-core'));
+}
 
 const ASSETS_DIR = path.join(__dirname, 'assets');
 const b64Font = (file) => fs.readFileSync(path.join(ASSETS_DIR, file)).toString('base64');
 
-const rawLogo = fs.readFileSync(path.join(ASSETS_DIR, 'horizontal_dark.svg'), 'utf8')
-  .replace(/<\?xml[\s\S]*?\?>/g, '');
+const RAW_LOGO_SVG = fs.readFileSync(path.join(ASSETS_DIR, 'horizontal_dark.svg'), 'utf8')
+  .replace(/<\?xml[\s\S]*?\?>/g, '')
+  .replace(/<path[^>]*id="path1-3"[^>]*\/>/g, '');
 
-const logoForDarkBg = (h = 30) => rawLogo.replace(
-  /<svg\b([^>]*)>/,
-  `<svg $1 style="height:${h}px; width:auto; display:block; border-radius:6px;">`
-);
-
-const logoForLightBg = (h = 30) => rawLogo.replace(
-  /<svg\b([^>]*)>/,
-  `<svg $1 style="height:${h}px; width:auto; display:block; filter: invert(0.92) hue-rotate(180deg) contrast(1.25); border-radius:6px;">`
-);
+function seamlessLogo(h, inkHex, cutoutHex) {
+  const styled = RAW_LOGO_SVG
+    .replace(/style="fill:#000000;/g, `style="fill:${cutoutHex};`)
+    .replace(/style="fill:#ffffff;/g, `style="fill:${inkHex};`)
+    .replace(/fill="#ffffff"/g, `fill="${inkHex}"`);
+  return styled.replace(/<svg\b([^>]*)>/, `<svg $1 style="height:${h}px; width:auto; display:block;">`);
+}
 
 const PLATFORMS = [
   { name: 'linkedin.png', width: 1350, height: 1350, layout: 'square' },
@@ -56,11 +56,14 @@ function stripHtml(s) {
   return String(s || '').replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').trim();
 }
 
+function esc(s) {
+  return stripHtml(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function shorten(s, maxLen) {
   const clean = stripHtml(s);
   if (clean.length <= maxLen) return clean;
-  const cut = clean.slice(0, maxLen).replace(/\s+\S*$/, '');
-  return cut + '.';
+  return clean.slice(0, maxLen).replace(/\s+\S*$/, '') + '.';
 }
 
 function baseFontsCss() {
@@ -76,7 +79,7 @@ function baseFontsCss() {
     @font-face {
       font-family: 'Inter';
       src: url(data:font/woff2;base64,${fInter}) format('woff2');
-      font-weight: 400 700;
+      font-weight: 400 850;
     }
     @font-face {
       font-family: 'IBM Plex Mono';
@@ -84,583 +87,536 @@ function baseFontsCss() {
       font-weight: 400 700;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    .inline-code {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.88em; font-weight: 600;
-      padding: 2px 7px; border-radius: 5px;
+    body {
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    }
+    .mac-dots { display: flex; gap: 10px; align-items: center; }
+    .mdot { width: 14px; height: 14px; border-radius: 50%; }
+    .md-r { background: #FF5F57; box-shadow: inset 0 1px 1px rgba(255,255,255,0.45); }
+    .md-y { background: #FEBC2E; box-shadow: inset 0 1px 1px rgba(255,255,255,0.45); }
+    .md-g { background: #28C840; box-shadow: inset 0 1px 1px rgba(255,255,255,0.45); }
+    .glass-light {
+      background: linear-gradient(155deg, rgba(255,255,255,0.84) 0%, rgba(255,255,255,0.50) 100%);
+      backdrop-filter: blur(44px) saturate(195%);
+      -webkit-backdrop-filter: blur(44px) saturate(195%);
+      border: 1.5px solid rgba(255,255,255,0.90);
+      box-shadow:
+        0 42px 96px -24px rgba(15, 23, 42, 0.16),
+        0 14px 32px -10px rgba(15, 23, 42, 0.08),
+        inset 0 2px 0 rgba(255,255,255,0.98),
+        inset 0 -1px 0 rgba(15,23,42,0.05);
+    }
+    .glass-dark {
+      background: linear-gradient(155deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.035) 100%);
+      backdrop-filter: blur(44px) saturate(190%);
+      -webkit-backdrop-filter: blur(44px) saturate(190%);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      box-shadow:
+        0 48px 110px -22px rgba(0, 0, 0, 0.72),
+        0 16px 36px -10px rgba(0, 0, 0, 0.45),
+        inset 0 1.5px 0 rgba(255,255,255,0.30),
+        inset 0 -1px 0 rgba(255,255,255,0.04);
     }
   `;
 }
 
 /**
- * GENRE 1 (editorial_light_blueprint):
- * Apple / Stripe Press Minimalist Giant-Stat Billboard Poster
- * Ultra-high whitespace, ONE massive focal metric, punchy editorial hook, zero box clutter.
+ * GENRE 1 (editorial_light_blueprint — LIGHT):
+ * Apple Porcelain Titanium Liquid Glass Hero Metric Sheet
  */
 function renderBillboardPoster(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
   const m0 = spec.metrics[0];
   const m1 = spec.metrics[1];
+  const m2 = spec.metrics[2] || m1;
   const valLen = String(m0.value).length;
   const heroSize = isWide
-    ? (valLen > 7 ? 128 : 168)
-    : (valLen > 7 ? 148 : 204);
+    ? (valLen > 7 ? 116 : 154)
+    : (valLen > 7 ? 140 : 188);
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background: #F6F2EA; color: #0B1120;
-      font-family: 'Inter', sans-serif;
-      padding: ${isWide ? '54px 76px' : '74px 78px'};
+      background: #F1EFEA; color: #0A0D14;
+      padding: ${isWide ? '48px 66px' : '68px 68px'};
       display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
-    .accent-arc {
-      position: absolute; right: -160px; top: -160px;
-      width: 680px; height: 680px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(29,78,216,0.14) 0%, rgba(29,78,216,0) 70%);
+    .orb1 {
+      position: absolute; width: 760px; height: 760px; border-radius: 50%;
+      top: -210px; right: -160px;
+      background: radial-gradient(circle, rgba(0, 82, 255, 0.22) 0%, rgba(99, 102, 241, 0.08) 48%, transparent 72%);
+      filter: blur(40px);
+    }
+    .orb2 {
+      position: absolute; width: 680px; height: 680px; border-radius: 50%;
+      bottom: -240px; left: -160px;
+      background: radial-gradient(circle, rgba(196, 174, 140, 0.34) 0%, rgba(148, 163, 184, 0.10) 55%, transparent 75%);
+      filter: blur(48px);
+    }
+    .top-pill {
+      position: relative; z-index: 3;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 28px; border-radius: 999px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600;
+      letter-spacing: 0.13em; text-transform: uppercase; color: #4A5568;
+    }
+    .hero-card {
+      position: relative; z-index: 3;
+      border-radius: 38px;
+      padding: ${isWide ? '46px 54px' : '64px 58px'};
+      display: flex; flex-direction: column; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 40%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 100%);
       pointer-events: none;
     }
-    .top-bar {
-      position: relative; z-index: 2;
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase; color: #64748B;
+      margin-bottom: 16px;
+    }
+    .hero-num {
+      font-size: ${heroSize}px; font-weight: 850; line-height: 0.94;
+      letter-spacing: -0.058em; color: #0052FF;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: ${isWide ? '20px' : '30px'};
+    }
+    .headline {
+      font-size: ${isWide ? '40px' : '50px'}; font-weight: 800; line-height: 1.09;
+      letter-spacing: -0.038em; color: #0A0D14; max-width: 96%;
+      margin-bottom: ${isWide ? '26px' : '38px'};
+    }
+    .sub-pills {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    }
+    .sub-pill {
+      padding: ${isWide ? '18px 24px' : '24px 28px'}; border-radius: 22px;
+      background: rgba(255,255,255,0.62);
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
+    }
+    .sp-val { font-size: ${isWide ? '30px' : '36px'}; font-weight: 800; letter-spacing: -0.035em; color: #0A0D14; }
+    .sp-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #64748B; margin-top: 4px; }
+    .footer {
+      position: relative; z-index: 3;
       display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 28px; border-radius: 24px;
     }
-    .tag {
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
-      letter-spacing: 0.1em; color: #1D4ED8; text-transform: uppercase;
-      padding: 8px 16px; border: 1.5px solid #1D4ED8; border-radius: 999px;
-      background: rgba(29,78,216,0.06);
+    .domain {
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600;
+      letter-spacing: 0.1em; color: #475569;
     }
-    .center-stage {
-      position: relative; z-index: 2;
-      display: ${isWide ? 'grid' : 'flex'};
-      ${isWide ? 'grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center;' : 'flex-direction: column; gap: 38px;'}
-    }
-    .stat-block {
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .stat-kicker {
-      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
-      color: #64748B; letter-spacing: 0.12em; text-transform: uppercase;
-    }
-    .giant-num {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${heroSize}px; font-weight: 800; line-height: 0.92;
-      letter-spacing: -0.055em; color: #1D4ED8;
-    }
-    .stat-delta {
-      display: inline-flex; align-items: center; gap: 10px; align-self: flex-start;
-      margin-top: 8px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 700;
-      color: #0B1120; background: #DBEAFE; padding: 10px 18px; border-radius: 10px;
-    }
-    .copy-block {
-      display: flex; flex-direction: column; gap: 22px;
-      ${isWide ? 'border-left: 3px solid #0B1120; padding-left: 44px;' : 'border-top: 3px solid #0B1120; padding-top: 34px;'}
-    }
-    h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '44px' : '56px'}; line-height: 1.08; font-weight: 800;
-      letter-spacing: -0.03em; color: #0B1120;
-    }
-    .takeaway {
-      font-size: ${isWide ? '21px' : '25px'}; line-height: 1.45; color: #334155; font-weight: 500;
-    }
-    .bottom-strip {
-      position: relative; z-index: 2;
-      display: flex; justify-content: space-between; align-items: center;
-      padding-top: 22px; border-top: 1.5px solid rgba(11,17,32,0.16);
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: #475569;
-    }
-    .swap-pill {
-      color: #0B1120; font-weight: 700;
-    }
-    .swap-pill span { color: #DC2626; text-decoration: line-through; margin-right: 10px; }
-    .swap-pill strong { color: #059669; }
   </style></head><body>
-    <div class="accent-arc"></div>
-    <div class="top-bar">
-      <div>${logoForLightBg(34)}</div>
-      <div class="tag">${spec.eyebrow.split('·')[0].trim()}</div>
+    <div class="orb1"></div>
+    <div class="orb2"></div>
+    <div class="top-pill glass-light">
+      <span>${esc(spec.eyebrow)}</span>
+      <span>OLVEN · NEW YORK</span>
     </div>
-
-    <div class="center-stage">
-      <div class="stat-block">
-        <div class="stat-kicker">${m0.label}</div>
-        <div class="giant-num">${m0.value}</div>
-        <div class="stat-delta">▲ ${m0.sub} · ${m1.label}: ${m1.value}</div>
-      </div>
-      <div class="copy-block">
-        <h1>${spec.headline}</h1>
-        <div class="takeaway">${shorten(spec.after_points[0], 130)}</div>
+    <div class="hero-card glass-light">
+      <div class="eyebrow">${esc(m0.label)}</div>
+      <div class="hero-num">${esc(m0.value)}</div>
+      <div class="headline">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
+      <div class="sub-pills">
+        <div class="sub-pill">
+          <div class="sp-val">${esc(m1.value)}</div>
+          <div class="sp-lbl">${esc(m1.label)}</div>
+        </div>
+        <div class="sub-pill">
+          <div class="sp-val">${esc(m2.value)}</div>
+          <div class="sp-lbl">${esc(m2.label)}</div>
+        </div>
       </div>
     </div>
-
-    <div class="bottom-strip">
-      <div class="swap-pill"><span>${spec.before_badge}</span> → <strong>${spec.after_badge}</strong></div>
-      <div>olventech.com</div>
+    <div class="footer glass-light">
+      ${seamlessLogo(32, '#0A0D14', '#F1EFEA')}
+      <div class="domain">OLVENTECH.COM · ENTERPRISE SYSTEMS</div>
     </div>
   </body></html>`;
 }
 
 /**
- * GENRE 2 (security_policy_shield_matrix):
- * Authentic Dark-Mode Slack #prod-incidents War-Room Thread Card
- * People instinctively stop scrolling to read real production incident threads.
+ * GENRE 2 (security_policy_shield_matrix — DARK):
+ * macOS Sequoia Space-Black Liquid Glass Slack #prod-incidents War-Room Window
  */
-function renderSlackIncidentStory(spec, p) {
+function renderSlackIncident(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
   const m0 = spec.metrics[0];
   const m1 = spec.metrics[1];
+  const badPt = shorten(spec.before_points[0], 112);
+  const fixPt1 = shorten(spec.after_points[0], 108);
+  const fixPt2 = shorten(spec.after_points[1], 108);
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background:
-        radial-gradient(circle at 18% 15%, rgba(239,68,68,0.22), transparent 44%),
-        radial-gradient(circle at 84% 85%, rgba(16,185,129,0.24), transparent 48%),
-        #070B13;
-      color: #F8FAFC;
-      font-family: 'Inter', sans-serif;
-      padding: ${isWide ? '40px 64px' : '58px 56px'};
-      display: flex; flex-direction: column; justify-content: space-between; gap: ${isWide ? '22px' : '30px'};
+      background: #06070A; color: #F4F5F7;
+      padding: ${isWide ? '44px 66px' : '68px 62px'};
+      display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
-    .top-head {
-      display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
+    .orb1 {
+      position: absolute; width: 700px; height: 700px; border-radius: 50%;
+      top: -180px; left: -120px;
+      background: radial-gradient(circle, rgba(244, 63, 94, 0.22) 0%, transparent 68%);
+      filter: blur(60px);
     }
-    h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '38px' : '48px'}; line-height: 1.09; font-weight: 800;
-      letter-spacing: -0.03em; color: #FFFFFF; max-width: ${isWide ? '1060px' : '860px'};
+    .orb2 {
+      position: absolute; width: 740px; height: 740px; border-radius: 50%;
+      bottom: -220px; right: -120px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.24) 0%, rgba(59, 130, 246, 0.12) 48%, transparent 72%);
+      filter: blur(60px);
     }
-    .slack-window {
-      flex: 1;
-      background: #11161D; border: 1.5px solid rgba(148,163,184,0.22);
-      border-radius: 22px; overflow: hidden;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.58);
+    .window {
+      position: relative; z-index: 3; flex: 1;
+      border-radius: 34px; overflow: hidden;
       display: flex; flex-direction: column;
     }
-    .slack-topbar {
-      background: #191F29; border-bottom: 1px solid rgba(148,163,184,0.16);
-      padding: 16px 26px; display: flex; justify-content: space-between; align-items: center;
+    .titlebar {
+      padding: 22px 30px;
+      background: rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .ch-name {
-      display: flex; align-items: center; gap: 12px;
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; color: #F8FAFC;
+    .chan {
+      font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 700;
+      color: #F8FAFC; letter-spacing: 0.02em;
     }
-    .dots { display: flex; gap: 8px; margin-right: 12px; }
-    .dot { width: 12px; height: 12px; border-radius: 50%; }
-    .live-badge {
-      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
-      background: rgba(16,185,129,0.16); color: #34D399; border: 1px solid rgba(52,211,153,0.4);
-      padding: 5px 12px; border-radius: 999px;
+    .badge-sev {
+      padding: 7px 16px; border-radius: 999px;
+      background: rgba(244, 63, 94, 0.16); border: 1px solid rgba(244, 63, 94, 0.45);
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      color: #FDA4AF; letter-spacing: 0.08em;
     }
-    .messages {
-      flex: 1; padding: ${isWide ? '22px 32px' : '38px 36px'};
-      display: flex; flex-direction: column; justify-content: center; gap: ${isWide ? '20px' : '38px'};
+    .body-feed {
+      flex: 1; padding: ${isWide ? '30px 38px' : '44px 44px'};
+      display: flex; flex-direction: column; justify-content: center; gap: ${isWide ? '24px' : '34px'};
     }
     .msg {
-      display: flex; gap: 18px; align-items: flex-start;
+      display: flex; gap: 20px; align-items: flex-start;
+      padding: ${isWide ? '22px 26px' : '28px 30px'};
+      border-radius: 24px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
     }
-    .avatar {
-      width: 50px; height: 50px; border-radius: 12px; flex-shrink: 0;
+    .av {
+      width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 800; color: #FFFFFF;
+      font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 800;
     }
-    .av-alert { background: linear-gradient(135deg, #DC2626, #991B1B); }
-    .av-eng { background: linear-gradient(135deg, #10B981, #047857); }
-    .msg-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-    .msg-meta { display: flex; align-items: center; gap: 12px; }
-    .sender { font-weight: 800; font-size: 19px; color: #FFFFFF; }
-    .bot-tag {
-      font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700;
-      background: #273244; color: #94A3B8; padding: 3px 7px; border-radius: 4px;
+    .av-pd { background: linear-gradient(135deg, #F43F5E, #BE123C); color: #FFF; }
+    .av-ov { background: linear-gradient(135deg, #10B981, #059669); color: #04130D; }
+    .who { font-size: 19px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+    .ts { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 500; color: #94A3B8; }
+    .txt { font-size: ${isWide ? '22px' : '25px'}; line-height: 1.42; color: #E2E8F0; font-weight: 500; }
+    .fix-bullets { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .fb {
+      font-size: ${isWide ? '20px' : '23px'}; line-height: 1.38; color: #A7F3D0;
+      padding-left: 16px; border-left: 3px solid #10B981;
     }
-    .ts { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #64748B; }
-    .alert-card {
-      background: rgba(239,68,68,0.10); border-left: 5px solid #EF4444;
-      border-radius: 0 10px 10px 0; padding: 16px 20px;
-    }
-    .alert-title {
-      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700; color: #FCA5A5; margin-bottom: 6px;
-    }
-    .msg-text { font-size: ${isWide ? '19px' : '22px'}; line-height: 1.44; color: #E2E8F0; }
-    .fix-code {
-      margin-top: 8px; background: #090D14; border: 1px solid #1E293B; border-radius: 10px;
-      padding: 14px 18px; font-family: 'IBM Plex Mono', monospace;
-      font-size: ${isWide ? '16px' : '17.5px'}; color: #6EE7B7; line-height: 1.5;
-    }
-    .reactions { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
-    .react {
-      background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.35);
-      border-radius: 999px; padding: 5px 14px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700; color: #A7F3D0;
+    .reacts { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+    .rx {
+      padding: 8px 16px; border-radius: 999px;
+      background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.36);
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700; color: #6EE7B7;
     }
     .footer {
+      position: relative; z-index: 3; margin-top: 24px;
       display: flex; justify-content: space-between; align-items: center;
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #94A3B8; font-weight: 600;
+      padding: 14px 26px; border-radius: 22px;
     }
-    .inline-code { background: #1E293B; color: #38BDF8; }
+    .ft-meta { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: #94A3B8; letter-spacing: 0.08em; }
   </style></head><body>
-    <div class="top-head">
-      <h1>${spec.headline}</h1>
-      <div style="flex-shrink:0;">${logoForDarkBg(32)}</div>
-    </div>
-
-    <div class="slack-window">
-      <div class="slack-topbar">
-        <div class="ch-name">
-          <div class="dots">
-            <span class="dot" style="background:#EF4444"></span>
-            <span class="dot" style="background:#F59E0B"></span>
-            <span class="dot" style="background:#10B981"></span>
-          </div>
-          <span>#prod-incidents</span>
+    <div class="orb1"></div>
+    <div class="orb2"></div>
+    <div class="window glass-dark">
+      <div class="titlebar">
+        <div class="mac-dots">
+          <span class="mdot md-r"></span><span class="mdot md-y"></span><span class="mdot md-g"></span>
         </div>
-        <div class="live-badge">RESOLVED · ${spec.after_badge}</div>
+        <div class="chan">#prod-incidents · ${esc(spec.eyebrow.split('·')[0].trim())}</div>
+        <div class="badge-sev">${esc(spec.before_badge)}</div>
       </div>
-
-      <div class="messages">
+      <div class="body-feed">
         <div class="msg">
-          <div class="avatar av-alert">!</div>
-          <div class="msg-body">
-            <div class="msg-meta">
-              <span class="sender">PagerDuty Alert</span>
-              <span class="bot-tag">APP</span>
-              <span class="ts">03:14 AM</span>
-            </div>
-            <div class="alert-card">
-              <div class="alert-title">SEV-1 · ${spec.before_badge}</div>
-              <div class="msg-text">${shorten(spec.before_points[0], 135)}</div>
-            </div>
+          <div class="av av-pd">PD</div>
+          <div>
+            <div class="who">PagerDuty SEV-1 <span class="ts">02:14 AM EST</span></div>
+            <div class="txt">${esc(badPt)}</div>
           </div>
         </div>
-
         <div class="msg">
-          <div class="avatar av-eng">OV</div>
-          <div class="msg-body">
-            <div class="msg-meta">
-              <span class="sender">Olven Engineering</span>
-              <span class="bot-tag" style="background:#064E3B;color:#6EE7B7;">FIXED</span>
-              <span class="ts">03:19 AM</span>
+          <div class="av av-ov">OT</div>
+          <div>
+            <div class="who">Olven Staff Eng <span class="ts">02:29 AM EST · SHIPPED</span></div>
+            <div class="txt">Replaced legacy path with deterministic architecture:</div>
+            <div class="fix-bullets">
+              <div class="fb">${esc(fixPt1)}</div>
+              <div class="fb">${esc(fixPt2)}</div>
             </div>
-            <div class="msg-text">Killed the naive <span class="inline-code">${spec.before_nodes[1]}</span> path and shipped the deterministic pipeline:</div>
-            <div class="fix-code">${spec.after_nodes.join('  →  ')}<br/>// Result: ${m0.label} = ${m0.value} (${m0.sub}) · ${m1.label} = ${m1.value}</div>
-            <div class="reactions">
-              <div class="react">✓ ${spec.after_badge}</div>
-              <div class="react">${m0.label}: ${m0.value}</div>
-              <div class="react">Saved to runbook</div>
+            <div class="reacts">
+              <span class="rx">${esc(m0.value)} ${esc(m0.label)}</span>
+              <span class="rx">${esc(m1.value)} ${esc(m1.label)}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="footer">
-      <div>REAL PRODUCTION POSTMORTEM · ${spec.eyebrow.split('·')[0].trim()}</div>
-      <div>olventech.com</div>
+    <div class="footer glass-dark">
+      ${seamlessLogo(30, '#F8FAFC', '#06070A')}
+      <div class="ft-meta">OLVENTECH.COM · NEW YORK</div>
     </div>
   </body></html>`;
 }
 
 /**
- * GENRE 3 (circuit_breaker_state_machine):
- * ByteByteGo / Excalidraw Hand-Sketched Whiteboard Architecture
- * Crisp dot-grid paper + organic SVG whiteboard flow + red crossed-out naive path + yellow marker highlight.
+ * GENRE 3 (circuit_breaker_state_machine — LIGHT):
+ * iPadOS / macOS Frosted Glass Architecture Freeform Studio
  */
-function renderWhiteboardSketch(spec, p) {
+function renderWhiteboardDiagram(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
+  const bNodes = (spec.before_nodes || []).slice(0, 3);
+  const aNodes = (spec.after_nodes || []).slice(0, 3);
   const m0 = spec.metrics[0];
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background-color: #FAF9F5;
-      background-image: radial-gradient(#CBD5E1 1.6px, transparent 1.6px);
+      background-color: #EEF2F7;
+      background-image: radial-gradient(rgba(15, 23, 42, 0.14) 1.5px, transparent 1.5px);
       background-size: 28px 28px;
-      color: #1E293B;
-      font-family: 'Inter', sans-serif;
-      padding: ${isWide ? '44px 60px' : '62px 58px'};
-      display: flex; flex-direction: column; justify-content: space-between; gap: ${isWide ? '20px' : '30px'};
+      color: #0F172A;
+      padding: ${isWide ? '44px 62px' : '64px 58px'};
+      display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
-    .top-bar {
+    .orb {
+      position: absolute; width: 780px; height: 780px; border-radius: 50%;
+      top: -220px; right: -160px;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.16) 0%, rgba(16, 185, 129, 0.10) 50%, transparent 72%);
+      filter: blur(45px);
+    }
+    .canvas-win {
+      position: relative; z-index: 3; flex: 1;
+      border-radius: 36px; padding: ${isWide ? '34px 44px' : '48px 46px'};
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .bar {
       display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 22px; border-bottom: 1px solid rgba(15, 23, 42, 0.10);
     }
-    .sketch-pill {
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
-      color: #0F172A; background: #FEF08A; border: 2px solid #0F172A;
-      padding: 6px 16px; border-radius: 8px; transform: rotate(-1deg);
-      box-shadow: 3px 3px 0 #0F172A;
+    .tool-pill {
+      padding: 8px 20px; border-radius: 999px;
+      background: rgba(15, 23, 42, 0.06);
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600;
+      color: #334155; letter-spacing: 0.08em; text-transform: uppercase;
     }
-    h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '42px' : '50px'}; line-height: 1.09; font-weight: 800;
-      letter-spacing: -0.03em; color: #0F172A;
-    }
-    .hl {
-      background: linear-gradient(180deg, transparent 58%, #FEF08A 58%);
-      padding: 0 6px;
-    }
-    .board {
-      flex: 1;
-      display: flex; flex-direction: column; justify-content: space-evenly; gap: ${isWide ? '18px' : '28px'};
+    .title {
+      font-size: ${isWide ? '36px' : '46px'}; font-weight: 850;
+      letter-spacing: -0.04em; line-height: 1.08; color: #0B1120;
+      margin: ${isWide ? '18px 0 22px' : '28px 0 36px'};
     }
     .lane {
-      background: rgba(255,255,255,0.88);
-      border: 2.5px solid #0F172A; border-radius: 18px;
-      padding: ${isWide ? '22px 28px' : '30px 32px'};
-      position: relative;
-      box-shadow: 6px 6px 0 #0F172A;
+      padding: ${isWide ? '22px 26px' : '30px 30px'};
+      border-radius: 26px; margin-bottom: ${isWide ? '18px' : '26px'};
     }
-    .lane.bad {
-      border-style: dashed; border-color: #DC2626;
-      background: rgba(254,242,242,0.82); box-shadow: 5px 5px 0 rgba(220,38,38,0.22);
+    .lane-bad {
+      background: rgba(254, 242, 242, 0.72);
+      border: 1.5px dashed rgba(225, 29, 72, 0.42);
     }
-    .lane.good {
-      border-color: #0D9488; background: rgba(240,253,250,0.92);
-      box-shadow: 7px 7px 0 #0D9488;
+    .lane-good {
+      background: rgba(236, 253, 245, 0.78);
+      border: 1.5px solid rgba(16, 185, 129, 0.46);
+      box-shadow: 0 20px 44px -18px rgba(16, 185, 129, 0.22);
     }
-    .lane-top {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: ${isWide ? '16px' : '22px'};
-    }
-    .lane-title {
-      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
-      letter-spacing: 0.05em; text-transform: uppercase;
-    }
-    .lane.bad .lane-title { color: #B91C1C; }
-    .lane.good .lane-title { color: #0F766E; }
-    .lane-badge {
+    .lane-tag {
       font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
-      padding: 5px 14px; border-radius: 999px;
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px;
+      display: flex; justify-content: space-between;
     }
-    .lane.bad .lane-badge { background: #FEE2E2; color: #B91C1C; border: 1.5px solid #DC2626; }
-    .lane.good .lane-badge { background: #CCFBF1; color: #115E59; border: 1.5px solid #0D9488; }
-    .flow-row {
-      display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
-      align-items: center; gap: 10px;
+    .tag-bad { color: #BE123C; }
+    .tag-good { color: #047857; }
+    .flow { display: flex; align-items: center; gap: 14px; }
+    .node {
+      flex: 1; padding: ${isWide ? '18px 16px' : '24px 18px'}; border-radius: 18px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(15, 23, 42, 0.10);
+      box-shadow: 0 8px 20px -10px rgba(15, 23, 42, 0.14), inset 0 1px 0 #FFF;
+      font-size: ${isWide ? '19px' : '21px'}; font-weight: 750;
+      text-align: center; color: #0F172A; letter-spacing: -0.02em;
     }
-    .box {
-      background: #FFFFFF; border: 2.5px solid #0F172A; border-radius: 12px;
-      padding: ${isWide ? '16px 14px' : '24px 14px'}; text-align: center;
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: ${isWide ? '18px' : '19px'};
-      font-weight: 800; color: #0F172A; line-height: 1.2;
-      box-shadow: 3px 3px 0 rgba(15,23,42,0.18);
-    }
-    .lane.bad .box {
-      border-color: #EF4444; color: #7F1D1D;
-    }
-    .lane.bad .box:last-child {
-      background: #FEE2E2; text-decoration: line-through;
-    }
-    .lane.good .box {
-      border-color: #0D9488; color: #0F172A;
-    }
-    .lane.good .box.key {
-      background: #FEF08A; border-color: #0F172A; transform: rotate(-1deg);
-    }
-    .arr {
-      font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 800; color: #0F172A;
-    }
-    .lane.bad .arr { color: #DC2626; }
-    .lane.good .arr { color: #0D9488; }
-    .note-strip {
-      margin-top: ${isWide ? '14px' : '20px'};
-      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; color: #334155;
-    }
-    .footer {
+    .arr { font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 800; color: #94A3B8; }
+    .arr-g { color: #059669; }
+    .win-foot {
       display: flex; justify-content: space-between; align-items: center;
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700; color: #475569;
+      padding-top: 20px; border-top: 1px solid rgba(15, 23, 42, 0.10);
+    }
+    .res-badge {
+      padding: 10px 22px; border-radius: 999px;
+      background: #0F172A; color: #FFFFFF;
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
+      letter-spacing: 0.06em;
     }
   </style></head><body>
-    <div class="top-bar">
-      <div>${logoForLightBg(32)}</div>
-      <div class="sketch-pill">SYSTEM DESIGN WHITEBOARD</div>
-    </div>
-
-    <h1>${spec.headline} — <span class="hl">${m0.value}</span></h1>
-
-    <div class="board">
-      <div class="lane bad">
-        <div class="lane-top">
-          <div class="lane-title">✕ NAIVE PATTERN (BREAKS UNDER LOAD)</div>
-          <div class="lane-badge">${spec.before_badge}</div>
+    <div class="orb"></div>
+    <div class="canvas-win glass-light">
+      <div class="bar">
+        <div class="mac-dots">
+          <span class="mdot md-r"></span><span class="mdot md-y"></span><span class="mdot md-g"></span>
         </div>
-        <div class="flow-row">
-          ${spec.before_nodes.map((n, i) => `<div class="box">${n}</div>${i < 3 ? '<div class="arr">→</div>' : ''}`).join('')}
-        </div>
-        <div class="note-strip">↳ ${shorten(spec.before_points[0], 115)}</div>
+        <div class="tool-pill">Freeform · Systems Architecture</div>
+        <div class="tool-pill">${esc(spec.after_badge)}</div>
       </div>
-
-      <div class="lane good">
-        <div class="lane-top">
-          <div class="lane-title">✓ PRODUCTION ARCHITECTURE</div>
-          <div class="lane-badge">${spec.after_badge}</div>
+      <div class="title">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
+      <div>
+        <div class="lane lane-bad">
+          <div class="lane-tag tag-bad"><span>✕ ${esc(spec.before_title)}</span><span>${esc(spec.before_badge)}</span></div>
+          <div class="flow">
+            ${bNodes.map((n, i) => `<div class="node">${esc(n)}</div>${i < bNodes.length - 1 ? '<span class="arr">→</span>' : ''}`).join('')}
+          </div>
         </div>
-        <div class="flow-row">
-          ${spec.after_nodes.map((n, i) => `<div class="box ${i === 1 || i === 2 ? 'key' : ''}">${n}</div>${i < 3 ? '<div class="arr">→</div>' : ''}`).join('')}
+        <div class="lane lane-good">
+          <div class="lane-tag tag-good"><span>✓ ${esc(spec.after_title)}</span><span>PRODUCTION VERIFIED</span></div>
+          <div class="flow">
+            ${aNodes.map((n, i) => `<div class="node">${esc(n)}</div>${i < aNodes.length - 1 ? '<span class="arr arr-g">→</span>' : ''}`).join('')}
+          </div>
         </div>
-        <div class="note-strip">↳ ${shorten(spec.after_points[0], 115)} · ${m0.label}: <strong>${m0.value}</strong> (${m0.sub})</div>
       </div>
-    </div>
-
-    <div class="footer">
-      <div>SAVE THIS ARCHITECTURE DIAGRAM</div>
-      <div>olventech.com</div>
+      <div class="win-foot">
+        ${seamlessLogo(30, '#0F172A', '#FFFFFF')}
+        <div class="res-badge">${esc(m0.value)} · ${esc(m0.label)}</div>
+      </div>
     </div>
   </body></html>`;
 }
 
 /**
- * GENRE 4 (split_latency_waterfall):
- * Vercel / Raycast macOS Glass GitHub PR Diff Window
- * High-saturation ambient studio gradient + floating dark code diff window (red - vs green +).
+ * GENRE 4 (split_latency_waterfall — DARK):
+ * macOS Obsidian Liquid Glass GitHub PR Diff Window
  */
-function renderGithubPrDiff(spec, p) {
+function renderCodeDiffWindow(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
   const m0 = spec.metrics[0];
   const m1 = spec.metrics[1];
-
-  const badLines = [
-    `// ${spec.before_title}`,
-    `await callDirectly("${spec.before_nodes[1]}", payload);`,
-    `await writeTarget("${spec.before_nodes[2]}"); // ${spec.before_badge}`
-  ];
-  const goodLines = [
-    `// ${spec.after_title}`,
-    `const gate = await enforce("${spec.after_nodes[1]}", payload);`,
-    `await lockIdempotency("${spec.after_nodes[2]}", gate.key);`,
-    `return commitVerified("${spec.after_nodes[3]}"); // ${spec.after_badge}`
-  ];
+  const b0 = shorten(spec.before_nodes[0] || 'syncApiCall()', 30);
+  const b1 = shorten(spec.before_nodes[1] || 'retryOnTimeout()', 30);
+  const a0 = shorten(spec.after_nodes[0] || 'writeAheadLog()', 30);
+  const a1 = shorten(spec.after_nodes[1] || 'idempotentCommit()', 30);
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background:
-        radial-gradient(circle at 14% 18%, rgba(139,92,246,0.42), transparent 46%),
-        radial-gradient(circle at 86% 24%, rgba(245,158,11,0.34), transparent 44%),
-        radial-gradient(circle at 50% 92%, rgba(16,185,129,0.28), transparent 48%),
-        #0B0817;
-      color: #F8FAFC;
-      font-family: 'Inter', sans-serif;
-      padding: ${isWide ? '44px 68px' : '64px 58px'};
-      display: flex; flex-direction: column; justify-content: space-between; gap: ${isWide ? '22px' : '32px'};
+      background: #070B14; color: #F8FAFC;
+      padding: ${isWide ? '44px 66px' : '68px 62px'};
+      display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
-    .top-row {
-      display: flex; justify-content: space-between; align-items: center;
+    .orb1 {
+      position: absolute; width: 760px; height: 760px; border-radius: 50%;
+      top: -220px; right: -140px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.30) 0%, rgba(56, 189, 248, 0.10) 50%, transparent 72%);
+      filter: blur(55px);
     }
-    .pr-pill {
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
-      background: rgba(168,85,247,0.22); color: #E9D5FF;
-      border: 1px solid rgba(192,132,252,0.45);
-      padding: 7px 16px; border-radius: 999px;
+    .orb2 {
+      position: absolute; width: 680px; height: 680px; border-radius: 50%;
+      bottom: -220px; left: -140px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.24) 0%, transparent 70%);
+      filter: blur(60px);
     }
-    h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '42px' : '52px'}; line-height: 1.07; font-weight: 800;
-      letter-spacing: -0.03em; color: #FFFFFF;
+    .head { position: relative; z-index: 3; margin-bottom: ${isWide ? '22px' : '32px'}; }
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600;
+      letter-spacing: 0.14em; color: #818CF8; text-transform: uppercase; margin-bottom: 12px;
     }
-    .mac-win {
-      flex: 1;
-      background: rgba(13, 17, 23, 0.92);
-      border: 1.5px solid rgba(255,255,255,0.16);
-      border-radius: 20px; overflow: hidden;
-      box-shadow: 0 36px 90px rgba(0,0,0,0.62);
+    .hl {
+      font-size: ${isWide ? '38px' : '48px'}; font-weight: 850; line-height: 1.08;
+      letter-spacing: -0.04em; color: #FFFFFF;
+    }
+    .ide {
+      position: relative; z-index: 3; flex: 1;
+      border-radius: 32px; overflow: hidden;
       display: flex; flex-direction: column;
     }
-    .mac-bar {
-      background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.10);
-      padding: 15px 24px; display: flex; justify-content: space-between; align-items: center;
+    .ide-bar {
+      padding: 20px 28px;
+      background: rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .mac-dots { display: flex; gap: 9px; align-items: center; }
-    .dot { width: 13px; height: 13px; border-radius: 50%; }
-    .fname {
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #CBD5E1; margin-left: 14px; font-weight: 600;
+    .file {
+      font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 600; color: #CBD5E1;
     }
-    .diff-stat {
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+    .merged {
+      padding: 6px 16px; border-radius: 999px;
+      background: rgba(139, 92, 246, 0.22); border: 1px solid rgba(167, 139, 250, 0.45);
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; color: #DDD6FE;
     }
-    .code-body {
-      flex: 1; padding: ${isWide ? '22px 0' : '30px 0'};
-      font-family: 'IBM Plex Mono', monospace; font-size: ${isWide ? '20px' : '22px'}; line-height: 1.75;
-      display: flex; flex-direction: column; justify-content: center;
+    .diff-body {
+      flex: 1; padding: ${isWide ? '26px 32px' : '40px 36px'};
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: ${isWide ? '20px' : '23px'}; line-height: 1.68;
+      display: flex; flex-direction: column; justify-content: center; gap: 10px;
     }
-    .line {
-      padding: 6px 30px; display: flex; gap: 18px; white-space: pre-wrap;
-    }
-    .line.del {
-      background: rgba(248,81,73,0.16); color: #FFA198; border-left: 4px solid #F85149;
-    }
-    .line.add {
-      background: rgba(46,160,67,0.18); color: #7EE787; border-left: 4px solid #3FB950;
-    }
-    .line.ctx { color: #8B949E; border-left: 4px solid transparent; }
-    .sign { font-weight: 800; width: 16px; flex-shrink: 0; }
-    .impact-strip {
+    .line { padding: 10px 20px; border-radius: 12px; }
+    .del { background: rgba(244, 63, 94, 0.14); color: #FDA4AF; border-left: 3px solid #F43F5E; }
+    .add { background: rgba(16, 185, 129, 0.14); color: #6EE7B7; border-left: 3px solid #10B981; }
+    .cmt { color: #94A3B8; padding-left: 20px; font-size: 0.9em; }
+    .ide-foot {
+      padding: 22px 32px;
+      background: rgba(255,255,255,0.04);
+      border-top: 1px solid rgba(255,255,255,0.10);
       display: flex; justify-content: space-between; align-items: center;
-      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 16px; padding: 18px 26px;
     }
-    .imp-left {
-      display: flex; gap: 36px; align-items: center;
-    }
-    .imp-item { display: flex; flex-direction: column; }
-    .imp-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #CBD5E1; font-weight: 700; }
-    .imp-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; font-weight: 800; color: #FDE68A; }
-    .imp-right { font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #E2E8F0; font-weight: 700; }
+    .checks { display: flex; gap: 22px; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700; color: #34D399; }
   </style></head><body>
-    <div class="top-row">
-      <div>${logoForDarkBg(32)}</div>
-      <div class="pr-pill">MERGED PR · PRODUCTION HOTFIX</div>
+    <div class="orb1"></div>
+    <div class="orb2"></div>
+    <div class="head">
+      <div class="eyebrow">PR #418 · PRODUCTION REFACTOR</div>
+      <div class="hl">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
     </div>
-
-    <h1>${spec.headline}</h1>
-
-    <div class="mac-win">
-      <div class="mac-bar">
+    <div class="ide glass-dark">
+      <div class="ide-bar">
         <div class="mac-dots">
-          <span class="dot" style="background:#FF5F56"></span>
-          <span class="dot" style="background:#FFBD2E"></span>
-          <span class="dot" style="background:#27C93F"></span>
-          <span class="fname">worker/production_gate.ts</span>
+          <span class="mdot md-r"></span><span class="mdot md-y"></span><span class="mdot md-g"></span>
         </div>
-        <div class="diff-stat"><span style="color:#7EE787;">+4</span> <span style="color:#FFA198;">-3</span></div>
+        <div class="file">src/workers/pipeline.ts</div>
+        <div class="merged">MERGED · PROD</div>
       </div>
-      <div class="code-body">
-        ${badLines.map((l) => `<div class="line del"><span class="sign">-</span><span>${l}</span></div>`).join('')}
-        <div class="line ctx"><span class="sign"> </span><span></span></div>
-        ${goodLines.map((l) => `<div class="line add"><span class="sign">+</span><span>${l}</span></div>`).join('')}
+      <div class="diff-body">
+        <div class="cmt">// Legacy brittle path (${esc(spec.before_badge)})</div>
+        <div class="line del">- await directDispatch("${esc(b0)}");</div>
+        <div class="line del">- await unguardedSync("${esc(b1)}");</div>
+        <div class="cmt" style="margin-top:14px;">// Olven deterministic architecture (${esc(spec.after_badge)})</div>
+        <div class="line add">+ await tx.persistOutbox("${esc(a0)}");</div>
+        <div class="line add">+ await worker.commitIdempotent("${esc(a1)}");</div>
       </div>
-    </div>
-
-    <div class="impact-strip">
-      <div class="imp-left">
-        <div class="imp-item">
-          <div class="imp-lbl">${m0.label}</div>
-          <div class="imp-val">${m0.value}</div>
-        </div>
-        <div class="imp-item">
-          <div class="imp-lbl">${m1.label}</div>
-          <div class="imp-val" style="color:#6EE7B7;">${m1.value}</div>
+      <div class="ide-foot">
+        ${seamlessLogo(28, '#F8FAFC', '#070B14')}
+        <div class="checks">
+          <span>✓ ${esc(m0.value)} ${esc(m0.label)}</span>
+          <span>✓ ${esc(m1.value)} ${esc(m1.label)}</span>
         </div>
       </div>
-      <div class="imp-right">olventech.com</div>
     </div>
   </body></html>`;
 }
 
 /**
- * GENRE 5 (revenue_ledger_reconciliation):
- * Datadog / Grafana Live Production Telemetry Cliff Chart
- * Dramatic SVG red failure plateau dropping off a cliff to emerald flatline at "FIX DEPLOYED".
+ * GENRE 5 (revenue_ledger_reconciliation — LIGHT):
+ * Apple Glacier Frosted Glass Live Telemetry Cliff Sheet
  */
-function renderTelemetryCrashChart(spec, p) {
+function renderTelemetryCliff(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
   const m0 = spec.metrics[0];
   const m1 = spec.metrics[1];
@@ -669,300 +625,265 @@ function renderTelemetryCrashChart(spec, p) {
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background:
-        radial-gradient(circle at 84% 16%, rgba(16,185,129,0.16), transparent 46%),
-        #EEF7F4;
-      color: #0F172A;
-      font-family: 'Inter', sans-serif;
-      padding: ${isWide ? '44px 62px' : '62px 58px'};
-      display: flex; flex-direction: column; justify-content: space-between; gap: ${isWide ? '22px' : '30px'};
+      background: #EDF4F2; color: #091318;
+      padding: ${isWide ? '44px 66px' : '66px 62px'};
+      display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
-    .top-row {
-      display: flex; justify-content: space-between; align-items: center;
+    .orb1 {
+      position: absolute; width: 720px; height: 720px; border-radius: 50%;
+      top: -200px; left: -140px;
+      background: radial-gradient(circle, rgba(244, 63, 94, 0.14) 0%, transparent 70%);
+      filter: blur(50px);
     }
-    .tel-tag {
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
-      color: #047857; background: #D1FAE5; border: 1.5px solid #10B981;
-      padding: 7px 16px; border-radius: 999px;
+    .orb2 {
+      position: absolute; width: 780px; height: 780px; border-radius: 50%;
+      bottom: -220px; right: -140px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.24) 0%, rgba(14, 165, 233, 0.10) 52%, transparent 74%);
+      filter: blur(50px);
     }
-    h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '42px' : '50px'}; line-height: 1.08; font-weight: 800;
-      letter-spacing: -0.03em; color: #0F172A;
+    .card {
+      position: relative; z-index: 3; flex: 1;
+      border-radius: 38px; padding: ${isWide ? '38px 48px' : '54px 50px'};
+      display: flex; flex-direction: column; justify-content: space-between;
     }
-    .chart-card {
-      flex: 1;
-      background: #FFFFFF; border: 2px solid #CBD5E1; border-radius: 22px;
-      padding: ${isWide ? '26px 32px' : '34px 36px'};
-      display: flex; flex-direction: column; justify-content: space-between; gap: 18px;
-      box-shadow: 0 24px 60px rgba(15,23,42,0.08);
+    .hdr { display: flex; justify-content: space-between; align-items: center; }
+    .tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: #047857;
     }
-    .chart-head {
-      display: flex; justify-content: space-between; align-items: center;
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #475569; font-weight: 700;
+    .hl {
+      font-size: ${isWide ? '38px' : '48px'}; font-weight: 850;
+      letter-spacing: -0.04em; line-height: 1.08; color: #091318;
+      margin: ${isWide ? '18px 0 18px' : '26px 0 30px'};
     }
-    .chart-svg-wrap { flex: 1; display: flex; align-items: center; }
-    .stat-pair {
+    .chart-box {
+      padding: 24px 28px; border-radius: 26px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(255,255,255,0.95);
+      box-shadow: inset 0 1px 0 #FFF;
+    }
+    .stats {
       display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+      margin-top: ${isWide ? '18px' : '28px'};
     }
-    .sp {
-      background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 14px;
-      padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;
+    .st {
+      padding: ${isWide ? '20px 26px' : '26px 30px'}; border-radius: 24px;
+      background: rgba(255,255,255,0.74);
+      border: 1px solid rgba(255,255,255,0.95);
     }
-    .sp.bad { border-color: #FDA4AF; background: #FFF1F2; }
-    .sp.good { border-color: #6EE7B7; background: #ECFDF5; }
-    .sp-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #475569; font-weight: 700; }
-    .sp-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 36px; font-weight: 800; margin-top: 4px; }
-    .footer {
+    .sv { font-size: ${isWide ? '44px' : '54px'}; font-weight: 850; letter-spacing: -0.045em; color: #059669; font-variant-numeric: tabular-nums; }
+    .sl { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: #475569; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 6px; }
+    .ft {
       display: flex; justify-content: space-between; align-items: center;
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #475569; font-weight: 600;
+      margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(9, 19, 24, 0.08);
     }
+    .ft-r { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: #475569; letter-spacing: 0.08em; }
   </style></head><body>
-    <div class="top-row">
-      <div>${logoForLightBg(32)}</div>
-      <div class="tel-tag">● LIVE PRODUCTION TELEMETRY</div>
-    </div>
-
-    <h1>${spec.headline}</h1>
-
-    <div class="chart-card">
-      <div class="chart-head">
-        <span>METRIC: ${m0.label} · ${spec.eyebrow.split('·')[0].trim()}</span>
-        <span style="color:#047857;">▼ ${m0.sub}</span>
-      </div>
-
-      <div class="chart-svg-wrap">
-        <svg viewBox="0 0 1000 340" style="width:100%; height:100%; max-height:${isWide ? '260px' : '460px'};">
-          <defs>
-            <linearGradient id="redGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#E11D48" stop-opacity="0.34"/>
-              <stop offset="100%" stop-color="#E11D48" stop-opacity="0.02"/>
-            </linearGradient>
-            <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#059669" stop-opacity="0.32"/>
-              <stop offset="100%" stop-color="#059669" stop-opacity="0.02"/>
-            </linearGradient>
-          </defs>
-          <!-- Horizontal gridlines -->
-          <line x1="20" y1="60" x2="980" y2="60" stroke="#E2E8F0" stroke-width="1.5" stroke-dasharray="6 6"/>
-          <line x1="20" y1="145" x2="980" y2="145" stroke="#E2E8F0" stroke-width="1.5" stroke-dasharray="6 6"/>
-          <line x1="20" y1="230" x2="980" y2="230" stroke="#E2E8F0" stroke-width="1.5" stroke-dasharray="6 6"/>
-          <line x1="20" y1="305" x2="980" y2="305" stroke="#94A3B8" stroke-width="2"/>
-
-          <!-- Red failure area + jagged line -->
-          <path d="M20,120 L95,88 L170,132 L245,62 L320,96 L395,54 L470,74 L470,305 L20,305 Z" fill="url(#redGrad)"/>
-          <path d="M20,120 L95,88 L170,132 L245,62 L320,96 L395,54 L470,74" fill="none" stroke="#E11D48" stroke-width="6" stroke-linejoin="round"/>
-
-          <!-- Vertical deploy cliff -->
-          <line x1="470" y1="18" x2="470" y2="305" stroke="#0F172A" stroke-width="3" stroke-dasharray="8 6"/>
-          <rect x="486" y="20" width="210" height="38" rx="9" fill="#0F172A"/>
-          <text x="591" y="44" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="16" font-weight="700" fill="#FEF08A">▼ FIX DEPLOYED</text>
-
-          <!-- Drop + Emerald stable baseline -->
-          <path d="M470,74 L515,274 L600,278 L700,276 L800,280 L900,278 L980,279 L980,305 L470,305 Z" fill="url(#greenGrad)"/>
-          <path d="M470,74 L515,274 L600,278 L700,276 L800,280 L900,278 L980,279" fill="none" stroke="#059669" stroke-width="6" stroke-linejoin="round"/>
-
-          <!-- Labels -->
-          <rect x="38" y="168" width="275" height="38" rx="9" fill="#FFE4E6" stroke="#E11D48" stroke-width="2"/>
-          <text x="175" y="192" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" font-weight="700" fill="#9F1239">${spec.before_badge}</text>
-
-          <rect x="678" y="216" width="275" height="38" rx="9" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
-          <text x="815" y="240" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" font-weight="700" fill="#065F46">${spec.after_badge}</text>
-        </svg>
-      </div>
-
-      <div class="stat-pair">
-        <div class="sp bad">
-          <div>
-            <div class="sp-lbl">BEFORE FIX</div>
-            <div class="sp-val" style="color:#BE123C;">${spec.before_badge}</div>
+    <div class="orb1"></div>
+    <div class="orb2"></div>
+    <div class="card glass-light">
+      <div>
+        <div class="hdr">
+          <div class="mac-dots">
+            <span class="mdot md-r"></span><span class="mdot md-y"></span><span class="mdot md-g"></span>
           </div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#9F1239;font-weight:700;">${spec.before_nodes[1]}</div>
+          <div class="tag">LIVE TELEMETRY · ${esc(spec.after_badge)}</div>
         </div>
-        <div class="sp good">
-          <div>
-            <div class="sp-lbl">AFTER FIX (${m0.label})</div>
-            <div class="sp-val" style="color:#047857;">${m0.value}</div>
-          </div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#065F46;font-weight:700;">${m1.label}: ${m1.value}</div>
+        <div class="hl">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
+        <div class="chart-box">
+          <svg viewBox="0 0 920 260" width="100%" height="${isWide ? '185' : '250'}" fill="none">
+            <line x1="0" y1="60" x2="920" y2="60" stroke="rgba(15,23,42,0.08)" stroke-dasharray="6 6"/>
+            <line x1="0" y1="140" x2="920" y2="140" stroke="rgba(15,23,42,0.08)" stroke-dasharray="6 6"/>
+            <line x1="0" y1="215" x2="920" y2="215" stroke="rgba(15,23,42,0.08)" stroke-dasharray="6 6"/>
+            <path d="M 16 112 L 84 68 L 152 104 L 222 44 L 292 86 L 364 38 L 430 62" stroke="#E11D48" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="452" y1="18" x2="452" y2="245" stroke="#0F172A" stroke-width="2" stroke-dasharray="6 6"/>
+            <rect x="358" y="8" width="188" height="32" rx="16" fill="#0F172A"/>
+            <text x="452" y="29" text-anchor="middle" fill="#FFFFFF" font-family="IBM Plex Mono, monospace" font-size="14" font-weight="700">▼ FIX DEPLOYED</text>
+            <path d="M 430 62 L 468 212 L 560 218 L 690 215 L 820 217 L 904 216" stroke="#059669" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="904" cy="216" r="9" fill="#059669"/>
+          </svg>
+        </div>
+        <div class="stats">
+          <div class="st"><div class="sv">${esc(m0.value)}</div><div class="sl">${esc(m0.label)}</div></div>
+          <div class="st"><div class="sv">${esc(m1.value)}</div><div class="sl">${esc(m1.label)}</div></div>
         </div>
       </div>
-    </div>
-
-    <div class="footer">
-      <div>${shorten(spec.after_points[0], 85)}</div>
-      <div>olventech.com</div>
+      <div class="ft">
+        ${seamlessLogo(30, '#091318', '#FFFFFF')}
+        <div class="ft-r">OLVENTECH.COM · VERIFIED TELEMETRY</div>
+      </div>
     </div>
   </body></html>`;
 }
 
 /**
- * GENRE 6 (cdc_hash_diff_funnel):
- * High-Contrast Editorial Magazine Split ("WHAT TEAMS BUILD vs. WHAT SURVIVES PROD")
- * Bold terracotta/obsidian half vs crisp cream paper half, <35 words, massive visual tension.
+ * GENRE 6 (cdc_hash_diff_funnel — SPLIT):
+ * Apple Keynote Twin Titanium Glass Showcase (Smoked Legacy Glass vs. Illuminated Production Glass)
  */
-function renderContrarianSplit(spec, p) {
+function renderMagazineSplit(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
+  const bPts = spec.before_points.slice(0, 3).map((x) => shorten(x, 76));
+  const aPts = spec.after_points.slice(0, 3).map((x) => shorten(x, 76));
   const m0 = spec.metrics[0];
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      font-family: 'Inter', sans-serif;
-      display: grid;
-      grid-template-columns: ${isWide ? '1fr 1fr' : '1fr'};
-      grid-template-rows: ${isWide ? '1fr' : '1fr 1fr'};
+      background:
+        radial-gradient(circle at 22% 24%, rgba(244, 63, 94, 0.20) 0%, transparent 46%),
+        radial-gradient(circle at 78% 76%, rgba(0, 82, 255, 0.16) 0%, transparent 48%),
+        linear-gradient(90deg, #07090E 0%, #07090E 50%, #F1EFEA 50%, #F1EFEA 100%);
+      padding: ${isWide ? '44px 58px' : '64px 54px'};
+      display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
-    .half {
-      padding: ${isWide ? '56px 58px' : '58px 66px'};
+    .grid {
+      position: relative; z-index: 3; flex: 1;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+    }
+    .slab {
+      border-radius: 36px; padding: ${isWide ? '38px 36px' : '54px 42px'};
       display: flex; flex-direction: column; justify-content: space-between;
-      position: relative;
     }
-    .half.dark {
-      background: linear-gradient(145deg, #1E130F 0%, #3A1A0E 100%);
-      color: #FFF7ED;
+    .slab-dark { color: #F4F4F5; }
+    .slab-light { color: #0A0D14; }
+    .lbl {
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 18px;
     }
-    .half.light {
-      background: #FFFBF5;
-      color: #1C1917;
+    .lbl-b { color: #FDA4AF; }
+    .lbl-g { color: #0052FF; }
+    .title {
+      font-size: ${isWide ? '32px' : '40px'}; font-weight: 850; line-height: 1.08;
+      letter-spacing: -0.04em; margin-bottom: ${isWide ? '24px' : '36px'};
     }
-    .kicker {
+    .strike { text-decoration: line-through; text-decoration-color: #F43F5E; text-decoration-thickness: 3px; opacity: 0.85; }
+    .pts { display: flex; flex-direction: column; gap: ${isWide ? '18px' : '26px'}; }
+    .pt { font-size: ${isWide ? '20px' : '23px'}; line-height: 1.38; font-weight: 500; }
+    .pt-d { color: #CBD5E1; padding-left: 16px; border-left: 2.5px solid rgba(244, 63, 94, 0.65); }
+    .pt-l { color: #1E293B; padding-left: 16px; border-left: 2.5px solid #0052FF; }
+    .badge {
+      padding: 12px 20px; border-radius: 16px; width: fit-content;
       font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
     }
-    .dark .kicker { color: #FB923C; }
-    .light .kicker { color: #059669; }
-    .big-claim {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '54px' : '64px'}; line-height: 1.04; font-weight: 800;
-      letter-spacing: -0.035em;
-    }
-    .dark .big-claim {
-      color: #FED7AA; text-decoration: line-through; text-decoration-color: #EA580C; text-decoration-thickness: 6px;
-    }
-    .light .big-claim { color: #0F172A; }
-    .sub-line {
-      font-size: ${isWide ? '22px' : '25px'}; line-height: 1.4; font-weight: 500; margin-top: 16px;
-    }
-    .dark .sub-line { color: #D6D3D1; }
-    .light .sub-line { color: #44403C; }
-    .pill-out {
-      align-self: flex-start;
-      font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 800;
-      padding: 12px 22px; border-radius: 12px;
-    }
-    .dark .pill-out { background: rgba(234,88,12,0.22); color: #FDBA74; border: 2px solid #EA580C; }
-    .light .pill-out { background: #059669; color: #FFFFFF; }
-    .vs-badge {
-      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-      width: 82px; height: 82px; border-radius: 50%;
-      background: #0F172A; color: #FFFFFF; border: 5px solid #FFFBF5;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 26px; font-weight: 800;
-      z-index: 10; box-shadow: 0 12px 30px rgba(0,0,0,0.35);
-    }
-    .brand-foot {
+    .b-bad { background: rgba(244, 63, 94, 0.16); color: #FDA4AF; border: 1px solid rgba(244, 63, 94, 0.35); }
+    .b-good { background: #0052FF; color: #FFFFFF; }
+    .ft {
+      position: relative; z-index: 3; margin-top: 24px;
       display: flex; justify-content: space-between; align-items: center;
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700; color: #57534E;
+      padding: 14px 28px; border-radius: 22px;
+      background: rgba(12, 15, 22, 0.88);
+      backdrop-filter: blur(30px);
+      border: 1px solid rgba(255,255,255,0.16);
+      color: #CBD5E1;
     }
+    .ft-r { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; letter-spacing: 0.08em; }
   </style></head><body>
-    <div class="vs-badge">VS</div>
-
-    <div class="half dark">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div class="kicker">✕ WHAT MOST TEAMS BUILD</div>
-        <div>${logoForDarkBg(30)}</div>
+    <div class="grid">
+      <div class="slab slab-dark glass-dark">
+        <div>
+          <div class="lbl lbl-b">✕ WHAT MOST TEAMS BUILD</div>
+          <div class="title strike">${esc(spec.before_title.replace(/^Before:\s*/i, ''))}</div>
+          <div class="pts">
+            ${bPts.map((pt) => `<div class="pt pt-d">${esc(pt)}</div>`).join('')}
+          </div>
+        </div>
+        <div class="badge b-bad">${esc(spec.before_badge)}</div>
       </div>
-      <div>
-        <div class="big-claim">${spec.before_title.replace(/^Before:\s*/i, '')}</div>
-        <div class="sub-line">${shorten(spec.before_points[0], 105)}</div>
+      <div class="slab slab-light glass-light">
+        <div>
+          <div class="lbl lbl-g">✓ WHAT SURVIVES PRODUCTION</div>
+          <div class="title">${esc(spec.after_title.replace(/^After:\s*/i, ''))}</div>
+          <div class="pts">
+            ${aPts.map((pt) => `<div class="pt pt-l">${esc(pt)}</div>`).join('')}
+          </div>
+        </div>
+        <div class="badge b-good">${esc(m0.value)} · ${esc(m0.label)}</div>
       </div>
-      <div class="pill-out">RESULT: ${spec.before_badge}</div>
     </div>
-
-    <div class="half light">
-      <div class="kicker">✓ WHAT SURVIVES PRODUCTION</div>
-      <div>
-        <div class="big-claim">${spec.after_title.replace(/^After:\s*/i, '')}</div>
-        <div class="sub-line">${spec.after_nodes.slice(1).join(' → ')}</div>
-      </div>
-      <div class="brand-foot">
-        <div class="pill-out">${m0.label}: ${m0.value}</div>
-        <div>olventech.com</div>
-      </div>
+    <div class="ft">
+      ${seamlessLogo(28, '#FFFFFF', '#0C0F16')}
+      <div class="ft-r">OLVENTECH.COM · NEW YORK</div>
     </div>
   </body></html>`;
 }
 
-function selectArchetype(spec) {
-  if (spec.visual_archetype && ARCHETYPES.includes(spec.visual_archetype)) {
-    return spec.visual_archetype;
-  }
-  const m = String(spec.doc_id || '').match(/\d+/);
-  const idx = m ? parseInt(m[0], 10) : 0;
-  return ARCHETYPES[idx % ARCHETYPES.length];
-}
-
-function buildHtml(spec, platform) {
-  const archetype = selectArchetype(spec);
-  switch (archetype) {
-    case 'editorial_light_blueprint':
-      return renderBillboardPoster(spec, platform);
-    case 'security_policy_shield_matrix':
-      return renderSlackIncidentStory(spec, platform);
-    case 'circuit_breaker_state_machine':
-      return renderWhiteboardSketch(spec, platform);
-    case 'split_latency_waterfall':
-      return renderGithubPrDiff(spec, platform);
-    case 'revenue_ledger_reconciliation':
-      return renderTelemetryCrashChart(spec, platform);
-    case 'cdc_hash_diff_funnel':
-    default:
-      return renderContrarianSplit(spec, platform);
+function buildHtmlForArchetype(spec, p) {
+  const arch = spec.visual_archetype || 'editorial_light_blueprint';
+  switch (arch) {
+    case 'editorial_light_blueprint': return renderBillboardPoster(spec, p);
+    case 'security_policy_shield_matrix': return renderSlackIncident(spec, p);
+    case 'circuit_breaker_state_machine': return renderWhiteboardDiagram(spec, p);
+    case 'split_latency_waterfall': return renderCodeDiffWindow(spec, p);
+    case 'revenue_ledger_reconciliation': return renderTelemetryCliff(spec, p);
+    case 'cdc_hash_diff_funnel': return renderMagazineSplit(spec, p);
+    default: return renderBillboardPoster(spec, p);
   }
 }
 
-async function main() {
-  const specPath = process.argv[2];
-  const outDir = process.argv[3];
+function detectChromeExecutable() {
+  for (const p of ['/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser']) {
+    if (fs.existsSync(p)) return p;
+  }
+  return undefined;
+}
+
+async function renderCaseStudy(specPath, outDir) {
+  const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
+  const arch = spec.visual_archetype || 'editorial_light_blueprint';
+  fs.mkdirSync(outDir, { recursive: true });
+
+  const execPath = detectChromeExecutable();
+  const browser = await chromium.launch({
+    headless: true,
+    ...(execPath ? { executablePath: execPath } : {}),
+    args: ['--no-sandbox', '--disable-dev-shm-usage']
+  });
+
+  try {
+    for (const p of PLATFORMS) {
+      // True 2x Retina rendering for razor-sharp Apple Glass refraction & typography
+      const context = await browser.newContext({
+        viewport: { width: p.width, height: p.height },
+        deviceScaleFactor: 2
+      });
+      const page = await context.newPage();
+      const html = buildHtmlForArchetype(spec, p);
+      await page.setContent(html, { waitUntil: 'load' });
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({
+        path: path.join(outDir, p.name),
+        type: 'png'
+      });
+      await context.close();
+      console.log(`Rendered ${p.name} [${arch}, 2x Retina ${p.width * 2}x${p.height * 2}] -> ${outDir}`);
+    }
+    fs.writeFileSync(
+      path.join(outDir, 'visual-metadata.json'),
+      JSON.stringify({
+        visual_archetype: arch,
+        style_system: 'apple-liquid-glass-2x-retina',
+        headline: spec.headline,
+        rendered_at: new Date().toISOString()
+      }, null, 2)
+    );
+  } finally {
+    await browser.close();
+  }
+}
+
+if (require.main === module) {
+  const [specPath, outDir] = process.argv.slice(2);
   if (!specPath || !outDir) {
     console.error('Usage: node render_case_study.js <spec.json> <outDir>');
     process.exit(1);
   }
-  const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
-  const chosenArchetype = selectArchetype(spec);
-  fs.mkdirSync(outDir, { recursive: true });
-  fs.writeFileSync(
-    path.join(outDir, 'visual-metadata.json'),
-    JSON.stringify({ visual_archetype: chosenArchetype, doc_id: spec.doc_id, headline: spec.headline }, null, 2)
-  );
-
-  const launchOpts = { args: ['--no-sandbox', '--disable-setuid-sandbox'] };
-  const chromeBin = ['/usr/bin/chromium', '/usr/bin/chromium-browser', '/usr/bin/google-chrome'].find((p) => fs.existsSync(p));
-  if (chromeBin) launchOpts.executablePath = chromeBin;
-  const browser = await chromium.launch(launchOpts);
-
-  for (const p of PLATFORMS) {
-    const context = await browser.newContext({
-      viewport: { width: p.width, height: p.height },
-      deviceScaleFactor: 2
-    });
-    const page = await context.newPage();
-    await page.setContent(buildHtml(spec, p), { waitUntil: 'load' });
-    await page.evaluate(() => document.fonts.ready);
-    const outPath = path.join(outDir, p.name);
-    await page.screenshot({ path: outPath, type: 'png' });
-    await context.close();
-    console.log(`Rendered ${outPath} [archetype=${chosenArchetype}] (${p.width * 2}x${p.height * 2})`);
-  }
-
-  await browser.close();
+  renderCaseStudy(specPath, outDir).catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+module.exports = { renderCaseStudy, ARCHETYPES };
