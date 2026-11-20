@@ -36,11 +36,13 @@ function seamlessLogo(h, inkHex, cutoutHex) {
   return styled.replace(/<svg\b([^>]*)>/, `<svg $1 style="height:${h}px; width:auto; display:block;">`);
 }
 
+const { execFileSync } = require('child_process');
+
 const PLATFORMS = [
-  { name: 'linkedin.png', width: 1350, height: 1350, layout: 'square' },
-  { name: 'instagram.png', width: 1200, height: 1500, layout: 'portrait' },
-  { name: 'x.png', width: 1600, height: 900, layout: 'landscape' },
-  { name: 'facebook.png', width: 1536, height: 1024, layout: 'landscape-tall' }
+  { name: 'linkedin.png', width: 1350, height: 1350, targetW: 1200, targetH: 1200, layout: 'square' },
+  { name: 'instagram.png', width: 1200, height: 1500, targetW: 1080, targetH: 1350, layout: 'portrait' },
+  { name: 'x.png', width: 1600, height: 900, targetW: 1600, targetH: 900, layout: 'landscape' },
+  { name: 'facebook.png', width: 1536, height: 1024, targetW: 1536, targetH: 1024, layout: 'landscape-tall' }
 ];
 
 const ARCHETYPES = [
@@ -65,6 +67,9 @@ function shorten(s, maxLen) {
   if (clean.length <= maxLen) return clean;
   return clean.slice(0, maxLen).replace(/\s+\S*$/, '') + '.';
 }
+
+// Ultra-fine monochrome micro-grain SVG eliminates 8-bit JPEG banding rings on Instagram/LinkedIn/X
+const GRAIN_SVG_URI = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.032'/%3E%3C/svg%3E";
 
 function baseFontsCss() {
   const fJakarta = b64Font('PlusJakartaSans.woff2');
@@ -92,31 +97,39 @@ function baseFontsCss() {
       text-rendering: geometricPrecision;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
     }
+    body::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("${GRAIN_SVG_URI}");
+      background-repeat: repeat;
+      pointer-events: none;
+      z-index: 99;
+    }
     .mac-dots { display: flex; gap: 10px; align-items: center; }
     .mdot { width: 14px; height: 14px; border-radius: 50%; }
     .md-r { background: #FF5F57; box-shadow: inset 0 1px 1px rgba(255,255,255,0.45); }
     .md-y { background: #FEBC2E; box-shadow: inset 0 1px 1px rgba(255,255,255,0.45); }
     .md-g { background: #28C840; box-shadow: inset 0 1px 1px rgba(255,255,255,0.45); }
     .glass-light {
-      background: linear-gradient(155deg, rgba(255,255,255,0.84) 0%, rgba(255,255,255,0.50) 100%);
-      backdrop-filter: blur(44px) saturate(195%);
-      -webkit-backdrop-filter: blur(44px) saturate(195%);
-      border: 1.5px solid rgba(255,255,255,0.90);
+      background: linear-gradient(155deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.64) 100%);
+      backdrop-filter: blur(36px) saturate(165%);
+      -webkit-backdrop-filter: blur(36px) saturate(165%);
+      border: 1.5px solid rgba(255,255,255,0.92);
       box-shadow:
-        0 42px 96px -24px rgba(15, 23, 42, 0.16),
-        0 14px 32px -10px rgba(15, 23, 42, 0.08),
+        0 38px 86px -24px rgba(15, 23, 42, 0.14),
+        0 12px 28px -10px rgba(15, 23, 42, 0.07),
         inset 0 2px 0 rgba(255,255,255,0.98),
         inset 0 -1px 0 rgba(15,23,42,0.05);
     }
     .glass-dark {
-      background: linear-gradient(155deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.035) 100%);
-      backdrop-filter: blur(44px) saturate(190%);
-      -webkit-backdrop-filter: blur(44px) saturate(190%);
-      border: 1.5px solid rgba(255,255,255,0.18);
+      background: linear-gradient(155deg, rgba(255,255,255,0.095) 0%, rgba(255,255,255,0.032) 100%);
+      backdrop-filter: blur(36px) saturate(150%);
+      -webkit-backdrop-filter: blur(36px) saturate(150%);
+      border: 1.5px solid rgba(255,255,255,0.17);
       box-shadow:
-        0 48px 110px -22px rgba(0, 0, 0, 0.72),
-        0 16px 36px -10px rgba(0, 0, 0, 0.45),
-        inset 0 1.5px 0 rgba(255,255,255,0.30),
+        0 44px 100px -22px rgba(0, 0, 0, 0.72),
+        0 14px 32px -10px rgba(0, 0, 0, 0.44),
+        inset 0 1.5px 0 rgba(255,255,255,0.28),
         inset 0 -1px 0 rgba(255,255,255,0.04);
     }
   `;
@@ -263,16 +276,16 @@ function renderSlackIncident(spec, p) {
       position: relative; overflow: hidden;
     }
     .orb1 {
-      position: absolute; width: 700px; height: 700px; border-radius: 50%;
-      top: -180px; left: -120px;
-      background: radial-gradient(circle, rgba(244, 63, 94, 0.22) 0%, transparent 68%);
-      filter: blur(60px);
+      position: absolute; width: 620px; height: 620px; border-radius: 50%;
+      top: -220px; left: -140px;
+      background: radial-gradient(circle, rgba(226, 232, 240, 0.11) 0%, transparent 66%);
+      filter: blur(48px);
     }
     .orb2 {
-      position: absolute; width: 740px; height: 740px; border-radius: 50%;
-      bottom: -220px; right: -120px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.24) 0%, rgba(59, 130, 246, 0.12) 48%, transparent 72%);
-      filter: blur(60px);
+      position: absolute; width: 680px; height: 680px; border-radius: 50%;
+      bottom: -240px; right: -140px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.14) 0%, rgba(148, 163, 184, 0.06) 48%, transparent 70%);
+      filter: blur(52px);
     }
     .window {
       position: relative; z-index: 3; flex: 1;
@@ -723,8 +736,8 @@ function renderTelemetryCliff(spec, p) {
  */
 function renderMagazineSplit(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
-  const bPts = spec.before_points.slice(0, 3).map((x) => shorten(x, 76));
-  const aPts = spec.after_points.slice(0, 3).map((x) => shorten(x, 76));
+  const bPts = spec.before_points.slice(0, 3).map((x) => shorten(x, 145));
+  const aPts = spec.after_points.slice(0, 3).map((x) => shorten(x, 145));
   const m0 = spec.metrics[0];
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
@@ -732,9 +745,9 @@ function renderMagazineSplit(spec, p) {
     body {
       width: ${p.width}px; height: ${p.height}px;
       background:
-        radial-gradient(circle at 22% 24%, rgba(244, 63, 94, 0.20) 0%, transparent 46%),
-        radial-gradient(circle at 78% 76%, rgba(0, 82, 255, 0.16) 0%, transparent 48%),
-        linear-gradient(90deg, #07090E 0%, #07090E 50%, #F1EFEA 50%, #F1EFEA 100%);
+        radial-gradient(circle at 22% 18%, rgba(226, 232, 240, 0.08) 0%, transparent 44%),
+        radial-gradient(circle at 78% 82%, rgba(0, 82, 255, 0.09) 0%, transparent 46%),
+        linear-gradient(90deg, #090B10 0%, #090B10 50%, #F1EFEA 50%, #F1EFEA 100%);
       padding: ${isWide ? '44px 58px' : '64px 54px'};
       display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
@@ -844,7 +857,7 @@ async function renderCaseStudy(specPath, outDir) {
 
   try {
     for (const p of PLATFORMS) {
-      // True 2x Retina rendering for razor-sharp Apple Glass refraction & typography
+      // 2x supersampled render -> exact native platform pixel grid via Lanczos (prevents IG/LI/FB downscale blur!)
       const context = await browser.newContext({
         viewport: { width: p.width, height: p.height },
         deviceScaleFactor: 2
@@ -853,18 +866,23 @@ async function renderCaseStudy(specPath, outDir) {
       const html = buildHtmlForArchetype(spec, p);
       await page.setContent(html, { waitUntil: 'load' });
       await page.evaluate(() => document.fonts.ready);
-      await page.screenshot({
-        path: path.join(outDir, p.name),
-        type: 'png'
-      });
+      const outPath = path.join(outDir, p.name);
+      await page.screenshot({ path: outPath, type: 'png' });
       await context.close();
-      console.log(`Rendered ${p.name} [${arch}, 2x Retina ${p.width * 2}x${p.height * 2}] -> ${outDir}`);
+
+      const tw = p.targetW || p.width;
+      const th = p.targetH || p.height;
+      execFileSync('python3', [
+        '-c',
+        `from PIL import Image, ImageFilter; im = Image.open(${JSON.stringify(outPath)}).convert("RGB").resize((${tw}, ${th}), Image.Resampling.LANCZOS).filter(ImageFilter.UnsharpMask(radius=0.8, percent=55, threshold=2)); im.save(${JSON.stringify(outPath)}, format="PNG", optimize=True)`
+      ]);
+      console.log(`Rendered ${p.name} [${arch}, 2x supersampled -> native ${tw}x${th}] -> ${outDir}`);
     }
     fs.writeFileSync(
       path.join(outDir, 'visual-metadata.json'),
       JSON.stringify({
         visual_archetype: arch,
-        style_system: 'apple-liquid-glass-2x-retina',
+        style_system: 'apple-liquid-glass-native-supersampled',
         headline: spec.headline,
         rendered_at: new Date().toISOString()
       }, null, 2)
