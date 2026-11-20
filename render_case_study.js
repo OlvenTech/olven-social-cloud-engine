@@ -46,12 +46,14 @@ const PLATFORMS = [
 ];
 
 const ARCHETYPES = [
-  'editorial_light_blueprint',
-  'security_policy_shield_matrix',
-  'circuit_breaker_state_machine',
+  'manhattan_swiss_poster',
   'split_latency_waterfall',
+  'iphone_keynote_hardware',
+  'security_policy_shield_matrix',
+  'editorial_light_blueprint',
+  'cdc_hash_diff_funnel',
   'revenue_ledger_reconciliation',
-  'cdc_hash_diff_funnel'
+  'circuit_breaker_state_machine'
 ];
 
 function stripHtml(s) {
@@ -823,16 +825,257 @@ function renderMagazineSplit(spec, p) {
   </body></html>`;
 }
 
+/**
+ * GENRE 7 (manhattan_swiss_poster — FULL-BLEED INTERNATIONAL KLEIN COBALT):
+ * Pentagram / Vignelli Manhattan Gallery Print Poster (zero generic SaaS card box)
+ */
+function renderManhattanSwissPoster(spec, p) {
+  const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
+  const m0 = spec.metrics[0];
+  const m1 = spec.metrics[1];
+  const m2 = spec.metrics[2] || m1;
+  const heroMetric = [m0, m1, m2].find((m) => String(m.value).includes('$') || String(m.value).includes('%')) || m0;
+  const rest = [m0, m1, m2].filter((m) => m !== heroMetric);
+  const sA = rest[0] || m1;
+  const sB = rest[1] || m2;
+
+  return `<!doctype html><html><head><meta charset="utf-8"><style>
+    ${baseFontsCss()}
+    body {
+      width: ${p.width}px; height: ${p.height}px; position: relative; overflow: hidden;
+      background: radial-gradient(ellipse 95% 75% at 24% 18%, #1539FF 0%, #0A22CC 48%, #040B46 100%);
+      color: #FFFFFF;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: ${isWide ? '44px 64px 40px' : '58px 62px 48px'};
+    }
+    .grid-frame {
+      position: absolute; inset: ${isWide ? '22px 28px' : '28px'};
+      border: 1.5px solid rgba(255,255,255,0.16); border-radius: 26px; pointer-events: none;
+    }
+    .ghost-ny {
+      position: absolute; top: ${isWide ? '-26px' : '20px'}; right: ${isWide ? '40px' : '34px'};
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 850;
+      font-size: ${isWide ? '310px' : '380px'}; line-height: 0.85; letter-spacing: -0.07em;
+      color: rgba(255,255,255,0.065); pointer-events: none;
+    }
+    .top {
+      position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: ${isWide ? '18px' : '24px'}; border-bottom: 1.5px solid rgba(255,255,255,0.18);
+      font-family: 'IBM Plex Mono', monospace; font-size: ${isWide ? '14px' : '16px'}; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.82);
+    }
+    .pill-lime {
+      background: #B8FF3B; color: #070A12; padding: 8px 18px; border-radius: 999px;
+      font-weight: 800; letter-spacing: 0.1em;
+    }
+    .main {
+      position: relative; z-index: 2; flex: 1;
+      display: flex; ${isWide ? 'flex-direction: row; align-items: center; gap: 56px;' : 'flex-direction: column; justify-content: center; gap: 36px;'}
+      padding: ${isWide ? '18px 0' : '24px 0'};
+    }
+    .left { flex: 1.25; }
+    .hero-val {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 850;
+      font-size: ${isWide ? '118px' : (String(heroMetric.value).length > 6 ? '124px' : '148px')};
+      line-height: 0.92; letter-spacing: -0.055em; color: #B8FF3B;
+      font-variant-numeric: tabular-nums; margin-bottom: ${isWide ? '16px' : '24px'};
+    }
+    .hl {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;
+      font-size: ${isWide ? '44px' : '54px'}; line-height: 1.08; letter-spacing: -0.04em;
+      color: #FFFFFF; max-width: ${isWide ? '780px' : '100%'};
+    }
+    .sub {
+      margin-top: ${isWide ? '16px' : '22px'}; font-size: ${isWide ? '21px' : '24px'}; line-height: 1.42;
+      color: rgba(255,255,255,0.78); font-weight: 500; max-width: ${isWide ? '740px' : '96%'};
+    }
+    .right {
+      flex: 0.85; display: flex; flex-direction: column; gap: 18px;
+    }
+    .stat-row {
+      display: grid; grid-template-columns: ${isWide ? '1fr' : '1fr 1fr'}; gap: 18px;
+    }
+    .stat-box {
+      padding: ${isWide ? '22px 26px' : '26px 30px'}; border-radius: 24px;
+      background: rgba(6, 12, 42, 0.56); border: 1.5px solid rgba(255,255,255,0.22);
+      box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.28);
+    }
+    .sv { font-size: ${isWide ? '40px' : '46px'}; font-weight: 850; letter-spacing: -0.04em; color: #FFFFFF; font-variant-numeric: tabular-nums; }
+    .sl { margin-top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; letter-spacing: 0.1em; color: #B8FF3B; text-transform: uppercase; }
+    .flow {
+      padding: 18px 24px; border-radius: 20px; background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      font-family: 'IBM Plex Mono', monospace; font-size: ${isWide ? '15px' : '17px'}; font-weight: 600;
+      color: rgba(255,255,255,0.92); display: flex; align-items: center; gap: 12px;
+    }
+    .ft {
+      position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center;
+      padding-top: ${isWide ? '18px' : '22px'}; border-top: 1.5px solid rgba(255,255,255,0.18);
+    }
+    .ft-r { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700; letter-spacing: 0.12em; color: rgba(255,255,255,0.82); }
+  </style></head><body>
+    <div class="grid-frame"></div>
+    <div class="ghost-ny">NY</div>
+    <div class="top">
+      <span>${esc(spec.eyebrow)}</span>
+      <span class="pill-lime">${esc(heroMetric.label)}</span>
+    </div>
+    <div class="main">
+      <div class="left">
+        <div class="hero-val">${esc(heroMetric.value)}</div>
+        <div class="hl">${esc(spec.headline)}</div>
+        <div class="sub">${esc(shorten(spec.subhead, isWide ? 140 : 175))}</div>
+      </div>
+      <div class="right">
+        <div class="stat-row">
+          <div class="stat-box"><div class="sv">${esc(sA.value)}</div><div class="sl">${esc(sA.label)}</div></div>
+          <div class="stat-box"><div class="sv">${esc(sB.value)}</div><div class="sl">${esc(sB.label)}</div></div>
+        </div>
+        <div class="flow"><span style="color:#B8FF3B;">→</span><span>${esc((spec.after_nodes || []).slice(0, 3).join(' · '))}</span></div>
+      </div>
+    </div>
+    <div class="ft">
+      ${seamlessLogo(30, '#FFFFFF', '#06125E')}
+      <div class="ft-r">OLVENTECH.COM · MANHATTAN, NY</div>
+    </div>
+  </body></html>`;
+}
+
+/**
+ * GENRE 8 (iphone_keynote_hardware — CUPERTINO STUDIO HARDWARE):
+ * Sculpted Apple iPhone 16 Pro Titanium Bezel over warm studio porcelain dome
+ */
+function renderIphoneKeynoteHardware(spec, p) {
+  const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
+  const m0 = spec.metrics[0];
+  const m1 = spec.metrics[1];
+  const bNodes = (spec.before_nodes || []).slice(0, 2);
+  const aNodes = (spec.after_nodes || []).slice(0, 3);
+
+  return `<!doctype html><html><head><meta charset="utf-8"><style>
+    ${baseFontsCss()}
+    body {
+      width: ${p.width}px; height: ${p.height}px; position: relative; overflow: hidden;
+      background: radial-gradient(ellipse 88% 72% at 50% 24%, #FFFFFF 0%, #F4F1EA 52%, #E5E0D5 100%);
+      color: #090C14;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: ${isWide ? '40px 60px 34px' : '50px 56px 42px'};
+    }
+    .top {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
+      letter-spacing: 0.12em; color: #565E6E; text-transform: uppercase;
+    }
+    .badge-ok {
+      padding: 8px 18px; border-radius: 999px; background: #090C14; color: #34D399;
+      font-weight: 700; letter-spacing: 0.08em;
+    }
+    .stage {
+      flex: 1; display: flex;
+      ${isWide ? 'flex-direction: row; align-items: center; gap: 58px;' : 'flex-direction: column; justify-content: space-between; gap: 28px;'}
+      padding: ${isWide ? '14px 0' : '26px 0 14px'};
+    }
+    .copy { flex: ${isWide ? '1.05' : '0 0 auto'}; }
+    .hl {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 850;
+      font-size: ${isWide ? '46px' : '50px'}; line-height: 1.08; letter-spacing: -0.042em;
+      color: #090C14;
+    }
+    .sub {
+      margin-top: 16px; font-size: ${isWide ? '20px' : '22px'}; line-height: 1.42;
+      color: #4D5566; font-weight: 500;
+    }
+    .kpis {
+      margin-top: ${isWide ? '26px' : '24px'}; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    .kpi {
+      padding: 20px 24px; border-radius: 22px;
+      background: rgba(255,255,255,0.88); border: 1.5px solid rgba(255,255,255,1);
+      box-shadow: 0 22px 44px -16px rgba(15,23,42,0.14);
+    }
+    .kv { font-size: ${isWide ? '38px' : '42px'}; font-weight: 850; letter-spacing: -0.04em; color: #0052FF; font-variant-numeric: tabular-nums; }
+    .kl { margin-top: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700; color: #5B6373; letter-spacing: 0.08em; text-transform: uppercase; }
+    .phone-wrap { flex: ${isWide ? '0.95' : '1'}; display: flex; justify-content: center; align-items: center; }
+    .iphone {
+      width: ${isWide ? '440px' : '510px'}; border-radius: ${isWide ? '58px' : '74px'}; padding: ${isWide ? '14px' : '18px'};
+      background: linear-gradient(145deg, #4B5262 0%, #171A21 50%, #303645 100%);
+      box-shadow: 0 44px 86px -18px rgba(15,23,42,0.42), inset 0 2px 3px rgba(255,255,255,0.5);
+    }
+    .screen {
+      border-radius: ${isWide ? '46px' : '58px'}; background: linear-gradient(180deg, #0D111A 0%, #07090F 100%);
+      padding: ${isWide ? '22px 24px 18px' : '28px 32px 22px'}; color: #F8FAFC;
+      border: 1px solid rgba(255,255,255,0.14);
+      min-height: ${isWide ? '520px' : '640px'};
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .sbar { display:flex; align-items:center; justify-content:space-between; margin-bottom: ${isWide ? '18px' : '24px'}; font-size: 14px; font-weight: 700; }
+    .island { width: ${isWide ? '122px' : '150px'}; height: ${isWide ? '24px' : '28px'}; border-radius: 999px; background: #000; display:flex; align-items:center; justify-content:flex-end; padding-right: 9px; border: 1px solid rgba(255,255,255,0.12); }
+    .cam { width: 9px; height: 9px; border-radius: 50%; background: radial-gradient(circle,#2563EB 20%,#090D1A 75%); }
+    .ncard {
+      border-radius: 20px; padding: ${isWide ? '16px 18px' : '18px 22px'}; margin-bottom: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .nbad { background: rgba(244,63,94,0.13); border-color: rgba(244,63,94,0.34); }
+    .ngood { background: rgba(16,185,129,0.13); border-color: rgba(16,185,129,0.38); }
+    .nh { display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; letter-spacing:0.08em; margin-bottom:8px; }
+    .nt { font-size: ${isWide ? '17px' : '20px'}; font-weight: 750; line-height: 1.28; color: #FFFFFF; }
+    .nd { margin-top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: ${isWide ? '13px' : '14px'}; color: rgba(255,255,255,0.74); }
+    .hind { width: 140px; height: 5px; border-radius: 999px; background: rgba(255,255,255,0.34); margin: 14px auto 0; }
+    .ft {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 18px; border-top: 1px solid rgba(10,14,26,0.1);
+    }
+    .ft-r { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; letter-spacing: 0.1em; color: #565E6E; }
+  </style></head><body>
+    <div class="top">
+      <span>${esc(spec.eyebrow)}</span>
+      <span class="badge-ok">● ${esc(spec.after_badge || 'PRODUCTION VERIFIED')}</span>
+    </div>
+    <div class="stage">
+      <div class="copy">
+        <div class="hl">${esc(spec.headline)}</div>
+        <div class="sub">${esc(shorten(spec.subhead, isWide ? 140 : 165))}</div>
+        <div class="kpis">
+          <div class="kpi"><div class="kv">${esc(m0.value)}</div><div class="kl">${esc(m0.label)}</div></div>
+          <div class="kpi"><div class="kv" style="color:#059669;">${esc(m1.value)}</div><div class="kl">${esc(m1.label)}</div></div>
+        </div>
+      </div>
+      <div class="phone-wrap">
+        <div class="iphone"><div class="screen">
+          <div class="sbar"><span>9:41</span><div class="island"><span class="cam"></span></div><span>5G</span></div>
+          <div class="ncard nbad">
+            <div class="nh" style="color:#FDA4AF;"><span>● LEGACY ALERT</span><span>BEFORE</span></div>
+            <div class="nt">${esc(spec.before_badge || spec.before_title)}</div>
+            <div class="nd">${esc(bNodes.join(' → '))}</div>
+          </div>
+          <div class="ncard ngood">
+            <div class="nh" style="color:#6EE7B7;"><span>✓ OLVEN ARCHITECTURE</span><span>LIVE</span></div>
+            <div class="nt">${esc(spec.after_title.replace(/^After:\s*/i, ''))}</div>
+            <div class="nd">${esc(aNodes.join(' → '))}</div>
+          </div>
+          <div class="hind"></div>
+        </div></div>
+      </div>
+    </div>
+    <div class="ft">
+      ${seamlessLogo(28, '#090C14', '#EAE6DC')}
+      <div class="ft-r">OLVENTECH.COM · MANHATTAN, NY</div>
+    </div>
+  </body></html>`;
+}
+
 function buildHtmlForArchetype(spec, p) {
-  const arch = spec.visual_archetype || 'editorial_light_blueprint';
+  const arch = spec.visual_archetype || 'manhattan_swiss_poster';
   switch (arch) {
+    case 'manhattan_swiss_poster': return renderManhattanSwissPoster(spec, p);
+    case 'iphone_keynote_hardware': return renderIphoneKeynoteHardware(spec, p);
     case 'editorial_light_blueprint': return renderBillboardPoster(spec, p);
     case 'security_policy_shield_matrix': return renderSlackIncident(spec, p);
     case 'circuit_breaker_state_machine': return renderWhiteboardDiagram(spec, p);
     case 'split_latency_waterfall': return renderCodeDiffWindow(spec, p);
     case 'revenue_ledger_reconciliation': return renderTelemetryCliff(spec, p);
     case 'cdc_hash_diff_funnel': return renderMagazineSplit(spec, p);
-    default: return renderBillboardPoster(spec, p);
+    default: return renderManhattanSwissPoster(spec, p);
   }
 }
 
@@ -857,13 +1100,73 @@ function detectPhotoCraftCli() {
   return null;
 }
 
+function detectLightCraftCli() {
+  const candidates = [
+    process.env.LIGHTCRAFT_CLI,
+    '/home/antigravity/.local/artcraft/lightcraft/lightcraft-0.21.1-linux-x86_64/bin/lightcraft-cli',
+    path.join(process.env.HOME || '', '.local/artcraft/lightcraft/lightcraft-0.21.1-linux-x86_64/bin/lightcraft-cli'),
+    '/usr/local/bin/lightcraft-cli',
+    '/usr/bin/lightcraft-cli',
+  ].filter(Boolean);
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
+// Bespoke per-archetype ArtCraft LightCraft (RAW tonal color grade) + PhotoCraft (micro-sharpen & grain) recipes
+const EDITORIAL_GRADES = {
+  manhattan_swiss_poster: {
+    name: 'Klein Print Vivid',
+    lc: ['light.contrast=8', 'color.vibrance=14', 'light.whites=4'],
+    pc: { sharpen: 48, contrast: 3, vibrance: 8, noise: 0.70 },
+  },
+  iphone_keynote_hardware: {
+    name: 'Cupertino Studio Porcelain',
+    lc: ['light.contrast=6', 'light.highlights=-6', 'light.shadows=6', 'color.vibrance=8'],
+    pc: { sharpen: 46, contrast: 3, vibrance: 6, noise: 0.55 },
+  },
+  editorial_light_blueprint: {
+    name: 'Bright Editorial Paper',
+    lc: ['light.contrast=5', 'light.whites=5', 'color.vibrance=10'],
+    pc: { sharpen: 44, contrast: 3, vibrance: 8, noise: 0.50 },
+  },
+  security_policy_shield_matrix: {
+    name: 'Titanium Slate Dark',
+    lc: ['light.contrast=7', 'light.shadows=4', 'light.blacks=-4', 'color.vibrance=10'],
+    pc: { sharpen: 46, contrast: 4, vibrance: 10, noise: 0.70 },
+  },
+  circuit_breaker_state_machine: {
+    name: 'Crisp Architectural Blueprint',
+    lc: ['light.contrast=6', 'color.vibrance=12', 'light.highlights=-4'],
+    pc: { sharpen: 48, contrast: 4, vibrance: 8, noise: 0.50 },
+  },
+  split_latency_waterfall: {
+    name: 'Pro Display XDR Blue Hour',
+    lc: ['light.contrast=8', 'light.blacks=-5', 'color.vibrance=14'],
+    pc: { sharpen: 46, contrast: 4, vibrance: 10, noise: 0.65 },
+  },
+  revenue_ledger_reconciliation: {
+    name: 'Warm Manhattan Magazine',
+    lc: ['wb.temp=6700', 'light.contrast=5', 'color.vibrance=10'],
+    pc: { sharpen: 44, contrast: 3, vibrance: 8, noise: 0.55 },
+  },
+  cdc_hash_diff_funnel: {
+    name: 'SoHo Matte Contrast',
+    lc: ['light.contrast=9', 'light.shadows=4', 'color.vibrance=10'],
+    pc: { sharpen: 46, contrast: 4, vibrance: 9, noise: 0.65 },
+  },
+};
+
 async function renderCaseStudy(specPath, outDir) {
   const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
-  const arch = spec.visual_archetype || 'editorial_light_blueprint';
+  const arch = spec.visual_archetype || 'manhattan_swiss_poster';
+  const grade = EDITORIAL_GRADES[arch] || EDITORIAL_GRADES.manhattan_swiss_poster;
   fs.mkdirSync(outDir, { recursive: true });
 
   const execPath = detectChromeExecutable();
   const pcCli = detectPhotoCraftCli();
+  const lcCli = detectLightCraftCli();
   const browser = await chromium.launch({
     headless: true,
     ...(execPath ? { executablePath: execPath } : {}),
@@ -872,7 +1175,7 @@ async function renderCaseStudy(specPath, outDir) {
 
   try {
     for (const p of PLATFORMS) {
-      // 3x Super-Retina supersampled render -> exact native platform pixel grid via Lanczos -> ArtCraft PhotoCraft studio master
+      // 3x Super-Retina render -> Lanczos native pixel grid -> ArtCraft LightCraft RAW color grade -> PhotoCraft studio sharpen/dither
       const context = await browser.newContext({
         viewport: { width: p.width, height: p.height },
         deviceScaleFactor: 3
@@ -892,23 +1195,41 @@ async function renderCaseStudy(specPath, outDir) {
         `from PIL import Image; im = Image.open(${JSON.stringify(outPath)}).convert("RGB").resize((${tw}, ${th}), Image.Resampling.LANCZOS); im.save(${JSON.stringify(outPath)}, format="PNG", optimize=True)`
       ]);
 
+      const toolsUsed = [];
+      if (lcCli) {
+        const tmpLc = outPath.replace(/\.png$/, '._lc.png');
+        const lcArgs = ['render', outPath, '-o', tmpLc];
+        for (const kv of grade.lc) lcArgs.push('--set', kv);
+        execFileSync(lcCli, lcArgs, { stdio: 'pipe' });
+        if (fs.existsSync(tmpLc)) {
+          fs.renameSync(tmpLc, outPath);
+          toolsUsed.push('LightCraft');
+        }
+      }
+
       if (pcCli) {
         execFileSync(pcCli, [
           'run', outPath,
-          '--cmd', 'filter.sharpen.smartSharpen', '--params', '{"amount":46,"radius":0.65,"reduceNoise":14}',
-          '--cmd', 'image.adjustments.brightnessContrast', '--params', '{"brightness":0,"contrast":4}',
-          '--cmd', 'image.adjustments.vibrance', '--params', '{"vibrance":10}',
-          '--cmd', 'filter.noise.addNoise', '--params', '{"amount":0.65,"monochromatic":true}',
+          '--cmd', 'filter.sharpen.smartSharpen', '--params', JSON.stringify({ amount: grade.pc.sharpen, radius: 0.65, reduceNoise: 14 }),
+          '--cmd', 'image.adjustments.brightnessContrast', '--params', JSON.stringify({ brightness: 0, contrast: grade.pc.contrast }),
+          '--cmd', 'image.adjustments.vibrance', '--params', JSON.stringify({ vibrance: grade.pc.vibrance }),
+          '--cmd', 'filter.noise.addNoise', '--params', JSON.stringify({ amount: grade.pc.noise, monochromatic: true }),
           '--out', outPath, '--in-place'
         ], { stdio: 'pipe' });
+        toolsUsed.push('PhotoCraft');
       }
-      console.log(`Rendered ${p.name} [${arch}, 3x->${tw}x${th}${pcCli ? ' + PhotoCraft studio master' : ''}] -> ${outDir}`);
+
+      const tag = toolsUsed.length ? ` + ${toolsUsed.join('×')} [${grade.name}]` : '';
+      console.log(`Rendered ${p.name} [${arch}, 3x->${tw}x${th}${tag}] -> ${outDir}`);
     }
     fs.writeFileSync(
       path.join(outDir, 'visual-metadata.json'),
       JSON.stringify({
         visual_archetype: arch,
-        style_system: pcCli ? 'artcraft-photocraft-apple-liquid-glass' : 'apple-liquid-glass-native-supersampled',
+        grade_profile: grade.name,
+        style_system: (lcCli && pcCli)
+          ? 'artcraft-lightcraft-photocraft-manhattan-suite'
+          : (pcCli ? 'artcraft-photocraft-apple-liquid-glass' : 'apple-liquid-glass-native-supersampled'),
         headline: spec.headline,
         rendered_at: new Date().toISOString()
       }, null, 2)
