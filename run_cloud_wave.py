@@ -40,8 +40,7 @@ def load_cursor():
 
 def save_next_cursor(day_num: int, slot: str, seq_index: int, current_media_type: str):
     STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    # Automated Reels paused (images-only) until a new Silicon Valley video style is explicitly approved.
-    next_media_type = "image"
+    next_media_type = "image" if current_media_type.lower() == "video" else "video"
     if slot.lower() == "morning":
         next_cursor = {
             "day_num": day_num,
