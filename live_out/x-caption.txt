@@ -1,7 +1,8 @@
-Triggering NetSuite entries on Stripe charge.succeeded misses settled FX spreads and grouped payout fees.
+Relying on app-layer WHERE tenant_id filters fails Fortune 500 security reviews.
 
-We moved an 18.4k txn/mo pipeline to a Postgres payout.paid worker:
-- $0.00 bank variance
-- Close time cut from 6.5h to 12m
+We enforced Postgres FORCE RLS with transaction-scoped org claims across 44 tables:
+- 0 cross-tenant leak surface
+- <0.4ms query overhead
+- $420k ARR unblocked
 
 contact@olventech.com

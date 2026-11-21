@@ -1,7 +1,6 @@
-Finance teams shouldn't spend close week matching Stripe CSVs to NetSuite by hand.
+App-layer WHERE tenant_id filters are not an isolation boundary when selling to enterprise buyers.
 
-Triggering on charge.succeeded means your ERP never sees settled FX spreads or grouped payout fees.
-
-We rebuilt an 18.4k txn/mo pipeline to anchor on payout.paid + balance_transactions in Postgres before posting a single balanced NetSuite deposit.
-
-Result: $0.00 bank variance, 84% fewer ERP API calls, and close reconciliation cut from 6.5 hours to 12 minutes. (contact@olventech.com)
+We enforced Postgres FORCE RLS + transaction-scoped org claims across 44 tables:
+- 0 cross-tenant leak paths (even in raw SQL)
+- <0.4ms overhead
+- Unblocked a $420k enterprise deal in 11 days (contact@olventech.com)

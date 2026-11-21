@@ -1,0 +1,13 @@
+Relying on developers to remember a WHERE tenant_id clause on every endpoint will eventually fail a Fortune 500 security review.
+
+We recently stepped in for a B2B SaaS platform whose $420k enterprise deal stalled in security review. Their app ran on a shared Postgres schema where tenant isolation lived strictly inside ORM helper functions. Two raw SQL export jobs bypassed those helpers completely, and one missed filter on a reporting query nearly exposed records across organizations.
+
+How we hardened tenant isolation at Olven Tech:
+
+1. Transaction-scoped claims: Every API request sets SET LOCAL app.org_id inside the database transaction right after JWT verification, compatible with PgBouncer transaction pooling.
+2. Forced Postgres RLS: Enabled FORCE ROW LEVEL SECURITY across all 44 tenant tables so the database kernel rejects cross-tenant reads regardless of ORM or raw SQL bugs.
+3. Composite indexing + CI fuzzing: Added (org_id, id) indexes to keep overhead under 0.4ms and wired a CI integration suite that tries cross-org reads on every PR.
+
+Result: Zero cross-tenant exposure surface, sub-millisecond query overhead, and the $420k enterprise contract cleared security review in 11 days.
+
+If enterprise security questionnaires are slowing down your sales cycle, email contact@olventech.com.

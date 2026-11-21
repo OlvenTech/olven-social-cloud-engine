@@ -1,0 +1,5 @@
+Relying on developers to never miss a tenant_id filter in application code is a ticking clock for B2B SaaS teams selling upmarket.
+
+We moved a client's 44-table Postgres database to transaction-scoped Row-Level Security (FORCE RLS) with composite org indexes and automated cross-tenant CI tests. Overhead stayed under 0.4ms, and their $420k enterprise contract cleared security review in 11 days.
+
+Reach us at contact@olventech.com.

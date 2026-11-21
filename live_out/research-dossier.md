@@ -1,8 +1,8 @@
-# Olven Tech — Daily R&D, Visual Uniqueness & Algorithm Strategy Dossier (`Day 11 (Morning)`)
+# Olven Tech — Daily R&D, Visual Uniqueness & Algorithm Strategy Dossier (`Day 11 (Evening)`)
 
-- **R&D Execution Timestamp (PKT):** `2026-11-21 13:25:38 PKT`
-- **Selected Case Study:** `DAY 11 (MORNING) · STRIPE TO NETSUITE PAYOUT RECONCILIATION` — *Eliminating a 6-Hour Month-End Stripe to NetSuite Payout Drift*
-- **Assigned Visual Archetype:** `revenue_ledger_reconciliation` *(Verified distinct against preceding grid posts via 8x8 spatial RGB distance >= 22.0)*
+- **R&D Execution Timestamp (PKT):** `2026-11-21 19:00:44 PKT`
+- **Selected Case Study:** `DAY 11 (EVENING) · MULTI-TENANT POSTGRES RLS ISOLATION` — *Enforcing Zero-Leak Tenant Isolation at the Database Layer for SOC-2*
+- **Assigned Visual Archetype:** `manhattan_swiss_poster` *(Verified distinct against preceding grid posts via 8x8 spatial RGB distance >= 22.0)*
 - **Target Buyer Persona:** CTOs, VPs of Engineering, Heads of RevOps / Finance Ops, High-Volume Commerce Founders
 - **Conversion CTA:** `contact@olventech.com` (`https://olventech.com`)
 
@@ -11,12 +11,12 @@
 ## 1. Live Engineering & Market Signals Scanned Today
 
 ### Hacker News Front-Page Signals
-- **Levent Alpöge claims proof of the Generalized Riemann Hypothesis [pdf]** (2564 pts, 1773 comments) — https://alpo.ge/remark.pdf
-- **Hurried Announcement: Alessandro Masullo GRH** (1941 pts, 892 comments) — https://math216.wordpress.com/2026/11/20/hurried-announcement-alessandro-masullo-grh/
-- **Inkling 2 Mini** (921 pts, 172 comments) — https://thinkingmachines.ai/news/inkling-2-mini/
-- **Unforced Navier-Stokes Singularity and the Generalized Riemann Hypothesis** (418 pts, 171 comments) — https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/
-- **We promoted developers into architects without informing them** (402 pts, 229 comments) — https://manidoraisamy.com/developer-to-architect.html
-- **Language Models Can Rewrite Their Own Weights** (394 pts, 117 comments) — https://arxiv.org/abs/2611.21885
+- **Levent Alpöge claims proof of the Generalized Riemann Hypothesis [pdf]** (2734 pts, 1916 comments) — https://alpo.ge/remark.pdf
+- **Hurried Announcement: Alessandro Masullo GRH** (2228 pts, 1051 comments) — https://math216.wordpress.com/2026/11/20/hurried-announcement-alessandro-masullo-grh/
+- **Inkling 2 Mini** (1122 pts, 212 comments) — https://thinkingmachines.ai/news/inkling-2-mini/
+- **We promoted developers into architects without informing them** (489 pts, 271 comments) — https://manidoraisamy.com/developer-to-architect.html
+- **Unforced Navier-Stokes Singularity and the Generalized Riemann Hypothesis** (478 pts, 206 comments) — https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/
+- **Language Models Can Rewrite Their Own Weights** (435 pts, 127 comments) — https://arxiv.org/abs/2611.21885
 
 ### Live Infrastructure, Queue & ERP Operations Signals
 - Evaluated current production webhook, ERP, and database reliability signals.
@@ -32,11 +32,11 @@
 
 ## 2. Why This Architecture Topic & Visual Archetype Were Selected
 
-1. **Concrete Financial / Operational Pain (`4.2% MONTHLY DRIFT`):**
-   - Decision-makers do not hire agencies from generic "AI tips." They reach out when a post names the exact failure mode happening inside their stack right now (*Before: Per-Charge Webhook Zaps*).
-2. **Bespoke Visual Grid Contrast (`revenue_ledger_reconciliation`):**
-   - Rendered using the `revenue_ledger_reconciliation` visual layout so the Instagram and LinkedIn profile grids show immediate color, typography, and structural contrast against adjacent posts.
-3. **Named Production Primitives (`Stripe payout.paid, Balance Txn Cursor, Postgres Ledger, NetSuite Deposit Batch`):**
+1. **Concrete Financial / Operational Pain (`3 CROSS-TENANT AUDIT FLAGS`):**
+   - Decision-makers do not hire agencies from generic "AI tips." They reach out when a post names the exact failure mode happening inside their stack right now (*Before: App-Layer WHERE Clauses*).
+2. **Bespoke Visual Grid Contrast (`manhattan_swiss_poster`):**
+   - Rendered using the `manhattan_swiss_poster` visual layout so the Instagram and LinkedIn profile grids show immediate color, typography, and structural contrast against adjacent posts.
+3. **Named Production Primitives (`SET LOCAL app.org_id, Postgres RLS Policy, Forced Table Guard, Signed Audit Trail`):**
    - Naming real engineering mechanisms builds immediate authority with technical co-founders and senior engineers, driving high **Bookmark/Save** rates on LinkedIn, X, and Instagram.
-4. **Quantified Business Outcome (`MONTH-END CLOSE: 12 mins`, `LEDGER VARIANCE: $0.00`):**
+4. **Quantified Business Outcome (`ENTERPRISE ARR: $420k`, `LEAK SURFACE: 0 rows`):**
    - Every platform caption closes with verifiable operational metrics and a direct low-friction invite to `contact@olventech.com`.

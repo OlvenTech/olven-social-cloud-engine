@@ -1,7 +1,0 @@
-Finance teams shouldn't spend close week matching Stripe CSVs to NetSuite by hand.
-
-Triggering on charge.succeeded means your ERP never sees settled FX spreads or grouped payout fees.
-
-We rebuilt an 18.4k txn/mo pipeline to anchor on payout.paid + balance_transactions in Postgres before posting a single balanced NetSuite deposit.
-
-Result: $0.00 bank variance, 84% fewer ERP API calls, and close reconciliation cut from 6.5 hours to 12 minutes. (contact@olventech.com)

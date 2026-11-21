@@ -1,0 +1,6 @@
+App-layer WHERE tenant_id filters are not an isolation boundary when selling to enterprise buyers.
+
+We enforced Postgres FORCE RLS + transaction-scoped org claims across 44 tables:
+- 0 cross-tenant leak paths (even in raw SQL)
+- <0.4ms overhead
+- Unblocked a $420k enterprise deal in 11 days (contact@olventech.com)
