@@ -329,7 +329,31 @@ def build_spec_for_day(day_num, seq_index=None, slot="Evening"):
     else:
         spec = copy.deepcopy(CASE_NOTES[keys[(lookup_idx - 7) % len(keys)]])
     spec["doc_id"] = re.sub(r"CASE NOTE #\d+", f"DAY {day_num:02d} ({slot.upper()})", spec["doc_id"])
-    spec["visual_archetype"] = ARCHETYPE_ROTATION[(lookup_idx - 10) % len(ARCHETYPE_ROTATION)]
+    chosen_arch = ARCHETYPE_ROTATION[(lookup_idx - 10) % len(ARCHETYPE_ROTATION)]
+    # Proactively avoid any archetype used in the last 2 waves in ./history/ so Attempt 1 passes cleanly
+    hist_dir = BASE_DIR / "history"
+    if hist_dir.exists():
+        recent_archs = set()
+        def _hist_key(p: Path):
+            m = re.match(r"^day(\d+)(?:_(morning|evening))?$", p.name.lower())
+            return (int(m.group(1)), 0 if m.group(2) == "morning" else 1) if m else (0, 0)
+        hist_folders = sorted(
+            [p for p in hist_dir.glob("day*") if p.is_dir() and (p / "visual-metadata.json").exists()],
+            key=_hist_key,
+        )[-2:]
+        for hf in hist_folders:
+            try:
+                recent_archs.add(json.loads((hf / "visual-metadata.json").read_text(encoding="utf-8")).get("visual_archetype"))
+            except Exception:
+                pass
+        if chosen_arch in recent_archs:
+            start_i = ARCHETYPE_ROTATION.index(chosen_arch)
+            for offset in range(1, len(ARCHETYPE_ROTATION)):
+                cand = ARCHETYPE_ROTATION[(start_i + offset) % len(ARCHETYPE_ROTATION)]
+                if cand not in recent_archs:
+                    chosen_arch = cand
+                    break
+    spec["visual_archetype"] = chosen_arch
     return spec, signals
 
 
