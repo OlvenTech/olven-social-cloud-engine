@@ -21,6 +21,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: olven-wave-generator
+  cancel-in-progress: false
+
 jobs:
   generate-lint-stage-1hr-before:
     runs-on: ubuntu-latest
