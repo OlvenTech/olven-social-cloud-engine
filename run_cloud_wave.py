@@ -157,9 +157,13 @@ def main():
     now_dt = datetime.datetime.now(datetime.timezone.utc)
     now_utc = now_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
     v_tag = f"d{day_num}_{slot.lower()}_{int(now_dt.timestamp())}"
+    wave_slug = f"day{day_num}_{slot.lower()}"
+    wave_cdn_base = f"https://cdn.jsdelivr.net/gh/OlvenTech/olven-social-cloud-engine@main/history/{wave_slug}"
+    wave_raw_base = f"https://raw.githubusercontent.com/OlvenTech/olven-social-cloud-engine/main/history/{wave_slug}"
     hn_top = (signals.get("hn_frontpage") or [{"title": "Live B2B Systems Architecture"}])[0].get("title", "")
-    video_url = f"{REPO_CDN_BASE}/walkthrough-video.mp4?v={v_tag}" if media_type == "video" else ""
-    instagram_img_url = f"{REPO_RAW_BASE}/instagram.png?v={v_tag}"
+    # Immutable per-wave path guarantees jsDelivr NEVER serves a stale cached @main/live_out video!
+    video_url = f"{wave_cdn_base}/walkthrough-video.mp4" if media_type == "video" else ""
+    instagram_img_url = f"{wave_raw_base}/instagram.png?v={v_tag}"
     instagram_media_url = video_url if media_type == "video" else instagram_img_url
 
     manifest = {
@@ -171,12 +175,12 @@ def main():
         "generated_at_utc": now_utc,
         "visual_archetype": spec.get("visual_archetype"),
         "hn_top_signal": hn_top,
-        "linkedin_img_url": f"{REPO_RAW_BASE}/linkedin.png?v={v_tag}",
-        "facebook_img_url": f"{REPO_RAW_BASE}/facebook.png?v={v_tag}",
+        "linkedin_img_url": f"{wave_raw_base}/linkedin.png?v={v_tag}",
+        "facebook_img_url": f"{wave_raw_base}/facebook.png?v={v_tag}",
         "instagram_img_url": instagram_img_url,
         "instagram_media_url": instagram_media_url,
         "video_url": video_url,
-        "x_img_url": f"{REPO_RAW_BASE}/x.png?v={v_tag}",
+        "x_img_url": f"{wave_raw_base}/x.png?v={v_tag}",
         "threads_img_url": instagram_img_url,
         "linkedin_caption": (wave_dir / "linkedin-caption.txt").read_text(encoding="utf-8").strip(),
         "facebook_caption": (wave_dir / "facebook-caption.txt").read_text(encoding="utf-8").strip(),
@@ -187,10 +191,17 @@ def main():
     }
     (LIVE_OUT_DIR / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
-    # Keep only the 3 most recent history folders so repo stays lightweight while enforcing 2-post lookback
-    all_hist = sorted(HISTORY_DIR.glob("day*"), key=lambda p: p.stat().st_mtime)
-    if len(all_hist) > 3:
-        for old_dir in all_hist[:-3]:
+    # Keep the 5 most recent history folders (~60 hours) sorted deterministically by (day_num, slot)
+    # (never use st_mtime, because git checkout in GitHub Actions resets directory timestamps!)
+    import re as _re
+    def _wave_sort_key(p: Path):
+        m = _re.match(r"^day(\d+)(?:_(morning|evening))?$", p.name.lower())
+        if not m:
+            return (0, 0, p.name)
+        return (int(m.group(1)), 0 if m.group(2) == "morning" else 1, p.name)
+    all_hist = sorted([p for p in HISTORY_DIR.glob("day*") if p.is_dir()], key=_wave_sort_key)
+    if len(all_hist) > 5:
+        for old_dir in all_hist[:-5]:
             shutil.rmtree(old_dir, ignore_errors=True)
 
     save_next_cursor(day_num, slot, seq_index, media_type)
