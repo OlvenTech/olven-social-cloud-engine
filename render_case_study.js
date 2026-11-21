@@ -41,8 +41,8 @@ const { execFileSync } = require('child_process');
 const PLATFORMS = [
   { name: 'linkedin.png', width: 1350, height: 1350, targetW: 1200, targetH: 1200, layout: 'square' },
   { name: 'instagram.png', width: 1200, height: 1500, targetW: 1080, targetH: 1350, layout: 'portrait' },
-  { name: 'x.png', width: 1600, height: 900, targetW: 1600, targetH: 900, layout: 'landscape' },
-  { name: 'facebook.png', width: 1536, height: 1024, targetW: 1536, targetH: 1024, layout: 'landscape-tall' }
+  { name: 'x.png', width: 1600, height: 900, targetW: 1920, targetH: 1080, layout: 'landscape' },
+  { name: 'facebook.png', width: 1536, height: 1024, targetW: 1620, targetH: 1080, layout: 'landscape-tall' }
 ];
 
 const ARCHETYPES = [
