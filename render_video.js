@@ -1034,7 +1034,7 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     '--out', rawMp4,
     '--format', 'h264',
     '--fps', String(FPS),
-    '--bitrate', '14000',
+    '--bitrate', '9200', // ~18.6 MB for 16s: studio 1080p quality AND strictly under jsDelivr's 20 MB CDN limit!
     '--quality', 'best',
     '--audio', 'off',
   ], { stdio: 'inherit' });
@@ -1053,12 +1053,29 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     outMp4,
   ], { stdio: 'inherit' });
 
+  // Hard CDN Safety Guard: jsDelivr blocks files > 20.0 MB with HTTP 403!
+  // If an unusually dense 3D scene exceeds 19.4 MB, re-encode cleanly to 8.8 Mbps (~18.0 MB) Rec.709.
+  const MAX_BYTES = Math.floor(19.4 * 1024 * 1024);
+  if (fs.statSync(outMp4).size > MAX_BYTES) {
+    const cappedMp4 = path.join(workDir, 'video_capped.mp4');
+    execFileSync('ffmpeg', [
+      '-y', '-v', 'error',
+      '-i', outMp4,
+      '-c:v', 'libx264', '-preset', 'slow', '-profile:v', 'high', '-level', '4.1',
+      '-pix_fmt', 'yuv420p', '-b:v', '8800k', '-maxrate', '9400k', '-bufsize', '18000k',
+      '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709',
+      '-c:a', 'copy', '-movflags', '+faststart',
+      cappedMp4,
+    ], { stdio: 'inherit' });
+    fs.renameSync(cappedMp4, outMp4);
+  }
+
   fs.rmSync(workDir, { recursive: true, force: true });
 
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
   const mb = (fs.statSync(outMp4).size / (1024 * 1024)).toFixed(2);
   console.log(
-    `[OK] Rendered ArtCraft EffectCraft 3D Reel [${dir.name} | skill=${dir.editSkill} | ${dir.track}, 14Mbps Rec.709 in ${elapsed}s, ${mb} MB] -> ${outMp4}`
+    `[OK] Rendered ArtCraft EffectCraft 3D Reel [${dir.name} | skill=${dir.editSkill} | ${dir.track}, 9.2Mbps Rec.709 in ${elapsed}s, ${mb} MB] -> ${outMp4}`
   );
 }
 
