@@ -1,13 +1,15 @@
-Burning 85% of your daily HubSpot API quota at 2:00 AM happens when warehouse syncs overwrite 280,000 unchanged accounts.
+Triggering ERP accounting entries on Stripe charge.succeeded instead of payout.paid guarantees a month-end reconciliation gap.
 
-We worked with a B2B software team syncing 280,000 customer accounts from their data warehouse into HubSpot. Every night at 2:00 AM, their pipeline pushed all 280,000 rows, burning 85% of their daily API call allowance and triggering HTTP 429 lockouts that broke customer-facing webforms. Meanwhile, when a mid-market customer crossed an expansion usage threshold at 11:00 AM, the account executive did not find out until the next day's batch run.
+When you push individual card charges into NetSuite the second a customer checks out, you do not know the final settled FX rate on cross-border cards, the grouped Stripe processing fee, or whether a partial refund will land before the bank transfer clears.
 
-How we rebuilt the warehouse-to-CRM pipeline at Olven Tech:
+We audited a B2B SaaS finance pipeline processing 18,400 transactions a month. Their team had 3 webhook workflows creating individual NetSuite CashSales. Every month-end, the bank deposit in checking disagreed with NetSuite by $3,000 to $9,000 because of unrecorded FX spreads, dispute holds, and timing cutoffs across UTC midnight. Finance spent 6.5 hours every close exporting CSVs to find the gap.
 
-1. Canonical row-hash diffing: Before touching the CRM API, our sync worker computes a SHA-256 hash of the 18 synced product-usage fields for each account and compares it against the last committed state in Postgres. On an average day, 97.4% of accounts have zero change and are skipped in milliseconds.
-2. Token-bucket batching (100 records/call): Changed rows are packed into HubSpot's batch upsert endpoint (100 objects per HTTP request) behind a strict rate-limiter that reserves 70% of API headroom for live webforms and sales tools.
-3. Sub-minute PQL fast lane: High-intent product milestones (such as hitting 90% seat capacity) stream through an incremental 45-second watermark cursor and notify the account owner in Slack immediately.
+How we rebuilt the reconciliation worker at Olven Tech:
 
-Result: Daily CRM API consumption dropped from 85% to 2.6%, PQL latency fell from 24 hours to 45 seconds, and expansion pipeline grew 24%.
+1. Anchor on payout.paid: Instead of guessing bank batches from raw charges, our worker waits for Stripe to close a payout batch and pages through balance_transactions tied to that exact payout_id.
+2. Explicit fee and FX decomposition: Every charge, refund, dispute fee, and currency conversion is written to a local Postgres ledger table with a unique constraint on balance_transaction_id.
+3. Single balanced NetSuite deposit: Once the batch sum in Postgres equals the Stripe payout header to the cent, the worker creates one NetSuite Bank Deposit with net cash, fee expense, and refund contra lines already balanced.
 
-Fighting CRM rate limits or stale product usage data? Email contact@olventech.com.
+The result over the last 4 monthly closes: $0.00 variance between the bank feed and NetSuite, 84% fewer ERP API calls, and month-end payout reconciliation dropped from 6.5 hours to a 12-minute review.
+
+If your finance team is still reconciling Stripe or Adyen payouts with spreadsheets at month-end, send a note to contact@olventech.com and we will map out the ledger architecture.

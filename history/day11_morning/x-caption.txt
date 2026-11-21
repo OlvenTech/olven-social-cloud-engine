@@ -1,0 +1,7 @@
+Triggering NetSuite entries on Stripe charge.succeeded misses settled FX spreads and grouped payout fees.
+
+We moved an 18.4k txn/mo pipeline to a Postgres payout.paid worker:
+- $0.00 bank variance
+- Close time cut from 6.5h to 12m
+
+contact@olventech.com

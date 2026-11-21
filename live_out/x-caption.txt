@@ -1,7 +1,7 @@
-Overwriting 280,000 HubSpot accounts every night at 2 AM burns 85% of daily API quota on unchanged rows.
+Triggering NetSuite entries on Stripe charge.succeeded misses settled FX spreads and grouped payout fees.
 
-Our SHA-256 row-diff CDC worker:
-- Skips 97.4% of unchanged accounts
-- 45s PQL alerts (vs 24h lag)
+We moved an 18.4k txn/mo pipeline to a Postgres payout.paid worker:
+- $0.00 bank variance
+- Close time cut from 6.5h to 12m
 
 contact@olventech.com

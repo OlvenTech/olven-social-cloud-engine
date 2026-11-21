@@ -1,7 +1,0 @@
-Overwriting 280,000 HubSpot accounts every night at 2 AM burns 85% of daily API quota on unchanged rows.
-
-Our SHA-256 row-diff CDC worker:
-- Skips 97.4% of unchanged accounts
-- 45s PQL alerts (vs 24h lag)
-
-contact@olventech.com

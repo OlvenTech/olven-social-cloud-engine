@@ -1,0 +1,9 @@
+Reconciling 18,400 monthly Stripe transactions by hand happens when your automation triggers on individual card charges instead of settled bank payouts.
+
+We recently fixed a Stripe-to-NetSuite pipeline where finance was spending 6.5 hours every month-end hunting down $3k-$9k in payout discrepancies caused by unrecorded FX conversion spreads, Stripe fee deductions, and partial refunds.
+
+We replaced the per-charge webhooks with a Postgres-backed payout worker that keys off payout.paid, decomposes every balance_transaction (gross, fee, FX, refund), verifies the batch sum to the cent, and posts a single balanced NetSuite deposit.
+
+Result: $0.00 ledger variance and month-end reconciliation down from 6.5 hours to 12 minutes.
+
+If your finance ops team is fighting ERP reconciliation drift, reach out at contact@olventech.com.

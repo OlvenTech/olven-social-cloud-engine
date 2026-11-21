@@ -1,5 +1,0 @@
-Overwriting 280,000 HubSpot or Salesforce records every night burns your API quota on unchanged data and delays expansion signals by 24 hours.
-
-We rebuilt a 280,000-account warehouse-to-HubSpot pipeline using SHA-256 row-hash diffing and 100-record batch upserts. By syncing only the 2.6% of accounts whose product usage actually changed, daily API quota consumption dropped from 85% to 2.6%, and reps now get expansion alerts in 45 seconds instead of the next morning.
-
-Reach us at contact@olventech.com.
