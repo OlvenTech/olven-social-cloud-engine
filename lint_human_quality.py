@@ -121,6 +121,14 @@ REQUIRED_TECH_PRIMITIVES = [
     "erp", "crm", "3pl", "wms", "webhook", "idempotency", "sha-256", "sha256",
     "dlq", "outbox", "cursor", "graphql", "lock", "ocr", "po ", "sku",
     "invoice", "payout", "cdc", "warehouse", "429", "503", "latency", "queue",
+    "snowflake", "bigquery", "rollup", "partition", "clustering", "watermark",
+    "p95", "p99", "backoff", "retry", "retries", "bulkhead", "slo", "pagerduty",
+    "concurrency", "jitter", "uptime", "cpu", "outage", "ddos", "rls", "tenant",
+    "redis", "kafka", "grpc", "sql", "api", "ach", "wire", "ledger", "uuid",
+    "pipeline", "schema", "index", "cache", "circuit", "quota", "kubernetes",
+    "docker", "aws", "s3", "cdn", "oauth", "jwt", "tls", "terraform", "replica",
+    "shard", "broker", "event", "alert", "burn-rate", "disbursement", "recon",
+    "migration", "canary", "rollback", "telemetry", "trace", "span", "rate limit",
 ]
 
 
@@ -263,7 +271,7 @@ def lint_caption(file_path: Path, folder: Path) -> list[str]:
             f"[{file_path.name}] Insufficient engineering specificity (found {len(matched_primitives)} primitives; need >= 2)."
         )
 
-    numbers_found = re.findall(r"\b\d+(?:[.,]\d+)?%?\b", text)
+    numbers_found = re.findall(r"(?<![A-Za-z])\d+(?:[.,]\d+)?(?:[%kKmMbBsxX]|ms|hr|mo|yr)?", text)
     if len(numbers_found) < 2:
         errors.append(
             f"[{file_path.name}] Insufficient quantified proof (found {len(numbers_found)} numbers; need >= 2 concrete metrics)."
