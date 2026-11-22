@@ -138,182 +138,192 @@ function baseFontsCss() {
 }
 
 /**
- * GENRE 1 (editorial_light_blueprint — ANTHROPIC WARM ALABASTER EDITORIAL):
- * High-status Claude / FT Editorial Metric Sheet with Warm Alabaster, Terracotta accent, and Before->After proof strip
+ * GENRE 1 (editorial_light_blueprint — VIRAL THERMAL RECEIPT):
+ * Entertaining, screenshot-worthy paper receipt showing the absurd cost of bad systems + diagonal red stamp vs. Olven Fix
  */
 function renderBillboardPoster(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
   const m0 = spec.metrics[0];
   const m1 = spec.metrics[1];
-  const m2 = spec.metrics[2] || m1;
-  const valLen = String(m0.value).length;
-  const heroSize = isWide
-    ? (valLen > 7 ? 112 : 148)
-    : (valLen > 7 ? 132 : 180);
+  const ent = spec.entertainment || {};
+  const rows = (ent.receipt && ent.receipt.length)
+    ? ent.receipt
+    : [
+        [shorten(spec.before_nodes[0] || 'Legacy Bottleneck', 28), 'SLOW'],
+        [shorten(spec.before_nodes[1] || 'Manual Cleanup', 28), 'WASTED'],
+        [shorten(spec.before_nodes[2] || 'Silent Errors', 28), 'COSTLY'],
+        ['Team Stress Level', 'MAX'],
+      ];
+  const badTotal = ent.receipt_total_bad || spec.before_badge || 'TOO EXPENSIVE';
+  const stampTxt = ent.receipt_stamp || 'OVERPAYING';
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background: radial-gradient(ellipse 92% 76% at 50% 18%, #FBF9F4 0%, #F4EFE6 56%, #EAE2D6 100%);
+      background: radial-gradient(ellipse 92% 76% at 50% 18%, #F8F4EC 0%, #EFE8DC 58%, #E4D9C7 100%);
       color: #141413;
-      padding: ${isWide ? '44px 66px' : '64px 66px'};
+      padding: ${isWide ? '38px 62px' : '54px 56px'};
       display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
-    }
-    .orb1 {
-      position: absolute; width: 780px; height: 780px; border-radius: 50%;
-      top: -260px; right: -180px;
-      background: radial-gradient(circle, rgba(201, 100, 66, 0.16) 0%, rgba(217, 119, 87, 0.05) 52%, transparent 74%);
-      filter: blur(44px);
-    }
-    .orb2 {
-      position: absolute; width: 680px; height: 680px; border-radius: 50%;
-      bottom: -260px; left: -160px;
-      background: radial-gradient(circle, rgba(168, 148, 120, 0.22) 0%, transparent 72%);
-      filter: blur(52px);
     }
     .top-bar {
       position: relative; z-index: 3;
       display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 18px; border-bottom: 1px solid rgba(20, 20, 19, 0.11);
+      padding-bottom: 16px; border-bottom: 1px solid rgba(20, 20, 19, 0.12);
       font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; color: #5C574F;
+      letter-spacing: 0.13em; text-transform: uppercase; color: #5C574F;
     }
     .ny-pill {
       padding: 7px 16px; border-radius: 999px;
+      background: #141413; color: #FAF8F4; font-size: 13px; letter-spacing: 0.12em;
+    }
+    .stage {
+      position: relative; z-index: 3; flex: 1;
+      display: flex; ${isWide ? 'flex-direction: row; align-items: center; gap: 46px;' : 'flex-direction: column; justify-content: center; gap: 28px;'}
+      padding: ${isWide ? '10px 0' : '22px 0'};
+    }
+    .left-col { flex: ${isWide ? '1.05' : '0 0 auto'}; }
+    .hl {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: ${isWide ? '44px' : '48px'}; font-weight: 880; line-height: 1.06;
+      letter-spacing: -0.042em; color: #141413;
+    }
+    .olven-win {
+      margin-top: ${isWide ? '24px' : '20px'};
+      padding: ${isWide ? '26px 30px' : '26px 32px'}; border-radius: 26px;
       background: #141413; color: #FAF8F4;
-      font-size: 13px; letter-spacing: 0.12em;
+      box-shadow: 0 28px 60px -18px rgba(20, 20, 19, 0.28);
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
     }
-    .hero-card {
-      position: relative; z-index: 3;
-      border-radius: 34px;
-      background: rgba(254, 253, 250, 0.92);
-      border: 1px solid rgba(20, 20, 19, 0.09);
-      box-shadow: 0 36px 80px -28px rgba(20, 20, 19, 0.12), inset 0 1px 0 #FFFFFF;
-      padding: ${isWide ? '40px 52px' : '58px 56px'};
-      display: flex; flex-direction: column; justify-content: center;
-      overflow: hidden;
+    .ow-tag { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; color: #34D399; text-transform: uppercase; margin-bottom: 6px; }
+    .ow-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: ${isWide ? '64px' : '70px'}; font-weight: 900; letter-spacing: -0.05em; color: #34D399; line-height: 0.95; }
+    .ow-meta { text-align: right; }
+    .ow-lbl { font-size: 22px; font-weight: 750; color: #FFFFFF; }
+    .ow-sub { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #A8A29E; margin-top: 6px; }
+    .receipt-wrap {
+      flex: ${isWide ? '0.95' : '0 0 auto'};
+      display: flex; justify-content: center; position: relative;
     }
-    .contrast-strip {
-      display: inline-flex; align-items: center; gap: 14px; flex-wrap: wrap;
-      margin-bottom: ${isWide ? '18px' : '26px'};
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
+    .receipt {
+      width: 100%; max-width: ${isWide ? '560px' : '820px'};
+      background: #FFFEFA;
+      padding: ${isWide ? '30px 34px 34px' : '36px 42px 42px'};
+      position: relative;
+      transform: rotate(-1.1deg);
+      box-shadow: 0 34px 70px -22px rgba(20, 20, 19, 0.22), 0 4px 12px rgba(20, 20, 19, 0.06);
+      border-top: 6px solid #141413;
+      border-bottom: 6px dashed #D6CEC0;
+      font-family: 'IBM Plex Mono', monospace;
     }
-    .c-bad {
-      padding: 6px 14px; border-radius: 999px;
-      background: rgba(201, 100, 66, 0.12); color: #A64323;
-      border: 1px solid rgba(201, 100, 66, 0.28);
+    .r-head { text-align: center; padding-bottom: 18px; border-bottom: 2px dashed #CBD5E1; margin-bottom: 18px; }
+    .r-store { font-size: 20px; font-weight: 800; letter-spacing: 0.16em; color: #141413; }
+    .r-sub { font-size: 13px; color: #64748B; margin-top: 4px; letter-spacing: 0.1em; }
+    .r-row {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+      padding: ${isWide ? '10px 0' : '12px 0'}; font-size: ${isWide ? '17px' : '20px'};
+      color: #1E293B; border-bottom: 1px dotted #E2E8F0;
     }
-    .c-arr { color: #8A8379; font-weight: 800; }
-    .c-good {
-      padding: 6px 14px; border-radius: 999px;
-      background: rgba(15, 118, 110, 0.10); color: #0F766E;
-      border: 1px solid rgba(15, 118, 110, 0.26);
+    .r-val { font-weight: 800; color: #B91C1C; white-space: nowrap; }
+    .r-total {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 18px; padding-top: 16px; border-top: 2px dashed #141413;
+      font-size: ${isWide ? '20px' : '24px'}; font-weight: 800; color: #141413;
     }
-    .eyebrow {
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
-      letter-spacing: 0.15em; text-transform: uppercase; color: #7C756B;
-      margin-bottom: 10px;
+    .r-total-v { color: #DC2626; }
+    .stamp {
+      position: absolute; top: ${isWide ? '-24px' : '-28px'}; right: ${isWide ? '-12px' : '-14px'};
+      padding: 10px 22px; border: 4px solid #DC2626; border-radius: 10px;
+      color: #DC2626; font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: ${isWide ? '22px' : '26px'}; font-weight: 900; letter-spacing: 0.1em;
+      transform: rotate(9deg); background: #FFF5F5;
+      box-shadow: 0 10px 24px -8px rgba(220, 38, 38, 0.25);
+      text-transform: uppercase; z-index: 5;
     }
-    .hero-num {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${heroSize}px; font-weight: 850; line-height: 0.94;
-      letter-spacing: -0.055em; color: #C96442;
-      font-variant-numeric: tabular-nums;
-      margin-bottom: ${isWide ? '18px' : '28px'};
-    }
-    .headline {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: ${isWide ? '38px' : '48px'}; font-weight: 800; line-height: 1.09;
-      letter-spacing: -0.038em; color: #141413; max-width: 96%;
-      margin-bottom: ${isWide ? '24px' : '36px'};
-    }
-    .sub-pills {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
-    }
-    .sub-pill {
-      padding: ${isWide ? '18px 24px' : '22px 26px'}; border-radius: 20px;
-      background: #F6F3EC;
-      border: 1px solid rgba(20, 20, 19, 0.08);
-    }
-    .sp-val { font-size: ${isWide ? '30px' : '36px'}; font-weight: 800; letter-spacing: -0.035em; color: #141413; font-variant-numeric: tabular-nums; }
-    .sp-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #6B655C; margin-top: 4px; }
     .footer {
       position: relative; z-index: 3;
       display: flex; justify-content: space-between; align-items: center;
-      padding-top: 18px; border-top: 1px solid rgba(20, 20, 19, 0.11);
+      padding-top: 16px; border-top: 1px solid rgba(20, 20, 19, 0.12);
     }
-    .domain {
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
-      letter-spacing: 0.1em; color: #5C574F;
-    }
+    .domain { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; letter-spacing: 0.1em; color: #5C574F; }
   </style></head><body>
-    <div class="orb1"></div>
-    <div class="orb2"></div>
     <div class="top-bar">
       <span>${esc(spec.eyebrow)}</span>
       <span class="ny-pill">OLVEN TECH · NEW YORK</span>
     </div>
-    <div class="hero-card">
-      <div class="contrast-strip">
-        <span class="c-bad">${esc(spec.before_badge)}</span>
-        <span class="c-arr">→</span>
-        <span class="c-good">${esc(spec.after_badge || 'DETERMINISTIC FIX')}</span>
-      </div>
-      <div class="eyebrow">${esc(m0.label)}</div>
-      <div class="hero-num">${esc(m0.value)}</div>
-      <div class="headline">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
-      <div class="sub-pills">
-        <div class="sub-pill">
-          <div class="sp-val">${esc(m1.value)}</div>
-          <div class="sp-lbl">${esc(m1.label)}</div>
+    <div class="stage">
+      <div class="left-col">
+        <div class="hl">${esc(shorten(spec.headline, isWide ? 64 : 74))}</div>
+        <div class="olven-win">
+          <div>
+            <div class="ow-tag">✓ AFTER OLVEN TECH FIXED IT</div>
+            <div class="ow-num">${esc(m0.value)}</div>
+          </div>
+          <div class="ow-meta">
+            <div class="ow-lbl">${esc(m0.label)}</div>
+            <div class="ow-sub">${esc(m1.value)} ${esc(m1.label)} · ${esc(m0.sub)}</div>
+          </div>
         </div>
-        <div class="sub-pill">
-          <div class="sp-val">${esc(m2.value)}</div>
-          <div class="sp-lbl">${esc(m2.label)}</div>
+      </div>
+      <div class="receipt-wrap">
+        <div class="receipt">
+          <div class="stamp">${esc(stampTxt)}</div>
+          <div class="r-head">
+            <div class="r-store">THE OLD SYSTEM RECEIPT</div>
+            <div class="r-sub">ITEMIZED COST OF "IT WORKS FOR NOW"</div>
+          </div>
+          ${rows.map(([k, v]) => `<div class="r-row"><span>${esc(k)}</span><span class="r-val">${esc(v)}</span></div>`).join('')}
+          <div class="r-total">
+            <span>TOTAL PAIN</span>
+            <span class="r-total-v">${esc(badTotal)}</span>
+          </div>
         </div>
       </div>
     </div>
     <div class="footer">
-      ${seamlessLogo(30, '#141413', '#EFE9DF')}
-      <div class="domain">OLVENTECH.COM · ENTERPRISE SYSTEMS</div>
+      ${seamlessLogo(28, '#141413', '#EAE0D0')}
+      <div class="domain">SAVE THIS · OLVENTECH.COM</div>
     </div>
   </body></html>`;
 }
 
 /**
- * GENRE 2 (security_policy_shield_matrix — DARK):
- * macOS Sequoia Space-Black Liquid Glass Slack #prod-incidents War-Room Window
+ * GENRE 2 (security_policy_shield_matrix — JUICY LIVE GROUP-CHAT MELTDOWN):
+ * Entertaining, voyeuristic Slack/iMessage workplace meltdown where Olven Tech enters as the calm hero
  */
 function renderSlackIncident(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
   const m0 = spec.metrics[0];
   const m1 = spec.metrics[1];
-  const badPt = shorten(spec.before_points[0], 112);
-  const fixPt1 = shorten(spec.after_points[0], 108);
-  const fixPt2 = shorten(spec.after_points[1], 108);
+  const ent = spec.entertainment || {};
+  const chat = (ent.chat && ent.chat.length >= 3)
+    ? ent.chat
+    : [
+        { who: 'CFO / Founder', side: 'left', role: 'cfo', msg: shorten(spec.before_points[0], 110) },
+        { who: 'Dev On-Call', side: 'right', role: 'dev', msg: shorten(spec.before_points[1] || 'Trying to patch it live right now...', 105) },
+        { who: 'Olven Tech', side: 'left', role: 'olven', msg: shorten(spec.after_points[0], 112) },
+      ];
+  const tm = ent.time || '9:14 AM';
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background: #06070A; color: #F4F5F7;
-      padding: ${isWide ? '44px 66px' : '68px 62px'};
+      background: #06080E; color: #F4F5F7;
+      padding: ${isWide ? '38px 62px' : '56px 54px'};
       display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
     .orb1 {
-      position: absolute; width: 620px; height: 620px; border-radius: 50%;
+      position: absolute; width: 640px; height: 640px; border-radius: 50%;
       top: -220px; left: -140px;
-      background: radial-gradient(circle, rgba(226, 232, 240, 0.11) 0%, transparent 66%);
-      filter: blur(48px);
+      background: radial-gradient(circle, rgba(244, 63, 94, 0.16) 0%, transparent 68%);
+      filter: blur(50px);
     }
     .orb2 {
       position: absolute; width: 680px; height: 680px; border-radius: 50%;
       bottom: -240px; right: -140px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.14) 0%, rgba(148, 163, 184, 0.06) 48%, transparent 70%);
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, transparent 70%);
       filter: blur(52px);
     }
     .window {
@@ -322,60 +332,68 @@ function renderSlackIncident(spec, p) {
       display: flex; flex-direction: column;
     }
     .titlebar {
-      padding: 22px 30px;
+      padding: 20px 30px;
       background: rgba(255,255,255,0.06);
       border-bottom: 1px solid rgba(255,255,255,0.12);
       display: flex; align-items: center; justify-content: space-between;
     }
     .chan {
-      font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 700;
-      color: #F8FAFC; letter-spacing: 0.02em;
+      font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 700;
+      color: #F8FAFC; letter-spacing: 0.03em;
     }
     .badge-sev {
       padding: 7px 16px; border-radius: 999px;
-      background: rgba(244, 63, 94, 0.16); border: 1px solid rgba(244, 63, 94, 0.45);
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      background: rgba(244, 63, 94, 0.18); border: 1px solid rgba(244, 63, 94, 0.45);
+      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 800;
       color: #FDA4AF; letter-spacing: 0.08em;
     }
-    .body-feed {
-      flex: 1; padding: ${isWide ? '30px 38px' : '44px 44px'};
-      display: flex; flex-direction: column; justify-content: center; gap: ${isWide ? '24px' : '34px'};
+    .chat-feed {
+      flex: 1; padding: ${isWide ? '26px 38px' : '38px 40px'};
+      display: flex; flex-direction: column; justify-content: center; gap: ${isWide ? '18px' : '26px'};
     }
-    .msg {
-      display: flex; gap: 20px; align-items: flex-start;
-      padding: ${isWide ? '22px 26px' : '28px 30px'};
-      border-radius: 24px;
-      background: rgba(255,255,255,0.045);
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+    .row { display: flex; flex-direction: column; max-width: 86%; }
+    .row-left { align-self: flex-start; }
+    .row-right { align-self: flex-end; align-items: flex-end; }
+    .who {
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      color: #94A3B8; margin-bottom: 8px; letter-spacing: 0.06em; text-transform: uppercase;
     }
-    .av {
-      width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 800;
+    .bubble {
+      padding: ${isWide ? '18px 24px' : '24px 28px'}; border-radius: 26px;
+      font-size: ${isWide ? '23px' : '27px'}; line-height: 1.36; font-weight: 600;
     }
-    .av-pd { background: linear-gradient(135deg, #F43F5E, #BE123C); color: #FFF; }
-    .av-ov { background: linear-gradient(135deg, #10B981, #059669); color: #04130D; }
-    .who { font-size: 19px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
-    .ts { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 500; color: #94A3B8; }
-    .txt { font-size: ${isWide ? '22px' : '25px'}; line-height: 1.42; color: #E2E8F0; font-weight: 500; }
-    .fix-bullets { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
-    .fb {
-      font-size: ${isWide ? '20px' : '23px'}; line-height: 1.38; color: #A7F3D0;
-      padding-left: 16px; border-left: 3px solid #10B981;
+    .b-cfo {
+      background: rgba(244, 63, 94, 0.15); border: 1.5px solid rgba(244, 63, 94, 0.40);
+      color: #FFF1F2; border-bottom-left-radius: 8px;
     }
-    .reacts { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+    .b-dev {
+      background: rgba(255, 255, 255, 0.09); border: 1.5px solid rgba(255, 255, 255, 0.16);
+      color: #E2E8F0; border-bottom-right-radius: 8px;
+    }
+    .b-olven {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(5, 150, 105, 0.14) 100%);
+      border: 1.5px solid rgba(52, 211, 153, 0.50);
+      color: #ECFDF5; border-bottom-left-radius: 8px;
+      box-shadow: 0 18px 40px -14px rgba(16, 185, 129, 0.30);
+    }
+    .joined {
+      align-self: center; padding: 7px 18px; border-radius: 999px;
+      background: rgba(52, 211, 153, 0.12); border: 1px solid rgba(52, 211, 153, 0.30);
+      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
+      color: #6EE7B7; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .reacts { display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
     .rx {
-      padding: 8px 16px; border-radius: 999px;
-      background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.36);
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700; color: #6EE7B7;
+      padding: 9px 18px; border-radius: 999px;
+      background: rgba(16, 185, 129, 0.16); border: 1px solid rgba(52, 211, 153, 0.42);
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 800; color: #6EE7B7;
     }
     .footer {
-      position: relative; z-index: 3; margin-top: 24px;
+      position: relative; z-index: 3; margin-top: 20px;
       display: flex; justify-content: space-between; align-items: center;
       padding: 14px 26px; border-radius: 22px;
     }
-    .ft-meta { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: #94A3B8; letter-spacing: 0.08em; }
+    .ft-meta { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; color: #94A3B8; letter-spacing: 0.08em; }
   </style></head><body>
     <div class="orb1"></div>
     <div class="orb2"></div>
@@ -384,37 +402,32 @@ function renderSlackIncident(spec, p) {
         <div class="mac-dots">
           <span class="mdot md-r"></span><span class="mdot md-y"></span><span class="mdot md-g"></span>
         </div>
-        <div class="chan">#prod-incidents · ${esc(spec.eyebrow.split('·')[0].trim())}</div>
+        <div class="chan">#emergency-chat · ${esc(tm)}</div>
         <div class="badge-sev">${esc(spec.before_badge)}</div>
       </div>
-      <div class="body-feed">
-        <div class="msg">
-          <div class="av av-pd">PD</div>
-          <div>
-            <div class="who">PagerDuty SEV-1 <span class="ts">02:14 AM EST</span></div>
-            <div class="txt">${esc(badPt)}</div>
-          </div>
+      <div class="chat-feed">
+        <div class="row row-left">
+          <div class="who" style="color:#FDA4AF;">${esc(chat[0].who)} · ${esc(tm)}</div>
+          <div class="bubble b-cfo">${esc(chat[0].msg)}</div>
         </div>
-        <div class="msg">
-          <div class="av av-ov">OT</div>
-          <div>
-            <div class="who">Olven Staff Eng <span class="ts">02:29 AM EST · SHIPPED</span></div>
-            <div class="txt">Replaced legacy path with deterministic architecture:</div>
-            <div class="fix-bullets">
-              <div class="fb">${esc(fixPt1)}</div>
-              <div class="fb">${esc(fixPt2)}</div>
-            </div>
-            <div class="reacts">
-              <span class="rx">${esc(m0.value)} ${esc(m0.label)}</span>
-              <span class="rx">${esc(m1.value)} ${esc(m1.label)}</span>
-            </div>
+        <div class="row row-right">
+          <div class="who">${esc(chat[1].who)} · ${esc(tm)}</div>
+          <div class="bubble b-dev">${esc(chat[1].msg)}</div>
+        </div>
+        <div class="joined">⚡ OLVEN TECH ENTERED THE CHAT</div>
+        <div class="row row-left">
+          <div class="who" style="color:#6EE7B7;">${esc(chat[2].who)} · SHIPPED IN DAYS</div>
+          <div class="bubble b-olven">${esc(chat[2].msg)}</div>
+          <div class="reacts">
+            <span class="rx">✓ ${esc(m0.value)} ${esc(m0.label)}</span>
+            <span class="rx">✓ ${esc(m1.value)} ${esc(m1.label)}</span>
           </div>
         </div>
       </div>
     </div>
     <div class="footer glass-dark">
-      ${seamlessLogo(30, '#F8FAFC', '#06070A')}
-      <div class="ft-meta">OLVENTECH.COM · NEW YORK</div>
+      ${seamlessLogo(28, '#F8FAFC', '#06080E')}
+      <div class="ft-meta">REAL CLIENT STORY · OLVENTECH.COM</div>
     </div>
   </body></html>`;
 }
@@ -575,31 +588,31 @@ function renderWhiteboardDiagram(spec, p) {
 }
 
 /**
- * GENRE 4 (split_latency_waterfall — DARK):
- * macOS Obsidian Liquid Glass GitHub PR Diff Window
+ * GENRE 4 (split_latency_waterfall — VIRAL BROWSER SPINNING-WHEEL vs. INSTANT RESULT):
+ * Relatable dark macOS browser showing a frustrating frozen loading wheel + buyer speech bubble vs. Olven instant speed
  */
 function renderCodeDiffWindow(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
   const m0 = spec.metrics[0];
   const m1 = spec.metrics[1];
-  const b0 = shorten(spec.before_nodes[0] || 'syncApiCall()', 30);
-  const b1 = shorten(spec.before_nodes[1] || 'retryOnTimeout()', 30);
-  const a0 = shorten(spec.after_nodes[0] || 'writeAheadLog()', 30);
-  const a1 = shorten(spec.after_nodes[1] || 'idempotentCommit()', 30);
+  const ent = spec.entertainment || {};
+  const query = ent.browser_query || shorten(spec.before_nodes[0] || 'search catalog...', 32);
+  const badQuote = ent.browser_bad_quote || `"Way too slow (${spec.before_badge})... buying somewhere else."`;
+  const goodQuote = ent.browser_good_quote || `"Instant! (${m0.value} ${m0.label}) Checking out now."`;
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
       background: #070B14; color: #F8FAFC;
-      padding: ${isWide ? '44px 66px' : '68px 62px'};
+      padding: ${isWide ? '38px 62px' : '56px 56px'};
       display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
     .orb1 {
       position: absolute; width: 760px; height: 760px; border-radius: 50%;
       top: -220px; right: -140px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.30) 0%, rgba(56, 189, 248, 0.10) 50%, transparent 72%);
+      background: radial-gradient(circle, rgba(244, 63, 94, 0.24) 0%, transparent 70%);
       filter: blur(55px);
     }
     .orb2 {
@@ -608,92 +621,114 @@ function renderCodeDiffWindow(spec, p) {
       background: radial-gradient(circle, rgba(16, 185, 129, 0.24) 0%, transparent 70%);
       filter: blur(60px);
     }
-    .head { position: relative; z-index: 3; margin-bottom: ${isWide ? '22px' : '32px'}; }
+    .head { position: relative; z-index: 3; margin-bottom: ${isWide ? '18px' : '26px'}; }
     .eyebrow {
-      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600;
-      letter-spacing: 0.14em; color: #818CF8; text-transform: uppercase; margin-bottom: 12px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
+      letter-spacing: 0.14em; color: #94A3B8; text-transform: uppercase; margin-bottom: 10px;
     }
     .hl {
-      font-size: ${isWide ? '38px' : '48px'}; font-weight: 850; line-height: 1.08;
-      letter-spacing: -0.04em; color: #FFFFFF;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: ${isWide ? '38px' : '48px'}; font-weight: 880; line-height: 1.07;
+      letter-spacing: -0.042em; color: #FFFFFF;
     }
-    .ide {
+    .browser {
       position: relative; z-index: 3; flex: 1;
       border-radius: 32px; overflow: hidden;
       display: flex; flex-direction: column;
     }
-    .ide-bar {
-      padding: 20px 28px;
+    .b-bar {
+      padding: 18px 26px;
       background: rgba(255,255,255,0.06);
       border-bottom: 1px solid rgba(255,255,255,0.12);
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; gap: 18px;
     }
-    .file {
-      font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 600; color: #CBD5E1;
+    .url-box {
+      flex: 1; padding: 10px 20px; border-radius: 12px;
+      background: rgba(0, 0, 0, 0.42); border: 1px solid rgba(255,255,255,0.12);
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: #CBD5E1;
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .merged {
-      padding: 6px 16px; border-radius: 999px;
-      background: rgba(139, 92, 246, 0.22); border: 1px solid rgba(167, 139, 250, 0.45);
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; color: #DDD6FE;
+    .b-stage {
+      flex: 1; padding: ${isWide ? '24px 32px' : '34px 36px'};
+      display: flex; flex-direction: column; justify-content: center; gap: ${isWide ? '18px' : '24px'};
     }
-    .diff-body {
-      flex: 1; padding: ${isWide ? '24px 32px' : '38px 38px'};
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: ${isWide ? '20px' : '24px'}; line-height: 1.55;
-      display: flex; flex-direction: column; justify-content: center; gap: ${isWide ? '12px' : '16px'};
+    .panel-bad {
+      padding: ${isWide ? '22px 26px' : '28px 30px'}; border-radius: 26px;
+      background: rgba(244, 63, 94, 0.11); border: 1.5px solid rgba(244, 63, 94, 0.36);
+      display: flex; align-items: center; gap: 26px;
     }
-    .hero-strip {
-      display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
-      padding: ${isWide ? '16px 22px' : '26px 30px'}; border-radius: 22px; margin-bottom: ${isWide ? '10px' : '18px'};
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(99, 102, 241, 0.12) 100%);
-      border: 1px solid rgba(52, 211, 153, 0.34);
-      font-family: 'Plus Jakarta Sans', sans-serif;
+    .panel-good {
+      padding: ${isWide ? '24px 28px' : '30px 32px'}; border-radius: 26px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(5, 150, 105, 0.09) 100%);
+      border: 1.5px solid rgba(52, 211, 153, 0.45);
+      display: flex; align-items: center; gap: 26px;
+      box-shadow: 0 20px 50px -18px rgba(16, 185, 129, 0.28);
     }
-    .hs-num { font-size: ${isWide ? '54px' : '74px'}; font-weight: 900; letter-spacing: -0.05em; color: #34D399; line-height: 0.95; }
-    .hs-sub { font-size: ${isWide ? '20px' : '24px'}; font-weight: 700; color: #E2E8F0; text-align: right; }
-    .hs-bad { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; color: #FDA4AF; text-decoration: line-through; margin-bottom: 6px; letter-spacing: 0.06em; }
-    .line { padding: ${isWide ? '12px 20px' : '16px 24px'}; border-radius: 14px; }
-    .del { background: rgba(244, 63, 94, 0.14); color: #FDA4AF; border-left: 3.5px solid #F43F5E; }
-    .add { background: rgba(16, 185, 129, 0.14); color: #6EE7B7; border-left: 3.5px solid #10B981; }
-    .cmt { color: #94A3B8; padding-left: 6px; font-size: 0.82em; letter-spacing: 0.08em; font-weight: 700; }
+    .icon-box {
+      width: ${isWide ? '76px' : '90px'}; height: ${isWide ? '76px' : '90px'};
+      border-radius: 22px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ic-bad { background: rgba(244, 63, 94, 0.18); border: 1px solid rgba(244, 63, 94, 0.40); }
+    .ic-good { background: rgba(16, 185, 129, 0.22); border: 1px solid rgba(52, 211, 153, 0.50); }
+    .p-tag { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+    .p-quote { font-size: ${isWide ? '23px' : '27px'}; font-weight: 750; line-height: 1.28; color: #FFFFFF; letter-spacing: -0.025em; }
+    .p-meta { margin-top: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700; }
     .ide-foot {
-      padding: 22px 32px;
+      padding: 20px 30px;
       background: rgba(255,255,255,0.04);
       border-top: 1px solid rgba(255,255,255,0.10);
       display: flex; justify-content: space-between; align-items: center;
     }
-    .checks { display: flex; gap: 22px; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700; color: #34D399; }
+    .checks { display: flex; gap: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 800; color: #34D399; }
   </style></head><body>
     <div class="orb1"></div>
     <div class="orb2"></div>
     <div class="head">
-      <div class="eyebrow">${esc(spec.eyebrow || 'REAL CLIENT RESULT · OLVEN TECH')}</div>
+      <div class="eyebrow">${esc(spec.eyebrow || 'REAL CLIENT STORY')}</div>
       <div class="hl">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
     </div>
-    <div class="ide glass-dark">
-      <div class="ide-bar">
+    <div class="browser glass-dark">
+      <div class="b-bar">
         <div class="mac-dots">
           <span class="mdot md-r"></span><span class="mdot md-y"></span><span class="mdot md-g"></span>
         </div>
-        <div class="file">BEFORE vs. AFTER · OLVEN TECH</div>
-        <div class="merged">SHIPPED IN DAYS</div>
-      </div>
-      <div class="diff-body">
-        <div class="hero-strip">
-          <div class="hs-num">${esc(m0.value)}</div>
-          <div class="hs-sub"><span class="hs-bad">BEFORE: ${esc(shorten(spec.before_badge, 26))}</span>${esc(m0.label)} · ${esc(m1.value)} ${esc(m1.label)}</div>
+        <div class="url-box">
+          <span>🔍  ${esc(query)}</span>
+          <span style="color:#34D399;font-weight:800;">OLVEN FIX</span>
         </div>
-        <div class="cmt">✕ WHAT WAS BREAKING</div>
-        <div class="line del">−  ${esc(b0)}  →  ${esc(b1)}</div>
-        <div class="line del">−  ${esc(shorten((spec.before_nodes && spec.before_nodes[2]) || spec.before_badge, 28))}  →  ${esc(shorten((spec.before_nodes && spec.before_nodes[3]) || 'Revenue Lost', 28))}</div>
-        <div class="cmt" style="margin-top:10px;">✓ WHAT OLVEN SHIPPED</div>
-        <div class="line add">+  ${esc(a0)}  →  ${esc(a1)}</div>
-        <div class="line add">+  ${esc(shorten((spec.after_nodes && spec.after_nodes[2]) || spec.after_badge, 28))}  →  ${esc(shorten((spec.after_nodes && spec.after_nodes[3]) || m0.value, 28))}</div>
+      </div>
+      <div class="b-stage">
+        <div class="panel-bad">
+          <div class="icon-box ic-bad">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="17" stroke="rgba(253,164,175,0.25)" stroke-width="5"/>
+              <path d="M24 7 A17 17 0 0 1 41 24" stroke="#FB7185" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="p-tag" style="color:#FDA4AF;">✕ BEFORE · ${esc(spec.before_badge)}</div>
+            <div class="p-quote">${esc(badQuote)}</div>
+            <div class="p-meta" style="color:#FDA4AF;">${esc((spec.before_nodes || []).slice(0, 3).join('  →  '))}</div>
+          </div>
+        </div>
+        <div class="panel-good">
+          <div class="icon-box ic-good">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <path d="M27 6 L11 27 H23 L21 42 L37 21 H25 L27 6 Z" fill="#34D399"/>
+            </svg>
+          </div>
+          <div>
+            <div class="p-tag" style="color:#6EE7B7;">✓ AFTER OLVEN TECH · ${esc(m0.value)} ${esc(m0.label)}</div>
+            <div class="p-quote">${esc(goodQuote)}</div>
+            <div class="p-meta" style="color:#A7F3D0;">${esc((spec.after_nodes || []).slice(0, 3).join('  →  '))}</div>
+          </div>
+        </div>
       </div>
       <div class="ide-foot">
         ${seamlessLogo(28, '#F8FAFC', '#070B14')}
         <div class="checks">
-          <span>✓ ${esc(m0.value)} ${esc(m0.label)}</span>
+          <span>⚡ ${esc(m0.value)} ${esc(m0.label)}</span>
           <span>✓ ${esc(m1.value)} ${esc(m1.label)}</span>
         </div>
       </div>
@@ -1133,16 +1168,22 @@ function renderIphoneKeynoteHardware(spec, p) {
       </div>
       <div class="phone-wrap">
         <div class="iphone"><div class="screen">
-          <div class="sbar"><span>9:41</span><div class="island"><span class="cam"></span></div><span>5G</span></div>
+          <div class="sbar"><span>${esc((spec.entertainment && spec.entertainment.time) || '9:14 AM')}</span><div class="island"><span class="cam"></span></div><span>5G</span></div>
+          ${((spec.entertainment && spec.entertainment.notifs) || []).slice(0, 2).map((n) => `
           <div class="ncard nbad">
-            <div class="nh" style="color:#FDA4AF;"><span>● LEGACY ALERT</span><span>BEFORE</span></div>
+            <div class="nh" style="color:#FDA4AF;"><span>● ${esc(n.app)}</span><span>${esc(n.time)}</span></div>
+            <div class="nt">${esc(n.title)}</div>
+            <div class="nd">${esc(n.body)}</div>
+          </div>`).join('') || `
+          <div class="ncard nbad">
+            <div class="nh" style="color:#FDA4AF;"><span>● ALERT</span><span>BEFORE</span></div>
             <div class="nt">${esc(spec.before_badge || spec.before_title)}</div>
             <div class="nd">${esc(bNodes.join(' → '))}</div>
-          </div>
+          </div>`}
           <div class="ncard ngood">
-            <div class="nh" style="color:#6EE7B7;"><span>✓ OLVEN ARCHITECTURE</span><span>LIVE</span></div>
-            <div class="nt">${esc(spec.after_title.replace(/^After:\s*/i, ''))}</div>
-            <div class="nd">${esc(aNodes.join(' → '))}</div>
+            <div class="nh" style="color:#6EE7B7;"><span>✓ OLVEN TECH</span><span>FIXED</span></div>
+            <div class="nt">${esc(m0.value)} ${esc(m0.label)}</div>
+            <div class="nd">${esc((spec.entertainment && spec.entertainment.cfo_react) || aNodes.join(' → '))}</div>
           </div>
           <div class="hind"></div>
         </div></div>
