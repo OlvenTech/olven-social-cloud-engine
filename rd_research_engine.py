@@ -654,45 +654,46 @@ Moving a 1.4B-row B2B pipeline to watermarked incremental rollups + clustering:
             {"label": "ROLLBACK PLAN", "value": "Reverse CDC", "sub": "Live safety net ready"}
         ],
         "captions": {
-            "linkedin": """Taking an 8-hour weekend maintenance window to migrate a production database is a non-starter when you have enterprise uptime SLAs.
+            "linkedin": """Most engineering orgs get quoted an 8-hour weekend outage to move 180M rows from MySQL to Postgres.
 
-We recently led a MySQL-to-Postgres migration covering 180 million financial ledger rows for a B2B SaaS team that could not afford a multi-hour freeze. A standard dump-and-restore also carried huge risk around decimal precision and UTC timestamp edge cases.
+We cut over the entire financial ledger in 4.1 seconds. Zero dropped writes. Zero SLA breach.
 
-How we executed the cutover in 4.1 seconds at Olven Tech:
+A B2B SaaS platform needed off legacy MySQL without breaking strict enterprise uptime contracts. A standard dump-and-restore carried two unacceptable risks: an 8-hour maintenance freeze, plus silent decimal rounding and UTC timestamp drift across 180 million accounting rows.
 
-1. Continuous binlog CDC: Backfilled historical chunks at controlled IOPS while streaming live MySQL binlog changes into Postgres until lag stabilized at 110ms.
-2. Continuous parity hashing: Ran a background verifier comparing chunked SHA-256 hashes of normalized decimal and timestamp columns across all 180M rows until mismatch count hit zero.
-3. Dark-read shadowing + reverse CDC: Mirrored production reads to Postgres for 72 hours to verify query plans, kept reverse CDC armed as a rollback safety net, then flipped writes in 4.1 seconds.
+Here is the exact zero-downtime architecture Olven Tech shipped inside their live stack:
 
-Zero dropped writes, zero SLA breach, and 100% row parity verified before cutover.
+1. Continuous binlog CDC: Backfilled historical chunks at throttled IOPS while streaming live MySQL binlog mutations into Postgres until replication lag held steady at 110ms.
+2. Continuous SHA-256 parity hashing: Ran a background verifier comparing normalized decimal and timestamp checksums across every chunk of all 180M rows until mismatch count hit zero.
+3. 72-hour dark-read shadow + reverse CDC: Mirrored 10% of production reads to Postgres to validate query plans under live load, armed reverse CDC as an instant rollback net, then executed a 4.1-second write cutover.
 
-Planning a high-stakes database migration? Email contact@olventech.com.""",
-            "x": """Migrating 180M production rows does not require an 8-hour weekend outage.
+Outcome: 100% hash-verified row parity, zero dropped transactions, and zero downtime notices sent to enterprise customers.
 
-Using binlog CDC + chunked SHA-256 parity checks + 72h dark reads:
-- 4.1-second write cutover
-- 100% parity across 180M rows
-- Reverse CDC rollback ready
+Most consultancies pitch multi-month rebuilds or painful freeze windows. At Olven Tech, we engineer deterministic cutovers directly inside production systems. Planning a high-stakes database migration? Write to our principal engineers at contact@olventech.com.""",
+            "x": """Most teams get quoted an 8-hour weekend outage to move 180M rows from MySQL to Postgres.
+
+We cut over in 4.1 seconds via binlog CDC + chunked SHA-256 parity verification + 72h dark reads:
+- 100% row parity across 180M rows
+- 0 dropped writes
 
 contact@olventech.com""",
-            "instagram": """Enterprise SLAs do not allow 8-hour weekend outages just to migrate databases.
+            "instagram": """Most teams get quoted an 8-hour weekend outage to migrate 180M production database rows.
 
-How we moved 180M ledger rows from MySQL to Postgres with a 4.1-second cutover:
-1. Streamed live MySQL binlogs via CDC until replication lag sat at 110ms.
+We executed the MySQL-to-Postgres cutover in 4.1 seconds with zero SLA breach:
+1. Streamed live MySQL binlogs via CDC until replication lag held at 110ms.
 2. Verified all 180M rows with chunked SHA-256 decimal and timestamp hashes.
-3. Shadowed live reads for 72 hours before flipping traffic atomically.
+3. Shadowed production reads for 72 hours with reverse CDC armed before flipping writes.
 
-Result: 100% verified parity, 0 dropped transactions, and zero SLA breach.
+Result: 100% verified parity and zero customer downtime.
 
-Planning a zero-downtime migration? Email contact@olventech.com.""",
-            "facebook": """Moving 180 million production rows from MySQL to Postgres without breaking enterprise uptime SLAs takes more than mysqldump.
+Planning a high-stakes migration? Email contact@olventech.com.""",
+            "facebook": """Most companies assume migrating 180 million production ledger rows from MySQL to Postgres requires an 8-hour weekend maintenance freeze.
 
-We ran continuous binlog CDC replication, chunked SHA-256 parity verification across all 180M rows, and 72 hours of dark-read shadowing, cutting the write-pause window from 8 hours down to 4.1 seconds with zero lost data.
+At Olven Tech, we paired continuous binlog CDC replication with chunked SHA-256 parity verification and 72 hours of dark-read shadowing, cutting the write-pause window from 8 hours down to 4.1 seconds with 100% verified row parity.
 
-Reach us at contact@olventech.com.""",
-            "threads": """You don't need an 8-hour maintenance outage to migrate 180M production rows.
+Planning a zero-downtime migration? Reach our engineering team at contact@olventech.com.""",
+            "threads": """Most teams get quoted an 8-hour weekend outage to migrate 180M production rows.
 
-Binlog CDC + chunked SHA-256 row-parity verification + 72h dark reads let us move a live ledger from MySQL to Postgres in a 4.1-second cutover with 0 lost rows. (contact@olventech.com)"""
+Binlog CDC + chunked SHA-256 parity hashing + 72h dark reads let us cut over MySQL to Postgres in 4.1 seconds with 0 lost rows. (contact@olventech.com)"""
         }
     },
     19: {
@@ -725,44 +726,46 @@ Binlog CDC + chunked SHA-256 row-parity verification + 72h dark reads let us mov
             {"label": "RECON TIME", "value": "-91%", "sub": "Auto-matched bank files"}
         ],
         "captions": {
-            "linkedin": """Retrying a timed-out bank API call without a ledger-level idempotency lock is how fintech teams accidentally send the same $32,000 wire twice.
+            "linkedin": """One 30-second HTTP 504 timeout from a banking API quietly sent the same $32,000 vendor wire twice.
 
-We audited a B2B marketplace disbursing $14M a month to suppliers. Twice in one quarter, an upstream bank gateway timed out after accepting a payout request. The background worker saw an HTTP 504, automatically retried the job, and dispatched a duplicate ACH transfer totaling $64,000 in erroneous payouts.
+By the end of the quarter, duplicate ACH disbursements hit $64,000 and took 18 days of bank recalls to unwind.
 
-How we made disbursements strictly once-only at Olven Tech:
+We audited this B2B marketplace moving $14M/month in supplier payouts. Their payment gateway actually accepted the transfer before timing out on the HTTP response. The stateless queue worker assumed failure, automatically retried the job, and wired the money a second time.
 
-1. Two-phase ledger intent: Before touching any banking API, the worker writes a PENDING row to Postgres guarded by a unique (invoice_id, payout_cycle) constraint.
-2. Deterministic idempotency headers: Generates a UUIDv5 key from the ledger row ID and attaches it to every outbound bank call so retries collapse onto the same transfer.
-3. Status-first timeout recovery: Any HTTP 5xx or timeout transitions the row to RECONCILING, where a poller queries the bank's transfer status endpoint instead of blindly re-submitting.
+Here is how Olven Tech made every payout mathematically once-only:
 
-Result: $0.00 in duplicate disbursements across $14M/mo in volume and 91% less manual treasury reconciliation.
+1. Two-phase ledger intent: Before calling any bank endpoint, the worker commits a PENDING row in Postgres protected by a unique (invoice_id, payout_cycle) constraint.
+2. Deterministic UUIDv5 keys: Derives a stable idempotency header directly from the ledger row ID so repeated attempts collapse onto the exact same bank transfer.
+3. Status-first timeout recovery: Any HTTP 5xx or timeout moves the row to RECONCILING, where a poller verifies transfer status at the bank instead of blindly re-submitting funds.
 
-If your team moves real money through APIs, email contact@olventech.com for an idempotency audit.""",
-            "x": """Retrying a timed-out bank API call without a ledger lock is how double wires happen.
+Outcome: $0.00 in duplicate disbursements across $14M/month in live volume and 91% less manual treasury reconciliation.
 
-We rebuilt a $14M/mo payout engine with Postgres two-phase locks + deterministic UUIDv5 idempotency keys:
+When software moves real money, default queue retries are a financial liability. If your team disburses funds through APIs, request an idempotency architecture review at contact@olventech.com.""",
+            "x": """One 30-second bank API timeout quietly sent the same $32,000 wire twice ($64K lost in one quarter).
+
+We rebuilt the $14M/mo payout engine with Postgres two-phase locks + deterministic UUIDv5 keys:
 - $0.00 duplicate payouts
 - 91% faster treasury recon
 
 contact@olventech.com""",
-            "instagram": """An HTTP 504 timeout from a bank gateway does not mean the transfer failed. Blindly retrying sends the wire twice.
+            "instagram": """One 30-second HTTP 504 timeout from a bank gateway sent the exact same $32,000 vendor wire twice.
 
-We hardened a $14M/month vendor payout pipeline:
-1. Locked payout intent in Postgres with a unique (invoice_id, cycle) constraint before calling the bank.
-2. Attached deterministic UUIDv5 idempotency keys to every bank request.
-3. Queried transfer status on timeouts instead of auto-retrying.
+How Olven Tech hardened a $14M/month payout pipeline to $0.00 duplicates:
+1. Locked payout intent in Postgres with a unique (invoice_id, cycle) constraint first.
+2. Attached deterministic UUIDv5 idempotency keys to every outbound bank call.
+3. Polled transfer status on ambiguous timeouts instead of auto-retrying.
 
-Result: $0.00 duplicate payouts across $14M/mo volume.
+Result: $0.00 duplicate payouts and 91% less manual treasury reconciliation.
 
-Moving money through APIs? Email contact@olventech.com.""",
-            "facebook": """When a banking API times out after 30 seconds, blindly retrying the background job can send the exact same ACH or wire twice.
+Moving real money through APIs? Email contact@olventech.com.""",
+            "facebook": """One 30-second HTTP timeout from a banking API caused a B2B marketplace to wire $64,000 in duplicate vendor payouts in a single quarter.
 
-We rebuilt a $14M/month payout system using Postgres two-phase ledger locks, deterministic idempotency keys, and status-first timeout reconciliation, bringing duplicate disbursements to $0.00.
+Olven Tech rebuilt their $14M/month payout architecture using Postgres two-phase ledger locks, deterministic UUIDv5 idempotency keys, and status-first timeout recovery, cutting duplicate disbursements to $0.00 and treasury recon time by 91%.
 
-Reach us at contact@olventech.com.""",
-            "threads": """Never let a queue worker auto-retry a timed-out ACH or wire API call blindly.
+Reach our engineering team at contact@olventech.com.""",
+            "threads": """A single 30-second bank API timeout sent the same $32,000 wire twice because the queue worker retried blindly.
 
-Adding Postgres two-phase ledger locks + deterministic UUIDv5 idempotency keys to a $14M/mo payout engine cut duplicate disbursements to $0.00. (contact@olventech.com)"""
+Postgres two-phase ledger locks + deterministic UUIDv5 idempotency keys brought duplicate payouts to $0.00 across $14M/mo. (contact@olventech.com)"""
         }
     },
     20: {
@@ -795,45 +798,47 @@ Adding Postgres two-phase ledger locks + deterministic UUIDv5 idempotency keys t
             {"label": "CONVERSION LIFT", "value": "+14%", "sub": "From instant SKU discovery"}
         ],
         "captions": {
-            "linkedin": """Running ILIKE '%keyword%' against an 11-million-row Postgres table will eventually turn your search bar into a denial-of-service attack on checkout.
+            "linkedin": """Every afternoon at 2 PM, one B2B wholesale platform watched primary Postgres CPU hit 94% and buyer checkouts stall.
 
-We worked with a B2B wholesale platform whose primary database hit 94% CPU every afternoon as buyers searched catalogs with multi-filter queries. Moving search sync into app controllers also failed because ERP bulk imports bypassed the controllers and left the search index stale.
+The culprit was a single wildcard ILIKE '%query%' search bar triggering sequential scans across 11M catalog rows on every keystroke.
 
-How we solved both latency and drift at Olven Tech:
+Earlier attempts to sync search inside app controllers had failed silently because nightly ERP bulk imports bypassed the controllers and left inventory prices stale for hours.
 
-1. Logical replication CDC: Attached a lightweight CDC worker to a Postgres WAL replication slot so every SKU update, whether from the UI or a bulk ERP import, streams into the search pipeline automatically.
-2. Micro-batched upserts: Coalesced bursts into 500-document batches, keeping search freshness under 1.2 seconds without hammering the index cluster.
-3. Workload isolation: Routed all faceted and prefix search queries to the dedicated search index, freeing primary Postgres strictly for transactional writes.
+How Olven Tech cut search latency 50x while keeping index drift at zero:
 
-Result: P95 search latency fell from 2.4 seconds to 48ms, primary Postgres CPU dropped 71%, and buyer search-to-cart conversion rose 14%.
+1. Postgres WAL CDC stream: Attached a dedicated CDC worker to a logical replication slot so every SKU mutation, whether from web UI or bulk ERP load, streams automatically.
+2. Micro-batched upserts: Coalesced bursts into 500-document batches, holding index freshness under 1.2 seconds without stressing the search cluster.
+3. Strict workload isolation: Moved every faceted and prefix search off primary Postgres so transactional checkout writes stay untouched during peak hours.
 
-If search queries are choking your primary database, email contact@olventech.com.""",
-            "x": """Running ILIKE '%term%' on 11M Postgres rows turns your search bar into a self-inflicted outage.
+Outcome: P95 search dropped from 2.4 seconds to 48ms, primary Postgres CPU fell 71% (94% down to 27%), and search-to-cart buyer conversion climbed 14%.
 
-We moved catalog search to a WAL CDC-synced index:
-- P95 latency: 2.4s -> 48ms
+Slow search is rarely a hardware problem; it is an isolation problem. If catalog queries are choking your primary database, write to contact@olventech.com.""",
+            "x": """At 2 PM daily, one B2B platform hit 94% Postgres CPU because ILIKE '%query%' scanned 11M catalog rows per keystroke.
+
+Moving search to a WAL CDC-synced index:
+- P95 search: 2.4s -> 48ms
 - Primary DB CPU: -71%
-- <1.2s index freshness
+- Buyer conversion: +14%
 
 contact@olventech.com""",
-            "instagram": """Wildcard ILIKE search queries on your primary Postgres database will choke checkout writes at peak traffic.
+            "instagram": """Every afternoon at 2 PM, a single wildcard ILIKE search bar spiked primary Postgres CPU to 94% and slowed checkout across an 11M-SKU catalog.
 
-We isolated search on an 11M-SKU B2B platform:
-1. Streamed all row changes directly from a Postgres WAL replication slot (zero index drift).
+How Olven Tech dropped search from 2.4 seconds to 48ms:
+1. Streamed all SKU updates directly from a Postgres WAL replication slot (zero index drift).
 2. Micro-batched 500 upserts/sec into a dedicated faceted search cluster.
-3. Freed primary Postgres strictly for transactional orders.
+3. Isolated primary Postgres strictly for transactional orders.
 
-Result: Search P95 dropped from 2.4s to 48ms, primary DB CPU fell 71%, and conversion jumped 14%.
+Result: 48ms P95 search, 71% lower DB CPU, and +14% buyer conversion.
 
-Need sub-100ms search without DB contention? Email contact@olventech.com.""",
-            "facebook": """If afternoon search traffic is spiking your primary Postgres CPU above 90%, it is time to get wildcard ILIKE queries off your transactional database.
+Search choking your database? Email contact@olventech.com.""",
+            "facebook": """Every afternoon at peak traffic, wildcard ILIKE search queries on an 11M-row Postgres catalog were spiking primary CPU to 94% and slowing buyer checkouts.
 
-We wired a Postgres WAL CDC stream into a dedicated search cluster for an 11M-row B2B catalog, cutting P95 search time from 2.4 seconds to 48ms while slashing primary DB CPU by 71%.
+Olven Tech wired a real-time Postgres WAL CDC stream into a dedicated search cluster, cutting P95 search latency from 2.4 seconds to 48ms, dropping primary DB CPU by 71%, and lifting buyer conversion by 14%.
 
-Reach us at contact@olventech.com.""",
-            "threads": """ILIKE '%query%' on 11M Postgres rows will choke your primary database during peak hours.
+Reach our engineering team at contact@olventech.com.""",
+            "threads": """A single ILIKE '%query%' search bar on 11M Postgres rows was spiking primary CPU to 94% every afternoon.
 
-Streaming Postgres WAL via CDC into a dedicated search cluster dropped search P95 from 2.4s to 48ms and cut primary DB CPU by 71%. (contact@olventech.com)"""
+Streaming Postgres WAL via CDC to a dedicated search cluster dropped P95 from 2.4s to 48ms and lifted buyer conversion 14%. (contact@olventech.com)"""
         }
     },
     21: {
@@ -866,45 +871,47 @@ Streaming Postgres WAL via CDC into a dedicated search cluster dropped search P9
             {"label": "IDLE PICK TIME", "value": "-88%", "sub": "Instant shipping labels"}
         ],
         "captions": {
-            "linkedin": """Throwing 32 parallel queue workers at a shared inventory table without lock ordering makes throughput slower, not faster.
+            "linkedin": """Adding 32 parallel queue workers to a shared Postgres inventory table made morning fulfillment slower, triggering 140 deadlocks before 10 AM.
 
-We diagnosed a fulfillment pipeline processing 45,000 morning orders where Postgres threw 140 deadlock errors every day before 10 AM. Two workers grabbing overlapping multi-SKU orders locked rows in opposite sequences, forcing aborts and immediate retries that snowballed into a 4.2-hour backlog.
+Warehouse pickers waited 4.2 hours for shipping labels on database hardware that was barely using half its capacity.
 
-How we cleared the bottleneck without upgrading database hardware at Olven Tech:
+Two workers grabbing overlapping multi-SKU orders acquired row locks in opposite sequences, forcing Postgres 40P01 aborts. Immediate retries amplified contention until the entire 45,000-order morning wave backed up.
 
-1. Deterministic lock ordering: Every multi-item transaction sorts sku_ids ascending before calling SELECT FOR UPDATE, mathematically eliminating circular wait deadlocks.
-2. Warehouse-keyed partitioning: Routed queue partitions by warehouse_id so high-volume facilities stop contending on shared stock batches.
-3. Non-blocking job claims: Switched worker polling to FOR UPDATE SKIP LOCKED so healthy orders never wait behind a single locked batch.
+How Olven Tech unlocked 9.4x throughput on the exact same database instance:
 
-Result: Zero deadlocks, 9.4x higher throughput on the exact same Postgres instance, and morning wave clearance dropped from 4.2 hours to 26 minutes.
+1. Deterministic lock ordering: Sorted sku_ids ascending inside every transaction before calling SELECT FOR UPDATE, mathematically preventing circular wait deadlocks.
+2. Warehouse-keyed queue partitioning: Routed job partitions by warehouse_id so high-volume fulfillment centers never fight over shared stock rows.
+3. Non-blocking job claims: Switched worker polling to FOR UPDATE SKIP LOCKED so healthy orders keep flowing past any busy batch.
 
-Fighting Postgres lock contention or queue backlogs? Email contact@olventech.com.""",
-            "x": """Adding more workers to an unordered queue makes Postgres deadlocks worse, not better.
+Outcome: 140 daily deadlocks dropped to 0, morning wave clearance fell from 4.2 hours to 26 minutes, and idle picker wait time dropped 88% with $0 spent on larger database instances.
 
-Sorting multi-SKU lock IDs + warehouse partitioning + SKIP LOCKED:
+Scaling cloud spend rarely fixes lock contention. Fighting Postgres deadlocks or ERP queue backlogs? Email contact@olventech.com.""",
+            "x": """32 workers on a Postgres inventory queue caused 140 deadlocks/day and a 4.2h warehouse stall.
+
+Sorted SKU locks + warehouse partitioning + SKIP LOCKED:
 - Deadlocks: 140/day -> 0
-- Wave clearance: 4.2h -> 26m
-- 9.4x throughput on same DB
+- Clearance: 4.2h -> 26m
+- 9.4x throughput
 
 contact@olventech.com""",
-            "instagram": """More queue workers will actually slow your database down if they lock the same rows in opposite orders.
+            "instagram": """32 parallel workers on an unordered Postgres inventory table caused 140 deadlocks every morning and stalled warehouse pickers for 4.2 hours.
 
-We fixed a 45,000-order/morning fulfillment backlog without upgrading database hardware:
-1. Sorted SKU IDs ascending inside every transaction before row locking (mathematically prevents circular deadlocks).
-2. Partitioned workers by warehouse_id to cut contention.
-3. Switched job claims to FOR UPDATE SKIP LOCKED.
+How Olven Tech hit 9.4x throughput without upgrading database hardware:
+1. Sorted SKU IDs ascending before locking (mathematically prevents circular deadlocks).
+2. Partitioned workers by warehouse_id to isolate hot stock.
+3. Switched job polling to FOR UPDATE SKIP LOCKED.
 
-Result: 140 daily deadlocks dropped to 0, and 4.2-hour backlogs now clear in 26 minutes.
+Result: 0 deadlocks and 4.2-hour backlogs cleared in 26 minutes.
 
-Need help with Postgres concurrency? Email contact@olventech.com.""",
-            "facebook": """When 32 background workers try to lock overlapping SKU rows in different orders, Postgres deadlocks can turn a 30-minute morning wave into a 4-hour warehouse delay.
+Fighting Postgres lock contention? Email contact@olventech.com.""",
+            "facebook": """Throwing 32 parallel workers at a shared Postgres inventory table triggered 140 deadlocks every morning and forced warehouse pickers to wait 4.2 hours for shipping labels.
 
-By enforcing deterministic sorted lock order, warehouse-keyed queue partitioning, and SKIP LOCKED polling, we eliminated all 140 daily deadlocks and boosted throughput 9.4x on the exact same database.
+Without upgrading a single server, Olven Tech enforced sorted SKU lock ordering, warehouse-keyed queue partitioning, and FOR UPDATE SKIP LOCKED polling, cutting deadlocks to 0 and boosting throughput 9.4x.
 
-Reach us at contact@olventech.com.""",
-            "threads": """Scaling workers blindly on a contended Postgres table causes deadlock storms.
+Reach our engineering team at contact@olventech.com.""",
+            "threads": """Adding 32 workers to an unordered Postgres inventory queue triggered 140 deadlocks/morning and a 4.2h warehouse stall.
 
-Sorting SKU lock IDs ascending + warehouse queue partitioning + FOR UPDATE SKIP LOCKED took a 45k-order fulfillment pipeline from 140 deadlocks/day to 0 and 4.2h to 26m. (contact@olventech.com)"""
+Sorted SKU lock IDs + warehouse partitioning + SKIP LOCKED hit 0 deadlocks and 26-min clearance on the same DB. (contact@olventech.com)"""
         }
     },
     22: {
@@ -937,45 +944,45 @@ Sorting SKU lock IDs ascending + warehouse queue partitioning + FOR UPDATE SKIP 
             {"label": "CACHE HIT RATE", "value": "41%", "sub": "SHA-256 page dedup"}
         ],
         "captions": {
-            "linkedin": """Dumping an entire 40-page PDF into one giant LLM prompt is the most expensive and slowest way to build document AI.
+            "linkedin": """Paying $0.42 per PDF and making enterprise users wait 46 seconds is how promising AI features quietly lose executive budget.
 
-We audited a B2B legal-ops pipeline where every contract upload took 46 seconds and cost $0.42 in tokens. Because 70% of each PDF was unchanged boilerplate and malformed JSON triggered full-document retries on 19% of uploads, both latency and unit economics were underwater.
+When Olven Tech audited this B2B legal-ops pipeline, 70% of every 40-page contract was identical boilerplate getting re-parsed by a frontier LLM from scratch, and malformed JSON forced full-document retries on 19% of uploads.
 
-How we re-engineered the extraction pipeline at Olven Tech:
+Most teams keep tuning prompts when the real bottleneck is systems architecture. Here is what we replaced it with:
 
-1. Lightweight page routing: Classifies each page first so boilerplate terms and blank signature sheets never hit the heavy extraction model.
-2. SHA-256 page caching: Hashes normalized page text so recurring vendor clauses resolve from Redis/Postgres in 4ms at $0 token cost.
-3. Parallel extraction + strict validation: Processes only the 5-8 high-signal pages in parallel with constrained structured output and deterministic math/date checks.
+1. Lightweight page routing: Classifies every page upfront so cover sheets, boilerplate terms, and blank signature pages never touch the heavy extraction model.
+2. SHA-256 content-hash cache: Digests normalized page text so recurring vendor clauses resolve from Redis and Postgres in 4ms at $0 token cost (41% cache hit rate).
+3. Parallel structured extraction: Runs only the 5-8 high-signal pages concurrently behind strict JSON schema, date, and math validation gates.
 
-Result: P95 processing time dropped 74% (46s to 11.8s), LLM spend fell 68%, and schema validity hit 99.8%.
+Outcome: P95 processing time fell 74% (46s down to 11.8s), LLM token spend dropped 68% ($0.42 to $0.13/doc), and schema validity reached 99.8%.
 
-Building production AI workflows that need real unit economics? Email contact@olventech.com.""",
-            "x": """Dumping 40-page PDFs into one giant LLM prompt burns $0.42/doc and takes 46 seconds.
+Shipping production AI with real SaaS unit economics takes systems engineering, not longer prompts. Building high-volume AI workflows? Email contact@olventech.com.""",
+            "x": """Paying $0.42/PDF and waiting 46s is how AI features lose executive budget.
 
-Page classification + SHA-256 page caching + parallel structured extraction:
-- Latency: -74% (11.8s P95)
-- Token cost: -68%
+Page routing + SHA-256 page caching + parallel structured extraction:
+- Latency: -74% (46s -> 11.8s)
+- LLM spend: -68%
 - 99.8% schema validity
 
 contact@olventech.com""",
-            "instagram": """Sending whole 40-page PDFs into a single LLM prompt destroys both speed and margins.
+            "instagram": """Paying $0.42 per PDF and waiting 46 seconds destroys AI product margins fast.
 
-How we cut contract AI latency by 74% and token spend by 68%:
-1. Classified pages first to skip boilerplate before calling the main model.
-2. Cached recurring clauses by SHA-256 page hash (41% instant cache hit rate).
-3. Ran target pages in parallel behind strict JSON and math validation gates.
+How Olven Tech cut contract AI latency by 74% and token spend by 68%:
+1. Classified pages upfront to skip boilerplate before calling the main model.
+2. Cached recurring clauses by SHA-256 page hash (41% instant cache hits at $0).
+3. Extracted target pages in parallel behind strict JSON and math gates.
 
-Result: 46s down to 11.8s and 99.8% valid output.
+Result: 11.8s P95 latency and 99.8% valid output.
 
-Need production AI with real margins? Email contact@olventech.com.""",
-            "facebook": """If your AI document pipeline takes 45+ seconds per PDF and burns through token budgets, stop sending raw boilerplate pages into one giant prompt.
+Need production AI with real unit economics? Email contact@olventech.com.""",
+            "facebook": """Dumping 40-page PDFs into a single frontier LLM prompt was costing one B2B legal-ops team $0.42 per document and 46 seconds of wait time.
 
-By adding fast page routing, SHA-256 page caching, and parallel structured extraction, we cut contract processing latency by 74% and lowered LLM spend by 68% while reaching 99.8% schema accuracy.
+Olven Tech added fast page routing, SHA-256 page caching, and parallel structured extraction, cutting latency by 74% (11.8s P95), slashing token bills by 68%, and raising schema validity to 99.8%.
 
-Reach us at contact@olventech.com.""",
-            "threads": """Stop dumping 40-page PDFs into one monolithic LLM prompt.
+Reach our engineering team at contact@olventech.com.""",
+            "threads": """Paying $0.42/PDF and waiting 46s is how enterprise AI workflows bleed margin.
 
-Adding fast page routing + SHA-256 page caching + parallel constrained extraction cut a client's AI latency by 74% (46s -> 11.8s) and token cost by 68%. (contact@olventech.com)"""
+Fast page routing + SHA-256 page caching + parallel schema extraction cut latency 74% (11.8s) and token cost 68%. (contact@olventech.com)"""
         }
     },
     23: {
@@ -1008,44 +1015,46 @@ Adding fast page routing + SHA-256 page caching + parallel constrained extractio
             {"label": "AUDIT READY", "value": "100%", "sub": "Per-invoice lineage"}
         ],
         "captions": {
-            "linkedin": """Flat invoice-total webhooks break the moment an annual B2B customer upgrades seats mid-cycle in EUR or GBP.
+            "linkedin": """Every quarter before the board meeting, one SaaS finance team spent 3 full days hunting down $19,000/month in missing deferred revenue between Stripe and QuickBooks.
 
-We worked with a multi-currency SaaS finance team seeing $19,000/month in deferred revenue variance between Stripe and QuickBooks. Their automation synced top-level invoice totals without decomposing negative proration credit lines, service-period cutoffs, or locked invoice FX rates.
+The leak started the exact week enterprise buyers began upgrading annual seats mid-cycle in EUR and GBP.
 
-How we automated clean SaaS revenue recognition at Olven Tech:
+Their billing automation synced top-level invoice totals without decomposing negative proration credit lines, exact service-period start/end dates, or locked settlement exchange rates. Every foreign-currency upgrade silently drifted against spot FX.
 
-1. Line-level proration decomposition: Ingests invoice.finalized and splits every subscription line and negative proration credit by exact service start/end timestamps.
-2. Locked FX amortization: Persists the exact invoice exchange rate in a Postgres deferred-revenue ledger so monthly recognition never drifts with fluctuating spot rates.
-3. Automated QuickBooks journal batches: Generates balanced deferred-to-recognized monthly journal entries linked directly back to Stripe invoice IDs.
+How Olven Tech rebuilt their revenue ledger to $0.00 variance:
 
-Result: $0.00 variance across USD, EUR, and GBP cohorts, and 3 days shaved off every quarterly board close.
+1. Line-level proration decomposition: Listens to invoice.finalized and splits every positive seat line and negative proration credit by exact service timestamps.
+2. Locked FX amortization: Persists the exact Stripe settlement exchange rate inside a Postgres deferred-revenue schedule so monthly recognition never drifts with currency markets.
+3. Automated QuickBooks journal batches: Posts balanced monthly deferred-to-recognized journal entries linked directly back to Stripe invoice IDs for instant audit lineage.
 
-Still untangling Stripe proration in spreadsheets? Email contact@olventech.com.""",
-            "x": """Flat invoice webhooks break as soon as annual SaaS customers upgrade seats mid-cycle.
+Outcome: $0.00 revrec variance across USD, EUR, and GBP cohorts, and 3 full days shaved off every quarterly board close.
 
-We built a line-level Postgres proration + locked-FX ledger syncing Stripe to QuickBooks:
+Manual spreadsheet reconciliation compounds silently as enterprise deals grow. Still untangling Stripe proration before board close? Email contact@olventech.com.""",
+            "x": """Finance spent 3 days every quarter hunting down $19K/mo in deferred revenue drift between Stripe and QuickBooks.
+
+Line-level Postgres proration + locked FX amortization schedules:
 - $0.00 revrec variance (USD/EUR/GBP)
 - 3 days cut from quarterly close
 
 contact@olventech.com""",
-            "instagram": """Mid-cycle seat upgrades in EUR and GBP break basic Stripe-to-QuickBooks zaps fast.
+            "instagram": """Finance spent 3 days before every board meeting hunting down $19,000/month in missing deferred revenue between Stripe and QuickBooks.
 
-How we eliminated $19k/month in deferred revenue drift:
-1. Split every invoice and negative proration line by exact service dates on invoice.finalized.
-2. Locked the invoice FX rate inside a Postgres amortization schedule.
+How Olven Tech brought revrec drift to $0.00:
+1. Split every invoice and negative proration credit by exact service dates on invoice.finalized.
+2. Locked the Stripe settlement FX rate inside a Postgres amortization schedule.
 3. Posted balanced monthly recognition journal entries to QuickBooks automatically.
 
-Result: $0.00 revrec variance and 3 days saved every board close.
+Result: $0.00 variance across USD/EUR/GBP and 3 days saved every close.
 
 Need clean billing-to-accounting engineering? Email contact@olventech.com.""",
-            "facebook": """Syncing top-level Stripe invoice totals into QuickBooks fails whenever enterprise customers upgrade seats mid-cycle or pay in foreign currencies.
+            "facebook": """Every quarter before board reporting, one multi-currency SaaS finance team was losing 3 full days untangling $19,000/month in deferred revenue variance between Stripe and QuickBooks.
 
-We built a line-level deferred revenue ledger that handles negative proration credits and locked FX rates automatically, cutting $19k/month of revrec drift down to $0.00 and saving 3 days every close.
+Olven Tech replaced flat invoice webhooks with a line-level Postgres proration ledger and locked-FX amortization schedules, bringing revrec drift to $0.00 across USD, EUR, and GBP.
 
-Reach us at contact@olventech.com.""",
-            "threads": """Top-level Stripe invoice zaps break on mid-cycle seat upgrades and multi-currency proration.
+Reach our engineering team at contact@olventech.com.""",
+            "threads": """One SaaS finance team lost 3 days every quarter hunting down $19K/mo of Stripe-to-QuickBooks revrec drift from EUR/GBP seat upgrades.
 
-Moving to a line-level Postgres deferred-revenue ledger cut a client's Stripe-to-QuickBooks variance from $19k/mo to $0.00 and saved 3 days per close. (contact@olventech.com)"""
+A line-level Postgres proration + locked-FX ledger brought variance to $0.00. (contact@olventech.com)"""
         }
     },
     24: {
@@ -1078,45 +1087,46 @@ Moving to a line-level Postgres deferred-revenue ledger cut a client's Stripe-to
             {"label": "TENANT ISOLATION", "value": "100%", "sub": "Per-org gateway quotas"}
         ],
         "captions": {
-            "linkedin": """A 15-second downstream hiccup shouldn't take down your entire platform for 42 minutes, yet synchronized retries do exactly that.
+            "linkedin": """A 15-second downstream slowdown knocked out an entire multi-tenant SaaS platform for 42 minutes.
 
-We investigated an incident where a brief upstream latency spike triggered 10,000 background workers to retry on a fixed 5-second interval. Traffic jumped 11x in lockstep, exhausting gateway connection pools and knocking healthy customers offline long after the original upstream blip had already recovered.
+Ten thousand background workers retried every 5 seconds in lockstep, turning a minor HTTP 503 blip into an 11x self-inflicted traffic storm.
 
-How we eliminated retry storms at Olven Tech:
+Even after the upstream vendor recovered 15 seconds later, the retry wave stayed pinned at 100% of API gateway connection pools and knocked completely unrelated enterprise customers offline.
 
-1. Global retry budget: Placed a Redis token bucket capping retry volume at 10% of live traffic so retries can never self-DDOS a recovering service.
-2. Full-jitter exponential backoff: Replaced fixed retry timers with randomized backoff windows so workers spread out evenly.
-3. Per-tenant bulkhead quotas: Bounded concurrent outbound slots per organization so one degraded vendor integration cannot starve healthy tenants.
+How Olven Tech eliminated cascading retry storms permanently:
 
-Result: Maximum traffic amplification dropped from 11x to 1.1x, recovery time fell from 42 minutes to 14 seconds, and cascading outages dropped to zero.
+1. Global 10% retry budget: Placed a Redis token bucket capping total retry volume at 10% of nominal traffic so workers can never self-DDoS a recovering service.
+2. Full-jitter exponential backoff: Replaced synchronized 5-second timers with randomized backoff windows so load spreads smoothly across time.
+3. Per-tenant bulkhead quotas: Bounded concurrent outbound connection slots per organization so one degraded integration never starves healthy tenants.
 
-Want to stress-test your API resilience before peak traffic? Email contact@olventech.com.""",
-            "x": """Fixed 5-second retries turn a 15-second dip into a 42-minute full outage.
+Outcome: Peak retry amplification fell from 11x to 1.1x, incident recovery dropped from 42 minutes to 14 seconds, and cascading outages hit zero across 9 months live.
 
-Adding a 10% global retry budget + full-jitter backoff + per-tenant bulkheads:
-- Retry spike: 11x -> 1.1x max
+Enterprise reliability is won in failure modes, not happy-path demos. Stress-testing your API gateway before peak load? Email contact@olventech.com.""",
+            "x": """A 15-second upstream blip took down a SaaS platform for 42 minutes because 10,000 workers retried every 5s in lockstep (11x storm).
+
+10% Redis retry budget + full-jitter backoff + per-tenant bulkheads:
 - Recovery: 42m -> 14s
 - 0 cascading outages
 
 contact@olventech.com""",
-            "instagram": """Synchronized retries can turn a 15-second slowdown into a 42-minute outage.
+            "instagram": """A 15-second downstream slowdown knocked an entire SaaS platform offline for 42 minutes due to synchronized 5-second retries (11x traffic spike).
 
-How we stopped retry storms on a multi-tenant B2B API:
-1. Added a Redis retry budget capping total retries at 10% of normal volume.
-2. Switched fixed timers to full-jitter exponential backoff.
-3. Enforced per-tenant concurrency quotas so one failing integration never hurts other clients.
+How Olven Tech stopped retry storms permanently:
+1. Added a Redis retry budget capping global retries at 10% of live traffic.
+2. Replaced fixed timers with full-jitter exponential backoff.
+3. Enforced per-tenant concurrency quotas so one degraded vendor never hurts other clients.
 
 Result: Recovery dropped from 42 minutes to 14 seconds with 0 cascading outages.
 
-Hardening your backend for scale? Email contact@olventech.com.""",
-            "facebook": """When thousands of workers retry a failed API call every 5 seconds in lockstep, the retries themselves keep your system down long after the original bug clears.
+Hardening your backend for enterprise scale? Email contact@olventech.com.""",
+            "facebook": """A 15-second upstream hiccup knocked out an entire multi-tenant platform for 42 minutes because 10,000 workers retried in lockstep every 5 seconds, creating an 11x traffic storm.
 
-By adding a 10% global retry budget, full-jitter backoff, and per-tenant concurrency quotas, we cut a client's incident recovery time from 42 minutes to 14 seconds with zero cascading outages.
+Olven Tech added a 10% Redis retry budget, full-jitter backoff, and per-tenant bulkhead quotas, slashing recovery time from 42 minutes to 14 seconds with zero cascading outages.
 
-Reach us at contact@olventech.com.""",
-            "threads": """Fixed-interval retries are a self-inflicted DDoS during any brief upstream slowdown.
+Reach our engineering team at contact@olventech.com.""",
+            "threads": """A 15-second upstream blip caused a 42-minute platform outage because 10K workers retried every 5s in lockstep.
 
-A 10% global retry budget + full-jitter backoff + per-tenant bulkheads cut incident recovery from 42 minutes to 14 seconds with 0 cascading outages. (contact@olventech.com)"""
+A 10% Redis retry budget + full-jitter backoff + per-tenant bulkheads cut recovery to 14 seconds with 0 cascading outages. (contact@olventech.com)"""
         }
     },
     25: {
@@ -1149,45 +1159,47 @@ A 10% global retry budget + full-jitter backoff + per-tenant bulkheads cut incid
             {"label": "FINDINGS", "value": "0", "sub": "Clean SOC-2 Type II pass"}
         ],
         "captions": {
-            "linkedin": """Pulling senior engineers off product sprints for two weeks to take compliance screenshots is an architecture failure, not a compliance requirement.
+            "linkedin": """Burning 110 senior engineering hours before every SOC-2 audit to capture CloudWatch screenshots costs far more than the auditor fee.
 
-We worked with a healthcare SaaS team burning 110 engineering hours per audit cycle chasing scattered access logs across services, many of which rotated after 30 days and failed 12-month SOC-2 Type II sampling.
+Worse, 30-day log rotation had already wiped access records required for 12-month SOC-2 Type II sampling inside this healthcare SaaS platform.
 
-How we automated audit evidence at Olven Tech:
+Enterprise procurement teams increasingly scrutinize whether admin permission logs can be altered retroactively. Pulling engineers off product roadmaps every quarter never solves the underlying integrity gap.
 
-1. Typed audit event bus: Emits structured events on every RBAC change, SSO login, API key creation, and PHI/PII read with actor identity and before/after diffs.
-2. Cryptographic hash chaining + WORM storage: Signs hourly batches with chained SHA-256 digests and writes directly to S3 Object Lock so logs are provably tamper-evident for 7 years.
-3. 1-click auditor exports: Gives compliance leads a read-only query tool that exports signed evidence packs for any sample window in 15 seconds.
+How Olven Tech turned compliance evidence into automated infrastructure:
 
-Result: Engineering audit overhead dropped 90% (110 hours to 11), with zero exceptions on their SOC-2 Type II report.
+1. Typed audit event bus: Captures every RBAC update, SSO login, API key grant, and PHI/PII read in a strict schema with actor ID, IP, and before/after diffs.
+2. SHA-256 hash chaining + S3 Object Lock: Cryptographically chains hourly log batches and archives them into immutable WORM storage for 7 years so tampering is mathematically detectable.
+3. 15-second auditor export tool: Lets compliance leads pull signed, date-range evidence packs on demand without interrupting a single backend engineer.
 
-Tired of losing engineering weeks to audit prep? Email contact@olventech.com.""",
-            "x": """Losing 110 engineering hours to compliance screenshots is an architecture bug.
+Outcome: Engineering audit overhead dropped 90% (110 hours down to 11), delivering a clean zero-exception SOC-2 Type II report.
 
-We built a typed audit bus writing SHA-256 hash-chained logs to S3 Object Lock:
+Compliance should be a byproduct of clean systems architecture, never a quarterly fire drill. Building audit-ready infrastructure? Email contact@olventech.com.""",
+            "x": """Burning 110 senior engineering hours on SOC-2 screenshots costs more than the auditor fee.
+
+Typed audit bus + SHA-256 hash-chained logs on S3 Object Lock (7-yr WORM):
 - Audit prep: -90% (110h -> 11h)
-- 7-year tamper-proof WORM archive
+- 15s auditor exports
 - 0 SOC-2 findings
 
 contact@olventech.com""",
-            "instagram": """Senior engineers shouldn't spend 110 hours every year taking screenshots for SOC-2 and HIPAA auditors.
+            "instagram": """Burning 110 senior engineering hours every audit cycle on CloudWatch screenshots stalls product roadmaps and still misses rotated logs.
 
-We automated tamper-evident compliance logging:
-1. Typed event bus capturing every RBAC, login, and PII read with full diffs.
+How Olven Tech automated tamper-evident SOC-2 & HIPAA logging:
+1. Typed event bus recording every RBAC, SSO, and PII access with full diffs.
 2. SHA-256 hash-chained batches archived to S3 Object Lock (7-year WORM).
-3. 15-second self-serve evidence exports for auditors.
+3. 15-second self-serve evidence exports for compliance leads.
 
-Result: 90% less audit prep and a zero-exception SOC-2 Type II pass.
+Result: 90% less audit prep and zero SOC-2 Type II findings.
 
 Need audit-ready infrastructure? Email contact@olventech.com.""",
-            "facebook": """Manual screenshot scrambles before SOC-2 and HIPAA audits drain senior engineering time and still miss logs that rotated after 30 days.
+            "facebook": """Losing 110 senior engineering hours every audit cycle to capture manual compliance screenshots drains product velocity and still fails when 30-day log retention wipes Type II evidence.
 
-We built a hash-chained audit pipeline archiving structured access diffs into S3 Object Lock for 7 years, cutting audit prep time by 90% with zero auditor findings.
+Olven Tech built an immutable SHA-256 hash-chained audit bus archiving structured diffs into S3 Object Lock for 7 years, cutting audit prep by 90% with zero findings.
 
-Reach us at contact@olventech.com.""",
-            "threads": """Stop pulling engineers off product work for 110 hours of SOC-2 screenshots.
+Reach our engineering team at contact@olventech.com.""",
+            "threads": """Losing 110 senior engineering hours to manual SOC-2 screenshots is an architecture bug.
 
-A typed audit bus shipping SHA-256 hash-chained batches to S3 Object Lock cut audit prep by 90% and delivered a zero-finding SOC-2 Type II report. (contact@olventech.com)"""
+A typed audit bus shipping SHA-256 hash-chained batches to S3 Object Lock cut audit prep 90% with 0 SOC-2 Type II findings. (contact@olventech.com)"""
         }
     },
     26: {
@@ -1220,45 +1232,45 @@ A typed audit bus shipping SHA-256 hash-chained batches to S3 Object Lock cut au
             {"label": "ON-CALL HEALTH", "value": "99.96%", "sub": "Verified customer uptime"}
         ],
         "captions": {
-            "linkedin": """Waking engineers up at 3 AM because CPU touched 82% for two minutes doesn't improve reliability; it trains your team to ignore real outages.
+            "linkedin": """Eighty-four 3 AM PagerDuty alarms a month made one engineering org miss a real checkout outage for 28 minutes.
 
-We audited an engineering org fielding 84 off-hours PagerDuty alerts per month. Over 90% were transient infrastructure spikes that auto-scaled cleanly with zero user impact, yet the alert fatigue caused a real checkout error spike to go unnoticed for 28 minutes.
+Over 90% of those night pages were transient container CPU spikes that auto-scaled cleanly with zero customer impact. The constant noise trained senior engineers to acknowledge alerts half-asleep, blinding them when checkout error rates genuinely spiked.
 
-How we rebuilt production observability at Olven Tech:
+How Olven Tech rebuilt production observability around customer impact:
 
-1. Customer-symptom SLIs: Defined strict latency and success-rate SLIs at the API gateway and checkout boundary instead of paging on raw container CPU.
-2. Multi-window burn-rate alerts: Configured paging strictly when both 5-minute and 1-hour error budget burn rates cross threshold, filtering out self-healing blips.
-3. Tiered routing: Kept non-urgent capacity warnings in daytime Slack digests while attaching direct trace queries and runbooks to every real page.
+1. Gateway-level user SLIs: Measured real request latency and checkout success rates at the API edge rather than waking humans for raw container CPU thresholds.
+2. Multi-window SLO burn-rate gates: Triggered PagerDuty strictly when both 5-minute fast burn and 1-hour sustained burn threatened monthly error budgets, filtering out self-healing blips.
+3. Daytime capacity routing + live traces: Moved non-urgent resource warnings into morning Slack digests and embedded direct trace links and rollback runbooks into every real page.
 
-Result: Off-hours pages dropped 92% (84/mo to 6), mean time to detect real customer issues fell from 28 minutes to 3.1 minutes, and uptime climbed to 99.96%.
+Outcome: Off-hours pages fell 92% (84/month down to 6 real incidents), real outage detection sped up 9x (28 minutes down to 3.1 minutes), and customer uptime reached 99.96%.
 
-If alert fatigue is burning out your engineering team, email contact@olventech.com.""",
-            "x": """Paging engineers at 3 AM for 82% CPU spikes trains them to miss real outages.
+Noisy alerting burns out your best engineers and weakens uptime at the exact same time. Rebuilding SRE observability? Email contact@olventech.com.""",
+            "x": """84 3 AM PagerDuty alarms a month trained one engineering team to miss a real checkout outage for 28 minutes.
 
-Switching to multi-window SLO burn-rate alerts:
-- Off-hours pages: -92% (84/mo -> 6)
+Multi-window SLO burn-rate alerting:
+- Night pages: -92% (84/mo -> 6)
 - Real incident detection: 28m -> 3.1m
 - 99.96% uptime
 
 contact@olventech.com""",
-            "instagram": """Alert fatigue from noisy CPU alarms is one of the biggest causes of missed production outages.
+            "instagram": """84 off-hours PagerDuty alarms a month made one team miss a real checkout outage for 28 minutes because 90% of pages were harmless CPU spikes.
 
-We rebuilt on-call alerting around multi-window SLO burn rates:
-1. Paged strictly on real customer latency and error-rate budgets (5m + 1h burn windows).
-2. Moved transient CPU/memory warnings into daytime Slack digests.
-3. Attached live trace links and runbooks directly to every page.
+How Olven Tech rebuilt SRE observability:
+1. Paged strictly on customer-impact error budgets (5m + 1h SLO burn windows).
+2. Routed transient CPU warnings into daytime Slack digests.
+3. Attached live trace queries and rollback commands to every real page.
 
-Result: 92% fewer night pages and 9x faster real incident detection (3.1 mins).
+Result: 92% fewer night pages and 9x faster real outage detection (3.1 mins).
 
 Need calmer, faster production SRE? Email contact@olventech.com.""",
-            "facebook": """84 off-hours PagerDuty alerts a month for harmless CPU spikes burns out senior engineers and hides real customer outages.
+            "facebook": """84 off-hours PagerDuty alerts a month for harmless CPU spikes burned out senior engineers and caused a real checkout outage to go unnoticed for 28 minutes.
 
-We moved a B2B platform to multi-window SLO burn-rate alerting, cutting night pages by 92% while speeding up real incident detection from 28 minutes to 3.1 minutes.
+Olven Tech replaced static threshold alarms with multi-window SLO burn-rate alerting, cutting night pages by 92% while speeding real outage detection from 28 minutes down to 3.1 minutes.
 
-Reach us at contact@olventech.com.""",
-            "threads": """Paging on raw CPU thresholds at 3 AM causes alert fatigue and hides real outages.
+Reach our engineering team at contact@olventech.com.""",
+            "threads": """84 3 AM PagerDuty pages a month for harmless CPU spikes made one team miss a real checkout outage for 28 minutes.
 
-Moving to multi-window SLO burn-rate alerts cut off-hours pages by 92% (84 -> 6/mo) and dropped real incident detection from 28m to 3.1m. (contact@olventech.com)"""
+Multi-window SLO burn-rate alerts cut night pages 92% (84 -> 6) and dropped real detection to 3.1m. (contact@olventech.com)"""
         }
     },
     27: {
@@ -1291,45 +1303,45 @@ Moving to multi-window SLO burn-rate alerts cut off-hours pages by 92% (84 -> 6/
             {"label": "OPS REWORK", "value": "-86%", "sub": "1-click DLQ replay UI"}
         ],
         "captions": {
-            "linkedin": """One malformed line inside a midnight SFTP EDI file shouldn't stall 400 valid purchase orders and trigger $95,000 a year in retail chargebacks.
+            "linkedin": """A single malformed line inside a midnight SFTP EDI file stalled 400 valid purchase orders and triggered $95,000 a year in retail chargebacks.
 
-We modernized a wholesale distributor's EDI 850/856 pipeline where brittle nightly cron scripts crashed silently whenever a retail partner changed an optional segment. By the time ops noticed the next morning, Advance Ship Notices were already past big-box compliance windows.
+By the time operations opened the raw X12 text file at 8 AM, big-box compliance windows for EDI 856 Advance Ship Notices had already closed, turning routine shipments into automatic margin deductions.
 
-How we rebuilt their EDI infrastructure at Olven Tech:
+How Olven Tech modernized their EDI 850/856 supply-chain pipeline without replacing their ERP:
 
-1. Atomic per-PO splitting: Triggered immediately on file arrival and split each X12 interchange into independent purchase-order events so one bad record never blocks healthy orders.
-2. Strict schema validation + DLQ replay: Isolated malformed segments into an alert queue where ops can inspect the exact field, fix it, and replay cleanly without touching raw X12 text.
-3. Real-time 856 dispatch: Emitted validated Advance Ship Notices within 90 seconds of warehouse pack scan instead of waiting for midnight crons.
+1. Atomic per-PO event splitting: Triggered immediately on file drop and decomposed each X12 interchange into independent purchase-order events so one broken line never stalls healthy orders.
+2. Schema guard + 1-click DLQ replay: Isolated malformed segments into a clean Slack ops queue showing the exact broken field, allowing instant repair and replay without touching raw X12 syntax.
+3. 90-second real-time 856 dispatch: Validated GS1-128 pack scans and emitted Advance Ship Notices within 90 seconds instead of waiting on fragile midnight crons.
 
-Result: Retail late-ASN chargebacks dropped from $95,000/yr to $0, batch stalls hit zero, and manual EDI rework fell 86%.
+Outcome: Big-box late-ASN chargebacks fell from $95,000/year to $0, batch stalls dropped to zero, and manual EDI rework fell 86%.
 
-Still fighting brittle SFTP or EDI batch scripts? Email contact@olventech.com.""",
-            "x": """One malformed line in a midnight SFTP EDI file shouldn't stall 400 orders and cost $95k/yr in chargebacks.
+Silent overnight cron scripts quietly tax wholesale margins every week. Modernizing legacy SFTP or EDI pipelines? Email contact@olventech.com.""",
+            "x": """One malformed line in a midnight SFTP EDI file stalled 400 valid orders and triggered $95K/yr in retail chargebacks.
 
-Event-driven per-PO X12 parsing + 90s EDI 856 dispatch:
-- Late ASN fines: $95k/yr -> $0
+Atomic per-PO X12 event parsing + 90-sec EDI 856 dispatch:
+- Late ASN fines: $95K/yr -> $0
 - Batch stalls: 0
 - Ops rework: -86%
 
 contact@olventech.com""",
-            "instagram": """Brittle midnight SFTP scripts are quietly costing B2B distributors tens of thousands in retail compliance chargebacks.
+            "instagram": """A single broken line inside a midnight SFTP EDI file stalled 400 valid purchase orders and cost $95,000/year in retail chargebacks.
 
-We replaced a nightly EDI 850/856 cron with an event-driven ingestion worker:
-1. Split X12 batches into isolated per-PO events so one bad line never blocks valid orders.
-2. Emitted validated EDI 856 notices within 90 seconds of warehouse scan.
-3. Built a clean dead-letter replay queue for malformed segments.
+How Olven Tech eliminated late-ASN penalties without replacing the ERP:
+1. Split X12 batches into isolated per-PO events so one bad record never stalls valid orders.
+2. Dispatched validated EDI 856 notices within 90 seconds of warehouse pack scan.
+3. Added a clean dead-letter replay queue for malformed segments.
 
-Result: $95k/yr in chargebacks reduced to $0 and 86% less manual rework.
+Result: $95K/yr in chargebacks dropped to $0 and ops rework fell 86%.
 
 Modernizing EDI or ERP pipelines? Email contact@olventech.com.""",
-            "facebook": """When one malformed EDI line crashes a midnight SFTP script, hundreds of valid purchase orders stall until morning and big-box retailers issue expensive late-ASN chargebacks.
+            "facebook": """One malformed EDI line crashing a midnight SFTP script was stalling 400 valid purchase orders until morning and costing a wholesale distributor $95,000/year in big-box late-ASN chargebacks.
 
-We rebuilt an EDI 850/856 pipeline with atomic per-PO event parsing and 90-second ASN dispatch, cutting $95,000/year in retail penalties down to $0.
+Olven Tech replaced the nightly batch script with atomic per-PO X12 event parsing and 90-second EDI 856 dispatch, cutting retail penalties from $95K/yr down to $0.
 
-Reach us at contact@olventech.com.""",
-            "threads": """One bad line in a midnight SFTP EDI batch shouldn't stall 400 orders and trigger $95k/yr in late-ASN fines.
+Reach our engineering team at contact@olventech.com.""",
+            "threads": """A single bad line in a midnight SFTP EDI batch stalled 400 ERP purchase orders and cost $95K/yr in big-box retail chargebacks.
 
-Atomic per-PO X12 event parsing + 90-second EDI 856 dispatch cut a distributor's retail chargebacks from $95k/yr to $0. (contact@olventech.com)"""
+Atomic per-PO X12 queue parsing + 90-second EDI 856 event dispatch cut retail penalties from $95K/yr to $0. (contact@olventech.com)"""
         }
     }
 }
