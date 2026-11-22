@@ -1,0 +1,3 @@
+Most teams get quoted an 8-hour weekend outage to migrate 180M production rows.
+
+Binlog CDC + chunked SHA-256 parity hashing + 72h dark reads let us cut over MySQL to Postgres in 4.1 seconds with 0 lost rows. (contact@olventech.com)

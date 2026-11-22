@@ -1,6 +1,3 @@
-Most runaway Snowflake bills happen because dashboards rescan billions of immutable rows every 15 minutes.
+Most teams get quoted an 8-hour weekend outage to migrate 180M production rows.
 
-Moving a 1.4B-row B2B pipeline to watermarked incremental rollups + clustering:
-- Cut spend by 61% ($278k/yr saved)
-- Dropped P95 load from 14.2s to 380ms
-- 96% fewer bytes scanned (contact@olventech.com)
+Binlog CDC + chunked SHA-256 parity hashing + 72h dark reads let us cut over MySQL to Postgres in 4.1 seconds with 0 lost rows. (contact@olventech.com)

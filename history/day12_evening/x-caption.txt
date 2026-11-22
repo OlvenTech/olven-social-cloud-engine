@@ -1,0 +1,7 @@
+Most teams get quoted an 8-hour weekend outage to move 180M rows from MySQL to Postgres.
+
+We cut over in 4.1 seconds via binlog CDC + chunked SHA-256 parity verification + 72h dark reads:
+- 100% row parity across 180M rows
+- 0 dropped writes
+
+contact@olventech.com

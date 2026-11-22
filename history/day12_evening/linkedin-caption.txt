@@ -1,0 +1,15 @@
+Most engineering orgs get quoted an 8-hour weekend outage to move 180M rows from MySQL to Postgres.
+
+We cut over the entire financial ledger in 4.1 seconds. Zero dropped writes. Zero SLA breach.
+
+A B2B SaaS platform needed off legacy MySQL without breaking strict enterprise uptime contracts. A standard dump-and-restore carried two unacceptable risks: an 8-hour maintenance freeze, plus silent decimal rounding and UTC timestamp drift across 180 million accounting rows.
+
+Here is the exact zero-downtime architecture Olven Tech shipped inside their live stack:
+
+1. Continuous binlog CDC: Backfilled historical chunks at throttled IOPS while streaming live MySQL binlog mutations into Postgres until replication lag held steady at 110ms.
+2. Continuous SHA-256 parity hashing: Ran a background verifier comparing normalized decimal and timestamp checksums across every chunk of all 180M rows until mismatch count hit zero.
+3. 72-hour dark-read shadow + reverse CDC: Mirrored 10% of production reads to Postgres to validate query plans under live load, armed reverse CDC as an instant rollback net, then executed a 4.1-second write cutover.
+
+Outcome: 100% hash-verified row parity, zero dropped transactions, and zero downtime notices sent to enterprise customers.
+
+Most consultancies pitch multi-month rebuilds or painful freeze windows. At Olven Tech, we engineer deterministic cutovers directly inside production systems. Planning a high-stakes database migration? Write to our principal engineers at contact@olventech.com.

@@ -1,0 +1,5 @@
+Most companies assume migrating 180 million production ledger rows from MySQL to Postgres requires an 8-hour weekend maintenance freeze.
+
+At Olven Tech, we paired continuous binlog CDC replication with chunked SHA-256 parity verification and 72 hours of dark-read shadowing, cutting the write-pause window from 8 hours down to 4.1 seconds with 100% verified row parity.
+
+Planning a zero-downtime migration? Reach our engineering team at contact@olventech.com.

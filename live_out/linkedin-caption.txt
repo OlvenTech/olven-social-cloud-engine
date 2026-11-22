@@ -1,13 +1,15 @@
-Rescanning 1.4 billion immutable rows every 15 minutes is the fastest way to burn $38,000 a month on Snowflake.
+Most engineering orgs get quoted an 8-hour weekend outage to move 180M rows from MySQL to Postgres.
 
-We audited a B2B analytics platform whose warehouse bill had tripled in eight months. Their customer dashboards queried raw append-only event tables directly through views, forcing an XL compute cluster to stay awake 24/7 and scan years of unchanged history every time a user opened a report.
+We cut over the entire financial ledger in 4.1 seconds. Zero dropped writes. Zero SLA breach.
 
-How we cut their bill by 61% at Olven Tech:
+A B2B SaaS platform needed off legacy MySQL without breaking strict enterprise uptime contracts. A standard dump-and-restore carried two unacceptable risks: an 8-hour maintenance freeze, plus silent decimal rounding and UTC timestamp drift across 180 million accounting rows.
 
-1. Watermarked incremental rollups: Replaced full-table views with hourly tenant rollup tables updated strictly from newly landed partitions since the last committed watermark.
-2. Clustering key alignment: Aligned micro-partition clustering on (tenant_id, event_date) so dashboard queries prune 96% of storage blocks automatically.
-3. Right-sized compute isolation: Split ingestion onto an X-Small auto-suspending warehouse and moved dashboard reads to a Small pool.
+Here is the exact zero-downtime architecture Olven Tech shipped inside their live stack:
 
-Result: Monthly Snowflake spend dropped by $23,200 ($278k/yr saved), P95 dashboard latency fell from 14.2 seconds to 380ms, and freshness actually improved from 15 minutes to 5 minutes.
+1. Continuous binlog CDC: Backfilled historical chunks at throttled IOPS while streaming live MySQL binlog mutations into Postgres until replication lag held steady at 110ms.
+2. Continuous SHA-256 parity hashing: Ran a background verifier comparing normalized decimal and timestamp checksums across every chunk of all 180M rows until mismatch count hit zero.
+3. 72-hour dark-read shadow + reverse CDC: Mirrored 10% of production reads to Postgres to validate query plans under live load, armed reverse CDC as an instant rollback net, then executed a 4.1-second write cutover.
 
-If your cloud data bill is growing faster than revenue, email contact@olventech.com.
+Outcome: 100% hash-verified row parity, zero dropped transactions, and zero downtime notices sent to enterprise customers.
+
+Most consultancies pitch multi-month rebuilds or painful freeze windows. At Olven Tech, we engineer deterministic cutovers directly inside production systems. Planning a high-stakes database migration? Write to our principal engineers at contact@olventech.com.

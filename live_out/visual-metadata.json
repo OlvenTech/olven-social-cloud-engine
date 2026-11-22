@@ -1,7 +1,7 @@
 {
-  "visual_archetype": "circuit_breaker_state_machine",
-  "grade_profile": "Crisp Architectural Blueprint",
+  "visual_archetype": "split_latency_waterfall",
+  "grade_profile": "Pro Display XDR Blue Hour",
   "style_system": "artcraft-lightcraft-photocraft-manhattan-suite",
-  "headline": "Cutting Monthly Snowflake Analytics Spend by 61% Without Dropping Freshness",
-  "rendered_at": "2026-11-22T07:01:53.259Z"
+  "headline": "Migrating 180M Production Rows from MySQL to Postgres with Zero Downtime",
+  "rendered_at": "2026-11-22T16:01:56.979Z"
 }
