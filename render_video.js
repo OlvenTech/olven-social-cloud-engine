@@ -1,20 +1,18 @@
 #!/usr/bin/env node
 /**
- * Olven Tech — Tier-1 Big Tech 3D Motion Studio (ArtCraft EffectCraft v0.24.1)
+ * Olven Tech — Entertainment-First Viral 3D Story Engine (ArtCraft EffectCraft v0.24.1)
  *
- * Engineered to Apple / OpenAI / Anthropic (Claude) / Google / Linear motion & visual psychology:
- *  - ZERO abrupt whip-slams, ZERO 90-deg flips, ZERO 1-frame dark-to-white luminance flashes, ZERO radial smear.
- *  - Asymmetric Apple exponential deceleration (inInfluence: 86%, outInfluence: 28%) — glides to a velvety stop.
- *  - Cohesive single-world studio lighting per video with 0.65s overlapping cross-dissolves on Domes & Depth planes.
- *  - Gentle human-scale travel (64–88px), restrained ±1.8° micro-parallax, continuous breathing camera float.
- *  - 6 Iconic Tier-1 Visual Worlds rotating cleanly via OLVEN_SEQ_INDEX:
- *      1. anthropic_warm_editorial  (Claude Warm Alabaster · Terracotta · Charcoal Ink)
- *      2. apple_obsidian_titanium   (Apple Pro Obsidian · Brushed Titanium · Precision Sapphire)
- *      3. openai_ceramic_studio     (OpenAI Pure Ceramic White · Pearl Mist · Studio Cobalt)
- *      4. stripe_linear_precision   (Stripe / Linear Midnight Slate · Amber Pain → Emerald Relief)
- *      5. google_deepmind_luminous  (Google DeepMind Paper · Soft Ice · Research Cobalt)
- *      6. manhattan_executive_noir  (Manhattan Warm Carbon · Ivory · Champagne Gold)
- *  - Output: 1080x1920 30fps H.264 9.2 Mbps Rec.709 (strictly <= 19.4 MB CDN-safe) + NYC Felt Piano.
+ * Designed for MAXIMUM views, watch-through completion, shares, comments & inbound B2B clients:
+ *  - ZERO boring static text slides — 13 individual visual + audio dopamine beats across 16.0s!
+ *  - Beat 1 (0.0–3.6s): Live 3D iPhone 16 Pro Lockscreen Meltdown (3 notifications pop in 1-by-1 with real dings!)
+ *  - Beat 2 (3.4–7.4s): Live Workplace Group-Chat Drama (#emergency-chat — CFO panic -> Dev sweat -> Olven Tech enters!)
+ *  - Beat 3 (7.2–10.7s): Interactive Apple Fix Switches (3 glowing emerald toggles flip ON with ascending clicks!)
+ *  - Beat 4 (10.5–13.7s): Giant Struck-Through BEFORE -> Glowing Emerald AFTER Payoff + Happy CFO Reply Bubble!
+ *  - Beat 5 (13.5–16.0s): Punchy Shareable Brand Drop ("Don't be the next 9 AM Slack meltdown.")
+ *  - 100% Butter-Smooth Apple exponential deceleration (inInfluence: 88, outInfluence: 25), silky 0.45s cross-dissolves,
+ *    ZERO 90-deg flips, ZERO 1-frame luminance flashes, ZERO radial smear!
+ *  - Synced 116-BPM upbeat pulse + Apple-style UI SFX via mix_reel_sfx.py (pure Python stdlib + FFmpeg).
+ *  - Output: 1080x1920 30fps H.264 9.2 Mbps Rec.709 (strictly <= 19.4 MB CDN-safe).
  */
 const fs = require('fs');
 const path = require('path');
@@ -36,178 +34,148 @@ const ASSETS_DIR = path.join(__dirname, 'assets');
 const MUSIC_DIR = path.join(ASSETS_DIR, 'music');
 
 const DIRECTORS = {
-  anthropic_warm_editorial: {
-    name: 'anthropic_warm_editorial',
-    label: 'NEW YORK · ARCHITECTURE',
-    isDark: false,
-    track: 'nyc_felt_piano_mvt1.mp3',
-    motionStyle: 'anthropic_warm_drift',
-    // Cohesive Claude / Anthropic Warm Alabaster & Linen Paper (zero harsh flashes!)
-    domes: [
-      [[0.968, 0.955, 0.928, 1.0], [0.922, 0.902, 0.862, 1.0]],
-      [[0.962, 0.948, 0.922, 1.0], [0.914, 0.894, 0.855, 1.0]],
-      [[0.966, 0.954, 0.930, 1.0], [0.916, 0.900, 0.868, 1.0]],
-      [[0.972, 0.958, 0.932, 1.0], [0.925, 0.905, 0.865, 1.0]],
-      [[0.964, 0.950, 0.924, 1.0], [0.915, 0.895, 0.856, 1.0]],
-    ],
-    ink: '#141413',
-    inkMuted: '#57534E',
-    accent: '#C96442',        // Anthropic Terracotta Clay
-    accentSoft: '#F3E5DE',
-    proofColor: '#166534',    // Deep Forest Emerald
-    proofSoft: '#E3F2E8',
-    alert: '#B91C1C',
-    alertSoft: '#FDECEC',
-    surfaceBg: 'rgba(255, 253, 249, 0.88)',
-    surfaceBorder: 'rgba(20, 20, 19, 0.10)',
-    depthMotif: 'editorial_hairlines',
-    ctaHeadline: ['Engineered for', 'systems that', 'never leak.'],
-    ctaSub: 'OLVENTECH.COM · NEW YORK',
-  },
-
   apple_obsidian_titanium: {
     name: 'apple_obsidian_titanium',
-    label: 'NEW YORK · SYSTEMS',
+    label: 'NEW YORK · REAL STORIES',
     isDark: true,
     track: 'nyc_felt_piano_mvt2.mp3',
-    motionStyle: 'apple_silk_float',
-    // Cohesive Apple Keynote Space-Black Obsidian & Sapphire Ambient Depth
     domes: [
-      [[0.062, 0.088, 0.145, 1.0], [0.022, 0.026, 0.038, 1.0]],
-      [[0.085, 0.068, 0.095, 1.0], [0.024, 0.026, 0.036, 1.0]],
-      [[0.048, 0.105, 0.135, 1.0], [0.020, 0.025, 0.036, 1.0]],
-      [[0.052, 0.118, 0.112, 1.0], [0.020, 0.026, 0.035, 1.0]],
-      [[0.058, 0.082, 0.140, 1.0], [0.020, 0.024, 0.036, 1.0]],
+      [[0.068, 0.095, 0.160, 1.0], [0.020, 0.025, 0.040, 1.0]],
+      [[0.092, 0.065, 0.105, 1.0], [0.022, 0.024, 0.036, 1.0]],
+      [[0.048, 0.112, 0.145, 1.0], [0.018, 0.025, 0.038, 1.0]],
+      [[0.048, 0.128, 0.115, 1.0], [0.018, 0.026, 0.035, 1.0]],
+      [[0.064, 0.088, 0.155, 1.0], [0.020, 0.024, 0.038, 1.0]],
     ],
     ink: '#F8FAFC',
     inkMuted: '#94A3B8',
-    accent: '#60A5FA',        // Precision Sapphire
-    accentSoft: 'rgba(96, 165, 250, 0.14)',
-    proofColor: '#34D399',    // Signal Emerald
-    proofSoft: 'rgba(52, 211, 153, 0.14)',
+    accent: '#60A5FA',
+    proofColor: '#34D399',
+    proofSoft: 'rgba(52, 211, 153, 0.16)',
     alert: '#FB7185',
-    alertSoft: 'rgba(251, 113, 133, 0.14)',
-    surfaceBg: 'rgba(20, 25, 36, 0.80)',
-    surfaceBorder: 'rgba(255, 255, 255, 0.14)',
+    alertSoft: 'rgba(251, 113, 133, 0.16)',
+    surfaceBg: 'rgba(18, 24, 38, 0.90)',
+    surfaceBorder: 'rgba(255, 255, 255, 0.15)',
     depthMotif: 'spatial_rings',
-    ctaHeadline: ['Precision', 'production', 'engineering.'],
-    ctaSub: 'OLVENTECH.COM · NEW YORK',
   },
 
-  openai_ceramic_studio: {
-    name: 'openai_ceramic_studio',
-    label: 'NEW YORK · ENGINEERING',
+  anthropic_warm_editorial: {
+    name: 'anthropic_warm_editorial',
+    label: 'NEW YORK · REAL STORIES',
     isDark: false,
-    track: 'nyc_felt_piano_mvt3.mp3',
-    motionStyle: 'openai_editorial_glide',
-    // Cohesive OpenAI Ceramic White & Subtle Pearl Sky Mist
+    track: 'nyc_felt_piano_mvt1.mp3',
     domes: [
-      [[0.985, 0.990, 1.000, 1.0], [0.928, 0.948, 0.988, 1.0]],
-      [[0.988, 0.986, 0.996, 1.0], [0.940, 0.938, 0.975, 1.0]],
-      [[0.982, 0.994, 0.994, 1.0], [0.922, 0.958, 0.962, 1.0]],
-      [[0.984, 0.996, 0.990, 1.0], [0.920, 0.962, 0.946, 1.0]],
-      [[0.985, 0.990, 1.000, 1.0], [0.928, 0.948, 0.988, 1.0]],
+      [[0.968, 0.954, 0.926, 1.0], [0.916, 0.896, 0.854, 1.0]],
+      [[0.962, 0.946, 0.920, 1.0], [0.910, 0.888, 0.848, 1.0]],
+      [[0.966, 0.954, 0.930, 1.0], [0.914, 0.898, 0.864, 1.0]],
+      [[0.972, 0.958, 0.932, 1.0], [0.922, 0.904, 0.862, 1.0]],
+      [[0.964, 0.950, 0.924, 1.0], [0.914, 0.894, 0.852, 1.0]],
     ],
-    ink: '#0A0B0E',
-    inkMuted: '#4B5563',
-    accent: '#1D4ED8',        // OpenAI / Swiss Studio Cobalt
-    accentSoft: '#E8EFFD',
-    proofColor: '#047857',
+    ink: '#141413',
+    inkMuted: '#57534E',
+    accent: '#C96442',
+    proofColor: '#059669',
     proofSoft: '#E2F6EF',
     alert: '#DC2626',
     alertSoft: '#FEECEC',
-    surfaceBg: 'rgba(255, 255, 255, 0.88)',
-    surfaceBorder: 'rgba(15, 23, 42, 0.09)',
-    depthMotif: 'studio_grid',
-    ctaHeadline: ['Built for', 'enterprise', 'reliability.'],
-    ctaSub: 'OLVENTECH.COM · NEW YORK',
+    surfaceBg: 'rgba(255, 253, 249, 0.95)',
+    surfaceBorder: 'rgba(20, 20, 19, 0.11)',
+    depthMotif: 'editorial_hairlines',
   },
 
   stripe_linear_precision: {
     name: 'stripe_linear_precision',
-    label: 'NEW YORK · INFRASTRUCTURE',
+    label: 'NEW YORK · REAL STORIES',
     isDark: true,
-    track: 'nyc_felt_piano_mvt1.mp3',
-    motionStyle: 'stripe_precision_reveal',
-    // Cohesive Stripe / Linear Deep Indigo-Slate
+    track: 'nyc_felt_piano_mvt3.mp3',
     domes: [
-      [[0.070, 0.082, 0.165, 1.0], [0.024, 0.028, 0.052, 1.0]],
-      [[0.095, 0.075, 0.135, 1.0], [0.026, 0.028, 0.048, 1.0]],
-      [[0.052, 0.112, 0.142, 1.0], [0.022, 0.030, 0.046, 1.0]],
-      [[0.045, 0.128, 0.118, 1.0], [0.020, 0.030, 0.042, 1.0]],
-      [[0.068, 0.080, 0.160, 1.0], [0.024, 0.028, 0.050, 1.0]],
+      [[0.075, 0.082, 0.175, 1.0], [0.022, 0.026, 0.052, 1.0]],
+      [[0.102, 0.074, 0.140, 1.0], [0.024, 0.026, 0.048, 1.0]],
+      [[0.052, 0.118, 0.148, 1.0], [0.020, 0.028, 0.046, 1.0]],
+      [[0.045, 0.132, 0.120, 1.0], [0.018, 0.028, 0.042, 1.0]],
+      [[0.072, 0.080, 0.168, 1.0], [0.022, 0.026, 0.050, 1.0]],
     ],
     ink: '#FFFFFF',
     inkMuted: '#94A3B8',
-    accent: '#818CF8',        // Stripe / Linear Soft Indigo
-    accentSoft: 'rgba(129, 140, 248, 0.15)',
+    accent: '#818CF8',
     proofColor: '#34D399',
-    proofSoft: 'rgba(52, 211, 153, 0.15)',
-    alert: '#F59E0B',         // High-contrast Amber Alert
-    alertSoft: 'rgba(245, 158, 11, 0.14)',
-    surfaceBg: 'rgba(18, 23, 38, 0.82)',
-    surfaceBorder: 'rgba(255, 255, 255, 0.13)',
+    proofSoft: 'rgba(52, 211, 153, 0.16)',
+    alert: '#F59E0B',
+    alertSoft: 'rgba(245, 158, 11, 0.16)',
+    surfaceBg: 'rgba(18, 22, 38, 0.90)',
+    surfaceBorder: 'rgba(255, 255, 255, 0.14)',
     depthMotif: 'telemetry_dotgrid',
-    ctaHeadline: ['Ship backends', 'that never', 'drop revenue.'],
-    ctaSub: 'OLVENTECH.COM · NEW YORK',
   },
 
-  google_deepmind_luminous: {
-    name: 'google_deepmind_luminous',
-    label: 'NEW YORK · RESEARCH',
+  openai_ceramic_studio: {
+    name: 'openai_ceramic_studio',
+    label: 'NEW YORK · REAL STORIES',
     isDark: false,
-    track: 'nyc_felt_piano_mvt2.mp3',
-    motionStyle: 'apple_silk_float',
-    // Cohesive Google DeepMind Luminous Paper & Soft Atmospheric Blue
+    track: 'nyc_felt_piano_mvt1.mp3',
     domes: [
-      [[0.980, 0.990, 1.000, 1.0], [0.910, 0.945, 0.995, 1.0]],
-      [[0.988, 0.984, 0.988, 1.0], [0.945, 0.928, 0.935, 1.0]],
-      [[0.978, 0.994, 0.988, 1.0], [0.908, 0.958, 0.935, 1.0]],
-      [[0.980, 0.995, 0.990, 1.0], [0.912, 0.960, 0.940, 1.0]],
-      [[0.980, 0.990, 1.000, 1.0], [0.910, 0.945, 0.995, 1.0]],
+      [[0.985, 0.990, 1.000, 1.0], [0.922, 0.946, 0.988, 1.0]],
+      [[0.988, 0.985, 0.996, 1.0], [0.938, 0.935, 0.975, 1.0]],
+      [[0.982, 0.994, 0.994, 1.0], [0.918, 0.958, 0.960, 1.0]],
+      [[0.984, 0.996, 0.990, 1.0], [0.918, 0.962, 0.945, 1.0]],
+      [[0.985, 0.990, 1.000, 1.0], [0.922, 0.946, 0.988, 1.0]],
     ],
-    ink: '#0F172A',
-    inkMuted: '#475569',
-    accent: '#1A73E8',        // Google DeepMind Blue
-    accentSoft: '#E8F0FE',
-    proofColor: '#188038',    // Google Signal Green
-    proofSoft: '#E6F4EA',
-    alert: '#D93025',         // Google Coral Red
-    alertSoft: '#FCE8E6',
-    surfaceBg: 'rgba(255, 255, 255, 0.90)',
-    surfaceBorder: 'rgba(26, 115, 232, 0.12)',
-    depthMotif: 'spatial_rings',
-    ctaHeadline: ['Deterministic', 'systems.', 'Zero guesswork.'],
-    ctaSub: 'OLVENTECH.COM · NEW YORK',
+    ink: '#0A0B0E',
+    inkMuted: '#4B5563',
+    accent: '#1D4ED8',
+    proofColor: '#047857',
+    proofSoft: '#E2F6EF',
+    alert: '#DC2626',
+    alertSoft: '#FEECEC',
+    surfaceBg: 'rgba(255, 255, 255, 0.95)',
+    surfaceBorder: 'rgba(15, 23, 42, 0.10)',
+    depthMotif: 'studio_grid',
   },
 
   manhattan_executive_noir: {
     name: 'manhattan_executive_noir',
-    label: 'MANHATTAN · EXECUTIVE',
+    label: 'MANHATTAN · REAL STORIES',
     isDark: true,
-    track: 'nyc_felt_piano_mvt3.mp3',
-    motionStyle: 'openai_editorial_glide',
-    // Cohesive Wall Street / Leica Warm Carbon & Champagne Gold
+    track: 'nyc_felt_piano_mvt2.mp3',
     domes: [
-      [[0.088, 0.082, 0.072, 1.0], [0.026, 0.024, 0.022, 1.0]],
-      [[0.098, 0.076, 0.070, 1.0], [0.028, 0.024, 0.022, 1.0]],
-      [[0.075, 0.092, 0.082, 1.0], [0.024, 0.026, 0.024, 1.0]],
-      [[0.082, 0.096, 0.078, 1.0], [0.024, 0.026, 0.022, 1.0]],
-      [[0.088, 0.082, 0.072, 1.0], [0.026, 0.024, 0.022, 1.0]],
+      [[0.090, 0.082, 0.072, 1.0], [0.024, 0.022, 0.020, 1.0]],
+      [[0.102, 0.076, 0.070, 1.0], [0.026, 0.022, 0.020, 1.0]],
+      [[0.075, 0.095, 0.082, 1.0], [0.022, 0.024, 0.022, 1.0]],
+      [[0.082, 0.098, 0.078, 1.0], [0.022, 0.024, 0.020, 1.0]],
+      [[0.088, 0.082, 0.072, 1.0], [0.024, 0.022, 0.020, 1.0]],
     ],
     ink: '#FAF7F0',
     inkMuted: '#A8A29E',
-    accent: '#E5B84B',        // Champagne Gold
-    accentSoft: 'rgba(229, 184, 75, 0.15)',
+    accent: '#E5B84B',
     proofColor: '#4ADE80',
-    proofSoft: 'rgba(74, 222, 128, 0.14)',
+    proofSoft: 'rgba(74, 222, 128, 0.16)',
     alert: '#F87171',
-    alertSoft: 'rgba(248, 113, 113, 0.14)',
-    surfaceBg: 'rgba(28, 25, 22, 0.84)',
-    surfaceBorder: 'rgba(250, 247, 240, 0.13)',
+    alertSoft: 'rgba(248, 113, 113, 0.16)',
+    surfaceBg: 'rgba(26, 23, 20, 0.92)',
+    surfaceBorder: 'rgba(250, 247, 240, 0.14)',
     depthMotif: 'editorial_hairlines',
-    ctaHeadline: ['Manhattan', 'systems', 'engineering.'],
-    ctaSub: 'OLVENTECH.COM · NEW YORK',
+  },
+
+  google_deepmind_luminous: {
+    name: 'google_deepmind_luminous',
+    label: 'NEW YORK · REAL STORIES',
+    isDark: false,
+    track: 'nyc_felt_piano_mvt3.mp3',
+    domes: [
+      [[0.980, 0.990, 1.000, 1.0], [0.908, 0.945, 0.995, 1.0]],
+      [[0.988, 0.984, 0.988, 1.0], [0.944, 0.926, 0.935, 1.0]],
+      [[0.978, 0.994, 0.988, 1.0], [0.906, 0.958, 0.935, 1.0]],
+      [[0.980, 0.995, 0.990, 1.0], [0.910, 0.960, 0.940, 1.0]],
+      [[0.980, 0.990, 1.000, 1.0], [0.908, 0.945, 0.995, 1.0]],
+    ],
+    ink: '#0F172A',
+    inkMuted: '#475569',
+    accent: '#1A73E8',
+    proofColor: '#188038',
+    proofSoft: '#E6F4EA',
+    alert: '#D93025',
+    alertSoft: '#FCE8E6',
+    surfaceBg: 'rgba(255, 255, 255, 0.95)',
+    surfaceBorder: 'rgba(26, 115, 232, 0.14)',
+    depthMotif: 'spatial_rings',
   },
 };
 
@@ -270,81 +238,40 @@ function detectEffectCraftCli() {
   return 'effectcraft-cli';
 }
 
-/**
- * Human-Psychology Editorial Script Compiler:
- * Turns any B2B engineering spec into a 5-act thumb-stopping narrative:
- *   Act 1 (Hook)  -> Pattern-interrupt loss aversion / curiosity gap (< 0.8s read)
- *   Act 2 (Pain)  -> Relatable operational bottleneck (Before)
- *   Act 3 (Fix)   -> The Olven Architecture Difference (3 clean steps)
- *   Act 4 (Proof) -> Monumental Before -> After ROI contrast
- *   Act 5 (Brand) -> Quiet, high-status Manhattan firm signature
- */
-function compileEditorialScript(spec) {
-  const m0 = (spec.metrics && spec.metrics[0]) || { value: '99.9%', label: 'RELIABILITY', sub: 'Production verified' };
-  const m1 = (spec.metrics && spec.metrics[1]) || { value: '$0', label: 'LEAKAGE', sub: 'Zero lost events' };
-  const m2 = (spec.metrics && spec.metrics[2]) || { value: '0', label: 'DOWNTIME', sub: 'Full audit trail' };
+function compileEntertainmentScript(spec) {
+  const m0 = (spec.metrics && spec.metrics[0]) || { value: '$0.00', label: 'ERRORS', sub: 'Verified in production' };
+  const m1 = (spec.metrics && spec.metrics[1]) || { value: '0', label: 'OUTAGES', sub: 'Fixed in days' };
+  const m2 = (spec.metrics && spec.metrics[2]) || m1;
 
-  const bNodes = ((spec.viral_before_nodes && spec.viral_before_nodes.length) ? spec.viral_before_nodes : (spec.before_nodes || ['Direct API Call', 'Rate Limit Hit', 'Silent Data Loss'])).slice(0, 3);
-  const aNodes = ((spec.viral_after_nodes && spec.viral_after_nodes.length) ? spec.viral_after_nodes : (spec.after_nodes || ['Lock Payment First', 'Stamp 1 Unique ID', 'Verify Before Retry'])).slice(0, 3);
+  const ent = spec.entertainment || {};
+  const timeStr = ent.time || '9:14 AM';
 
-  const domainRaw = String(spec.eyebrow || 'REAL CLIENT STORY').split('·')[1] || String(spec.eyebrow || 'REAL RESULT').split('·')[0];
-  const domainShort = domainRaw.trim().split(/\s+/).slice(0, 2).join(' ').toUpperCase();
+  const aNodes = ((spec.viral_after_nodes && spec.viral_after_nodes.length)
+    ? spec.viral_after_nodes
+    : (spec.after_nodes || ['Lock Every Action', 'Stamp 1 Unique ID', 'Verify Before Retry'])).slice(0, 3);
 
-  const badBadge = String(spec.viral_before_stat || spec.before_badge || '').trim();
-  const hl = stripHtml(spec.viral_headline || spec.headline || 'One tiny bug cost $64,000.');
-  const hlLower = (hl + ' ' + JSON.stringify(spec.keywords || [])).toLowerCase();
+  const hookHeadline = stripHtml(spec.viral_headline || spec.headline || 'One tiny bug cost $64,000.');
+  const hookLines = (Array.isArray(spec.viral_hook_lines) && spec.viral_hook_lines.length === 3)
+    ? spec.viral_hook_lines.map(stripHtml)
+    : [hookHeadline.split(' ').slice(0, 3).join(' '), hookHeadline.split(' ').slice(3, 6).join(' '), m0.value];
 
-  let hookL1 = 'One silent bug';
-  let hookL2 = 'was quietly';
-  let hookAccent = 'burning cash.';
+  const notifs = (ent.notifs && ent.notifs.length >= 3)
+    ? ent.notifs
+    : [
+        { app: 'SYSTEM ALERT', time: timeStr, title: stripHtml(spec.before_title || 'System Stalled'), body: stripHtml((spec.viral_before_nodes || spec.before_nodes || ['Bottleneck hit'])[0]), tone: 'warn' },
+        { app: 'CRITICAL', time: timeStr, title: stripHtml(spec.before_badge || 'Revenue At Risk'), body: stripHtml((spec.viral_before_points || spec.before_points || ['Production incident triggered'])[0]).slice(0, 68), tone: 'danger' },
+        { app: 'SLACK · #OPS', time: 'now', title: 'Founder is typing...', body: '"WHO CAN FIX THIS RIGHT NOW?!"', tone: 'panic' },
+      ];
 
-  if (Array.isArray(spec.viral_hook_lines) && spec.viral_hook_lines.length === 3) {
-    [hookL1, hookL2, hookAccent] = spec.viral_hook_lines.map((s) => stripHtml(s));
-  } else if (/\b(snowflake|bigquery|warehouse|rollup|scan)\b/.test(hlLower)) {
-    hookL1 = 'Their cloud bill';
-    hookL2 = 'was paying to';
-    hookAccent = 'scan old data.';
-  } else if (/\b(ach|wire|disbursement|double|payout|bank)\b/.test(hlLower)) {
-    hookL1 = 'A 30-second glitch';
-    hookL2 = 'wired the same';
-    hookAccent = '$64,000 twice.';
-  } else if (/\b(retry|retries|storm|backoff|bulkhead|jitter)\b/.test(hlLower)) {
-    hookL1 = 'A 15-second dip';
-    hookL2 = 'crashed their app';
-    hookAccent = 'for 42 minutes.';
-  } else if (/\b(pagerduty|slo|burn-rate|cpu|3 am|alert)\b/.test(hlLower)) {
-    hookL1 = '84 fake 3 AM';
-    hookL2 = 'alarms made them';
-    hookAccent = 'miss a real crash.';
-  } else if (/\b(lead|hubspot|routing|revops)\b/.test(hlLower)) {
-    hookL1 = 'A 19-minute delay';
-    hookL2 = 'was killing';
-    hookAccent = 'hot sales leads.';
-  } else if (/\b(stripe|billing|usage|metering|quickbooks|proration)\b/.test(hlLower)) {
-    hookL1 = '$19,000/month';
-    hookL2 = 'kept vanishing';
-    hookAccent = 'from their books.';
-  } else if (/\b(deadlock|32 workers|fulfillment|warehouse)\b/.test(hlLower)) {
-    hookL1 = 'Adding 32 workers';
-    hookL2 = 'made this company';
-    hookAccent = '9x SLOWER.';
-  } else if (/\b(soc-2|soc2|audit|screenshot|compliance)\b/.test(hlLower)) {
-    hookL1 = '110 hours of';
-    hookL2 = 'audit screenshots.';
-    hookAccent = 'Now 1 click.';
-  } else if (/\b(edi|sftp|typo|chargeback|fines)\b/.test(hlLower)) {
-    hookL1 = '1 tiny typo in';
-    hookL2 = 'a midnight file';
-    hookAccent = 'cost $95,000/yr.';
-  } else {
-    const words = hl.split(/\s+/);
-    hookL1 = words.slice(0, 3).join(' ');
-    hookL2 = words.slice(3, 6).join(' ');
-    hookAccent = m0.value;
-  }
+  const chat = (ent.chat && ent.chat.length >= 3)
+    ? ent.chat
+    : [
+        { who: 'Founder', side: 'left', role: 'cfo', msg: `Why is ${stripHtml(spec.before_badge || 'this breaking')} happening right now?!` },
+        { who: 'Dev On-Call', side: 'right', role: 'dev', msg: stripHtml((spec.viral_before_points || spec.before_points || ['The legacy script choked under load.'])[0]).slice(0, 88) },
+        { who: 'Olven Tech', side: 'left', role: 'olven', msg: `Fixed it in days. ${aNodes[0]} + ${aNodes[1]}. Result: ${m0.value}.` },
+      ];
 
-  if (hookAccent.length > 20) hookAccent = m0.value;
-  if (!/[.!?%]$/.test(hookAccent) && !hookAccent.includes('/')) hookAccent = hookAccent + '.';
+  const cfoReact = ent.cfo_react || `${m0.value} ${m0.label.toLowerCase()} & ${m1.value} ${m1.label.toLowerCase()}. Best call we made all year.`;
 
   let heroMetric = m0;
   for (const m of [m0, m1, m2]) {
@@ -354,326 +281,347 @@ function compileEditorialScript(spec) {
     }
   }
   const rest = [m0, m1, m2].filter((x) => x !== heroMetric);
-  const subA = rest[0] || m1;
-  const subB = rest[1] || m2;
-
   const cleanTag = (s) => String(s || '').replace(/\s+/g, ' ').trim();
-  const heroLabel = cleanTag(heroMetric.label).toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
-  const heroSub = cleanTag(heroMetric.sub);
-  const painKicker = badBadge ? badBadge.toUpperCase() : cleanTag(m1.sub).toUpperCase();
-  const hookFoot = cleanTag(spec.viral_subhead || heroMetric.sub || 'Real client result · fixed in days.');
 
   return {
-    domainShort,
-    hookL1,
-    hookL2,
-    hookAccent,
-    hookFoot,
-    beforeStat: badBadge || cleanTag(spec.before_title || 'BROKEN LEGACY FLOW').replace(/^Before:\s*/i, ''),
-    diagLines: [cleanTag(bNodes[0]), cleanTag(bNodes[1] || 'System Stalled'), cleanTag(bNodes[2] || 'Silent Cash Leak')],
-    painKicker,
-    archSteps: [
+    timeStr,
+    hookHeadline,
+    hookLines,
+    notifs,
+    chat,
+    cfoReact,
+    beforeStat: cleanTag(spec.viral_before_stat || spec.before_badge || 'BROKEN LEGACY FLOW'),
+    fixSteps: [
       { num: '01', title: cleanTag(aNodes[0]) },
       { num: '02', title: cleanTag(aNodes[1]) },
       { num: '03', title: cleanTag(aNodes[2]) },
     ],
-    archFoot: cleanTag(spec.after_badge || 'Fixed in days · Zero rebuild'),
     heroVal: cleanTag(heroMetric.value),
-    heroFontPx: cleanTag(heroMetric.value).length >= 7 ? 148 : (cleanTag(heroMetric.value).length >= 5 ? 176 : 208),
-    heroLabel,
-    heroSub,
-    subA: { val: cleanTag(subA.value), lbl: cleanTag(subA.label).toLowerCase() },
-    subB: { val: cleanTag(subB.value), lbl: cleanTag(subB.label).toLowerCase() },
+    heroFontPx: cleanTag(heroMetric.value).length >= 7 ? 142 : (cleanTag(heroMetric.value).length >= 5 ? 172 : 204),
+    heroLabel: cleanTag(heroMetric.label).toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
+    heroSub: cleanTag(heroMetric.sub),
+    subA: rest[0] || m1,
+    subB: rest[1] || m2,
   };
 }
 
-function buildDepthPlaneHtml(idx, dir, interB64, monoB64) {
-  const stroke = dir.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.07)';
-  const ghostInk = dir.isDark ? 'rgba(255,255,255,0.038)' : 'rgba(15,23,42,0.036)';
-  const num = `0${idx + 1}`;
+function fontsCss(interB64, monoB64) {
+  return `
+    @font-face { font-family: 'Inter'; src: url('data:font/woff2;base64,${interB64}') format('woff2'); font-weight: 100 900; }
+    @font-face { font-family: 'IBM Plex Mono'; src: url('data:font/woff2;base64,${monoB64}') format('woff2'); font-weight: 400 700; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; -webkit-font-smoothing: antialiased; }
+  `;
+}
 
-  // Sleek 5-segment Story Progress Bar (boosts Reels & LinkedIn watch-through completion!)
-  const progSegments = [0, 1, 2, 3, 4].map((i) => {
+function buildDepthHtml(idx, dir, interB64, monoB64) {
+  const stroke = dir.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.07)';
+  const prog = [0, 1, 2, 3, 4].map((i) => {
     const active = i <= idx;
     const bg = active ? dir.accent : (dir.isDark ? 'rgba(255,255,255,0.16)' : 'rgba(15,23,42,0.12)');
-    const op = i === idx ? '1' : (active ? '0.55' : '1');
+    const op = i === idx ? '1' : (active ? '0.52' : '1');
     return `<div style="flex:1;height:6px;border-radius:999px;background:${bg};opacity:${op};"></div>`;
   }).join('');
-  const progressBar = `
-    <div style="position:absolute;top:118px;left:110px;right:110px;display:flex;gap:14px;z-index:5;">
-      ${progSegments}
-    </div>
-  `;
 
-  let inner = '';
-  if (dir.depthMotif === 'editorial_hairlines') {
-    inner = `
-      <div style="position:absolute;inset:72px;border:1px solid ${stroke};border-radius:36px;"></div>
-      <div style="position:absolute;top:152px;right:84px;font-family:'Inter',sans-serif;font-weight:800;font-size:300px;line-height:0.85;letter-spacing:-0.06em;color:${ghostInk};">${num}</div>
-      <div style="position:absolute;bottom:108px;left:108px;font-family:'IBM Plex Mono',monospace;font-size:18px;letter-spacing:0.22em;color:${stroke};">OLVEN TECH · ${dir.label}</div>
-    `;
-  } else if (dir.depthMotif === 'studio_grid') {
-    inner = `
-      <div style="position:absolute;inset:76px;background-image:linear-gradient(${stroke} 1px, transparent 1px),linear-gradient(90deg, ${stroke} 1px, transparent 1px);background-size:96px 96px;opacity:0.65;"></div>
-      <div style="position:absolute;bottom:108px;left:108px;font-family:'IBM Plex Mono',monospace;font-size:18px;letter-spacing:0.22em;color:${stroke};">OLVEN TECH // ${num}</div>
-    `;
-  } else if (dir.depthMotif === 'telemetry_dotgrid') {
-    inner = `
-      <div style="position:absolute;inset:64px;background-image:radial-gradient(${stroke} 2px, transparent 2px);background-size:48px 48px;"></div>
-      <div style="position:absolute;top:174px;left:96px;right:96px;height:1px;background:linear-gradient(90deg,transparent,${dir.accent}33,transparent);"></div>
-      <div style="position:absolute;bottom:164px;left:96px;right:96px;height:1px;background:linear-gradient(90deg,transparent,${dir.proofColor}33,transparent);"></div>
-    `;
-  } else {
-    inner = `
-      <div style="position:absolute;top:50%;left:50%;width:920px;height:920px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid ${stroke};"></div>
-      <div style="position:absolute;top:50%;left:50%;width:660px;height:660px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid ${stroke};"></div>
-      <div style="position:absolute;top:50%;left:50%;width:1180px;height:1180px;transform:translate(-50%,-50%);border-radius:50%;border:1px dashed ${stroke};"></div>
-    `;
-  }
-
-  return `<!doctype html><html><head><meta charset="utf-8"><style>
-    @font-face { font-family: 'Inter'; src: url('data:font/woff2;base64,${interB64}') format('woff2'); font-weight: 100 900; }
-    @font-face { font-family: 'IBM Plex Mono'; src: url('data:font/woff2;base64,${monoB64}') format('woff2'); font-weight: 400 700; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
     html, body { width: 1080px; height: 1920px; background: transparent; overflow: hidden; position: relative; }
-  </style></head><body>${progressBar}${inner}</body></html>`;
+  </style></head><body>
+    <div style="position:absolute;top:110px;left:90px;right:90px;display:flex;gap:14px;">${prog}</div>
+    <div style="position:absolute;inset:64px;border:1px solid ${stroke};border-radius:36px;"></div>
+    <div style="position:absolute;bottom:92px;left:92px;font-family:'IBM Plex Mono',monospace;font-size:17px;letter-spacing:0.2em;color:${stroke};">OLVEN TECH · ${dir.label}</div>
+  </body></html>`;
 }
 
-function buildForegroundChipHtml(idx, script, dir, interB64, monoB64) {
-  const pillBg = dir.isDark ? 'rgba(22, 26, 36, 0.92)' : 'rgba(255, 255, 255, 0.96)';
-  const pillBorder = dir.isDark ? 'rgba(255,255,255,0.18)' : 'rgba(15,23,42,0.12)';
-  const pillInk = dir.ink;
+function buildNotificationCardHtml(n, idx, interB64, monoB64) {
+  const isDanger = n.tone === 'danger' || n.tone === 'panic';
+  const bg = n.tone === 'panic'
+    ? 'linear-gradient(135deg, rgba(225, 29, 72, 0.96) 0%, rgba(159, 18, 57, 0.96) 100%)'
+    : isDanger
+    ? 'rgba(46, 16, 26, 0.96)'
+    : 'rgba(26, 32, 46, 0.96)';
+  const border = n.tone === 'panic'
+    ? 'rgba(255, 255, 255, 0.34)'
+    : isDanger
+    ? 'rgba(244, 63, 94, 0.65)'
+    : 'rgba(255, 255, 255, 0.18)';
+  const tagColor = n.tone === 'panic' ? '#FFF1F2' : (isDanger ? '#FDA4AF' : '#93C5FD');
 
-  const chipCss = `
-    @font-face { font-family: 'Inter'; src: url('data:font/woff2;base64,${interB64}') format('woff2'); font-weight: 100 900; }
-    @font-face { font-family: 'IBM Plex Mono'; src: url('data:font/woff2;base64,${monoB64}') format('woff2'); font-weight: 400 700; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      width: 960px; height: 340px; background: transparent; overflow: hidden;
-      font-family: 'Inter', -apple-system, sans-serif; -webkit-font-smoothing: antialiased;
-      display: flex; align-items: center; justify-content: center; padding: 20px;
+  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
+    html, body { width: 720px; height: 204px; background: transparent; display: flex; align-items: center; justify-content: center; padding: 10px; }
+    .card {
+      width: 100%; border-radius: 28px; padding: 24px 28px;
+      background: ${bg}; border: 1.5px solid ${border};
+      box-shadow: 0 22px 46px -12px rgba(0,0,0,0.62); color: #FFFFFF;
     }
-    .pill {
-      display: inline-flex; align-items: center; gap: 16px;
-      padding: 22px 38px; border-radius: 999px;
-      background: ${pillBg}; border: 1.5px solid ${pillBorder}; color: ${pillInk};
-      font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      box-shadow: 0 18px 44px -14px rgba(0,0,0,${dir.isDark ? '0.55' : '0.12'});
-    }
-    .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-    .dual { display: flex; gap: 20px; width: 100%; justify-content: center; }
-    .mini {
-      flex: 1; max-width: 410px; padding: 26px 32px; border-radius: 28px;
-      background: ${pillBg}; border: 1.5px solid ${pillBorder}; color: ${pillInk};
-      display: flex; flex-direction: column; gap: 6px;
-      box-shadow: 0 20px 48px -14px rgba(0,0,0,${dir.isDark ? '0.55' : '0.12'});
-    }
-    .mv { font-size: 46px; font-weight: 850; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; color: ${dir.ink}; }
-    .ml { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: ${dir.inkMuted}; }
-  `;
-
-  let body = '';
-  if (idx === 0) {
-    body = `<div class="pill" style="border-color:${dir.accent}55;"><span class="dot" style="background:${dir.accent};"></span><span>REAL STORY · ${esc(script.domainShort)}</span></div>`;
-  } else if (idx === 1) {
-    body = `<div class="pill" style="border-color:${dir.alert}55;"><span class="dot" style="background:${dir.alert};"></span><span style="color:${dir.alert};">${esc(script.painKicker)}</span></div>`;
-  } else if (idx === 2) {
-    body = `<div class="pill" style="border-color:${dir.proofColor}55;"><span class="dot" style="background:${dir.proofColor};"></span><span style="color:${dir.proofColor};">${esc(script.archFoot)}</span></div>`;
-  } else if (idx === 3) {
-    body = `
-      <div class="dual">
-        <div class="mini"><div class="mv">${esc(script.subA.val)}</div><div class="ml">${esc(script.subA.lbl)}</div></div>
-        <div class="mini"><div class="mv">${esc(script.subB.val)}</div><div class="ml">${esc(script.subB.lbl)}</div></div>
-      </div>`;
-  } else {
-    const ctaBg = dir.isDark ? '#FFFFFF' : '#141413';
-    const ctaInk = dir.isDark ? '#0A0B0E' : '#FAF8F5';
-    body = `<div class="pill" style="background:${ctaBg};color:${ctaInk};border:none;padding:24px 44px;font-size:21px;letter-spacing:0.05em;text-transform:none;"><span>Save this  ·  contact@olventech.com</span></div>`;
-  }
-
-  return `<!doctype html><html><head><meta charset="utf-8"><style>${chipCss}</style></head><body>${body}</body></html>`;
+    .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; color: ${tagColor}; }
+    .t { font-size: 27px; font-weight: 820; letter-spacing: -0.03em; line-height: 1.15; color: #FFFFFF; }
+    .b { margin-top: 6px; font-size: 20px; font-weight: 500; line-height: 1.28; color: rgba(255,255,255,0.88); }
+  </style></head><body>
+    <div class="card">
+      <div class="hdr"><span>● ${esc(n.app)}</span><span>${esc(n.time)}</span></div>
+      <div class="t">${esc(n.title)}</div>
+      <div class="b">${esc(n.body)}</div>
+    </div>
+  </body></html>`;
 }
 
-function buildHeroCardsHtml(script, dir, interB64, monoB64) {
+function buildChatBubbleHtml(msgObj, dir, interB64, monoB64) {
+  const isRight = msgObj.side === 'right';
+  const isOlven = msgObj.role === 'olven';
+  const isCfo = msgObj.role === 'cfo';
+
+  const bg = isOlven
+    ? (dir.isDark ? 'linear-gradient(135deg, rgba(16,185,129,0.28) 0%, rgba(5,150,105,0.20) 100%)' : '#E6F7F0')
+    : isCfo
+    ? (dir.isDark ? 'rgba(244,63,94,0.22)' : '#FFF1F2')
+    : (dir.isDark ? 'rgba(255,255,255,0.12)' : '#F1F5F9');
+  const border = isOlven
+    ? 'rgba(16,185,129,0.55)'
+    : isCfo
+    ? 'rgba(244,63,94,0.48)'
+    : (dir.isDark ? 'rgba(255,255,255,0.20)' : 'rgba(15,23,42,0.12)');
+  const whoColor = isOlven ? dir.proofColor : (isCfo ? dir.alert : dir.inkMuted);
+  const txtColor = dir.ink;
+
+  const badge = isOlven
+    ? `<div style="align-self:center;margin-bottom:14px;padding:7px 20px;border-radius:999px;background:${dir.proofSoft};border:1px solid ${dir.proofColor}66;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:800;letter-spacing:0.1em;color:${dir.proofColor};">⚡ OLVEN TECH ENTERED THE CHAT</div>`
+    : '';
+
+  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
+    html, body { width: 840px; height: ${isOlven ? '320' : '250'}px; background: transparent; display: flex; flex-direction: column; justify-content: center; padding: 12px 16px; }
+    .wrap { display: flex; flex-direction: column; max-width: 90%; align-self: ${isRight ? 'flex-end' : 'flex-start'}; align-items: ${isRight ? 'flex-end' : 'flex-start'}; }
+    .who { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: ${whoColor}; margin-bottom: 8px; }
+    .b {
+      padding: 24px 30px; border-radius: 28px;
+      ${isRight ? 'border-bottom-right-radius: 8px;' : 'border-bottom-left-radius: 8px;'}
+      background: ${bg}; border: 1.5px solid ${border};
+      font-size: 29px; font-weight: 700; line-height: 1.32; color: ${txtColor};
+      box-shadow: 0 18px 42px -14px rgba(0,0,0,${dir.isDark ? '0.52' : '0.12'});
+    }
+  </style></head><body>
+    ${badge}
+    <div class="wrap">
+      <div class="who">${esc(msgObj.who)}</div>
+      <div class="b">${esc(msgObj.msg)}</div>
+    </div>
+  </body></html>`;
+}
+
+function buildSwitchCardHtml(step, dir, interB64, monoB64) {
+  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
+    html, body { width: 860px; height: 184px; background: transparent; display: flex; align-items: center; justify-content: center; padding: 12px; }
+    .row {
+      width: 100%; padding: 28px 34px; border-radius: 28px;
+      background: ${dir.surfaceBg}; border: 1.5px solid ${dir.proofColor}55;
+      box-shadow: 0 22px 48px -16px rgba(0,0,0,${dir.isDark ? '0.55' : '0.12'});
+      display: flex; align-items: center; justify-content: space-between; gap: 22px;
+    }
+    .left { display: flex; align-items: center; gap: 22px; }
+    .num { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 800; color: ${dir.proofColor}; background: ${dir.proofSoft}; padding: 10px 16px; border-radius: 14px; }
+    .txt { font-size: 33px; font-weight: 800; letter-spacing: -0.03em; color: ${dir.ink}; }
+    .toggle {
+      width: 88px; height: 50px; border-radius: 999px; background: #10B981;
+      padding: 5px; display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.18), 0 0 20px rgba(16,185,129,0.45);
+    }
+    .knob { width: 40px; height: 40px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.28); }
+  </style></head><body>
+    <div class="row">
+      <div class="left"><span class="num">${step.num}</span><span class="txt">${esc(step.title)}</span></div>
+      <div class="toggle"><div class="knob"></div></div>
+    </div>
+  </body></html>`;
+}
+
+function buildBaseScenesHtml(script, dir, interB64, monoB64) {
   const logoUri = dir.isDark
     ? loadTransparentLogoDataUri('#F8FAFC', '#141924')
     : loadTransparentLogoDataUri('#141413', '#FFFDF9');
 
-  const baseCss = `
-    @font-face { font-family: 'Inter'; src: url('data:font/woff2;base64,${interB64}') format('woff2'); font-weight: 100 900; }
-    @font-face { font-family: 'IBM Plex Mono'; src: url('data:font/woff2;base64,${monoB64}') format('woff2'); font-weight: 400 700; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      width: 960px; height: 1420px; background: transparent; overflow: hidden;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      display: flex; flex-direction: column; justify-content: center; padding: 40px;
-    }
-    .panel {
-      position: relative; border-radius: 40px; padding: 62px 56px; overflow: hidden;
-      background: ${dir.surfaceBg};
-      border: 1.5px solid ${dir.surfaceBorder};
-      box-shadow: 0 36px 84px -22px rgba(0, 0, 0, ${dir.isDark ? '0.68' : '0.11'});
-      color: ${dir.ink};
-    }
-    .eyebrow {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 36px; font-family: 'IBM Plex Mono', monospace;
-      font-size: 19px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-      color: ${dir.inkMuted};
-    }
-    .badge {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 10px 18px; border-radius: 999px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-    }
-  `;
+  const n0 = script.notifs[0];
 
-  // SCENE 0: Viral Scroll-Stop Story Hook (0.7-second 5th-grade read!)
-  const scene0 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
-    .wrap { padding: 20px 14px; color: ${dir.ink}; }
-    .brand-ey {
-      display: inline-flex; align-items: center; gap: 14px; margin-bottom: 40px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 700;
-      letter-spacing: 0.16em; color: ${dir.inkMuted};
+  // BASE 0: Top Viral Hook + 3D Titanium iPhone Lockscreen with Notification #1 ALREADY LIVE at Frame 0!
+  const base0 = `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
+    html, body { width: 960px; height: 1580px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 20px 30px; }
+    .top-hook { width: 100%; text-align: center; margin-bottom: 34px; }
+    .ey { display: inline-flex; align-items: center; gap: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 800; letter-spacing: 0.14em; color: ${dir.accent}; margin-bottom: 14px; }
+    .h { font-size: 62px; font-weight: 900; line-height: 1.04; letter-spacing: -0.045em; color: ${dir.ink}; }
+    .ha { color: ${dir.accent}; }
+    .iphone {
+      width: 790px; height: 1120px; border-radius: 82px; padding: 20px;
+      background: linear-gradient(145deg, #4B5262 0%, #171A21 50%, #303645 100%);
+      box-shadow: 0 44px 92px -20px rgba(0,0,0,${dir.isDark ? '0.78' : '0.32'}), inset 0 2px 3px rgba(255,255,255,0.45);
     }
-    .bdot { width: 10px; height: 10px; border-radius: 50%; background: ${dir.accent}; }
-    .h { font-size: 104px; font-weight: 880; line-height: 1.02; letter-spacing: -0.052em; color: ${dir.ink}; }
-    .ha { font-size: 112px; font-weight: 900; line-height: 0.98; letter-spacing: -0.056em; color: ${dir.accent}; margin-top: 10px; }
-    .rule { margin-top: 44px; height: 4px; width: 110px; border-radius: 99px; background: ${dir.accent}; opacity: 0.85; }
-    .ft { margin-top: 24px; font-size: 29px; font-weight: 560; line-height: 1.38; color: ${dir.inkMuted}; max-width: 800px; }
+    .screen {
+      width: 100%; height: 100%; border-radius: 66px;
+      background: radial-gradient(ellipse 90% 60% at 50% 10%, #1B243B 0%, #0B0F1A 60%, #05070D 100%);
+      padding: 30px 30px; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.14);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .island { width: 180px; height: 34px; border-radius: 999px; background: #000; border: 1px solid rgba(255,255,255,0.12); margin-bottom: 24px; }
+    .clock { font-size: 96px; font-weight: 800; letter-spacing: -0.04em; line-height: 0.96; color: #FFFFFF; }
+    .date { font-size: 22px; font-weight: 600; color: rgba(255,255,255,0.72); margin-top: 8px; margin-bottom: 34px; }
+    .n1 {
+      width: 100%; border-radius: 28px; padding: 24px 28px;
+      background: rgba(26, 32, 46, 0.94); border: 1.5px solid rgba(255,255,255,0.18);
+      box-shadow: 0 20px 44px -12px rgba(0,0,0,0.55);
+    }
+    .nh { display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; color: #93C5FD; margin-bottom: 8px; }
+    .nt { font-size: 27px; font-weight: 820; letter-spacing: -0.03em; color: #FFFFFF; }
+    .nb { margin-top: 6px; font-size: 20px; color: rgba(255,255,255,0.85); }
   </style></head><body>
-    <div class="wrap">
-      <div class="brand-ey"><span class="bdot"></span><span>OLVEN TECH · REAL CLIENT STORY</span></div>
-      <div class="h">${esc(script.hookL1)}</div>
-      <div class="h">${esc(script.hookL2)}</div>
-      <div class="ha">${esc(script.hookAccent)}</div>
-      <div class="rule"></div>
-      <div class="ft">${esc(script.hookFoot)}</div>
+    <div class="top-hook">
+      <div class="ey">● REAL CLIENT STORY</div>
+      <div class="h">${esc(script.hookLines[0])} ${esc(script.hookLines[1])} <span class="ha">${esc(script.hookLines[2])}</span></div>
     </div>
-  </body></html>`;
-
-  // SCENE 1: Plain-English Domino Chain ("How It Happened" — instant human curiosity!)
-  const scene1 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
-    .title { font-size: 54px; font-weight: 850; letter-spacing: -0.042em; line-height: 1.08; margin-bottom: 36px; color: ${dir.ink}; }
-    .item {
-      display: flex; align-items: center; gap: 22px; padding: 26px 0;
-      border-top: 1px solid ${dir.surfaceBorder};
-    }
-    .idx {
-      font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 800;
-      color: ${dir.alert}; background: ${dir.alertSoft};
-      padding: 10px 16px; border-radius: 14px; flex-shrink: 0;
-    }
-    .txt { font-size: 38px; font-weight: 760; letter-spacing: -0.03em; line-height: 1.2; color: ${dir.ink}; }
-  </style></head><body>
-    <div class="panel">
-      <div class="eyebrow">
-        <span class="badge" style="background:${dir.alertSoft};color:${dir.alert};">● WHAT WENT WRONG</span>
-        <span>02 / 05</span>
+    <div class="iphone"><div class="screen">
+      <div class="island"></div>
+      <div class="clock">${esc(script.timeStr.replace(/\s*(AM|PM)/i, ''))}</div>
+      <div class="date">Tuesday · Live Production Alert</div>
+      <div class="n1">
+        <div class="nh"><span>● ${esc(n0.app)}</span><span>${esc(n0.time)}</span></div>
+        <div class="nt">${esc(n0.title)}</div>
+        <div class="nb">${esc(n0.body)}</div>
       </div>
-      <div class="title">How one glitch spiraled fast.</div>
-      <div class="item"><span class="idx">01</span><div class="txt">${esc(script.diagLines[0])}</div></div>
-      <div class="item"><span class="idx">02</span><div class="txt">${esc(script.diagLines[1])}</div></div>
-      <div class="item"><span class="idx">03</span><div class="txt">${esc(script.diagLines[2])}</div></div>
-    </div>
+    </div></div>
   </body></html>`;
 
-  // SCENE 2: The Simple 3-Step Fix (Plain English — Zero Jargon!)
-  const scene2 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
-    .title { font-size: 56px; font-weight: 850; letter-spacing: -0.042em; line-height: 1.06; margin-bottom: 36px; color: ${dir.ink}; }
-    .step {
-      display: flex; align-items: center; gap: 24px; padding: 30px 34px; border-radius: 26px;
+  // BASE 1: Live Workplace Group-Chat Window Frame (#emergency-chat)
+  const base1 = `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
+    html, body { width: 960px; height: 1380px; background: transparent; padding: 30px; display: flex; }
+    .win {
+      flex: 1; border-radius: 38px; overflow: hidden;
       background: ${dir.surfaceBg}; border: 1.5px solid ${dir.surfaceBorder};
-      box-shadow: 0 22px 54px -18px rgba(0, 0, 0, ${dir.isDark ? '0.55' : '0.09'});
+      box-shadow: 0 38px 86px -22px rgba(0,0,0,${dir.isDark ? '0.68' : '0.14'});
+      display: flex; flex-direction: column;
     }
-    .conn { width: 2px; height: 22px; background: ${dir.proofColor}; opacity: 0.45; margin-left: 48px; }
-    .num {
-      font-family: 'IBM Plex Mono', monospace; font-size: 21px; font-weight: 800;
-      color: ${dir.proofColor}; background: ${dir.proofSoft};
-      padding: 10px 16px; border-radius: 14px; flex-shrink: 0;
+    .bar {
+      padding: 26px 34px; border-bottom: 1px solid ${dir.surfaceBorder};
+      display: flex; align-items: center; justify-content: space-between;
+      background: ${dir.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.03)'};
     }
-    .st { font-size: 36px; font-weight: 760; letter-spacing: -0.03em; color: ${dir.ink}; }
+    .dots { display: flex; gap: 11px; }
+    .d { width: 15px; height: 15px; border-radius: 50%; }
+    .chan { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 800; color: ${dir.ink}; }
+    .sev { padding: 8px 18px; border-radius: 999px; background: ${dir.alertSoft}; color: ${dir.alert}; font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 800; letter-spacing: 0.08em; }
   </style></head><body>
-    <div style="padding: 12px;">
-      <div class="eyebrow" style="margin-bottom: 20px;">
-        <span class="badge" style="background:${dir.proofSoft};color:${dir.proofColor};">✓ THE OLVEN FIX</span>
-        <span>03 / 05</span>
+    <div class="win">
+      <div class="bar">
+        <div class="dots"><span class="d" style="background:#FF5F57;"></span><span class="d" style="background:#FEBC2E;"></span><span class="d" style="background:#28C840;"></span></div>
+        <div class="chan">#emergency-chat · ${esc(script.timeStr)}</div>
+        <div class="sev">LIVE DRAMA</div>
       </div>
-      <div class="title">Fixed in days. 3 simple steps.</div>
-      ${script.archSteps.map((s, i) => `
-        <div class="step"><span class="num">${s.num}</span><span class="st">${esc(s.title)}</span></div>
-        ${i < 2 ? '<div class="conn"></div>' : ''}
-      `).join('')}
     </div>
   </body></html>`;
 
-  // SCENE 3: Dopamine BEFORE -> AFTER Payoff Reveal (Struck-through pain -> Huge Emerald Win!)
-  const scene3 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
-    .before-strike {
-      display: inline-flex; align-items: center; gap: 12px;
-      padding: 12px 22px; border-radius: 16px; margin-bottom: 18px;
+  // BASE 2: Interactive Fix Switches Header Backdrop
+  const base2 = `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
+    html, body { width: 960px; height: 1380px; background: transparent; padding: 50px 44px; display: flex; flex-direction: column; }
+    .ey { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 800; color: ${dir.inkMuted}; letter-spacing: 0.14em; }
+    .badge { padding: 10px 20px; border-radius: 999px; background: ${dir.proofSoft}; color: ${dir.proofColor}; font-size: 17px; }
+    .title { font-size: 68px; font-weight: 900; line-height: 1.04; letter-spacing: -0.045em; color: ${dir.ink}; }
+    .sub { margin-top: 16px; font-size: 28px; font-weight: 550; color: ${dir.inkMuted}; }
+  </style></head><body>
+    <div class="ey"><span class="badge">✓ THE OLVEN FIX</span><span>03 / 05</span></div>
+    <div class="title">Fixed in days.<br/>3 simple switches.</div>
+    <div class="sub">Zero 6-month agency rewrites. Shipped live inside their stack.</div>
+  </body></html>`;
+
+  // BASE 3: Giant Dopamine Payoff Panel (Struck-through Disaster -> Huge Emerald Result!)
+  const base3 = `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
+    html, body { width: 960px; height: 920px; background: transparent; padding: 36px; display: flex; align-items: center; }
+    .panel {
+      width: 100%; border-radius: 40px; padding: 56px 54px;
+      background: ${dir.surfaceBg}; border: 1.5px solid ${dir.surfaceBorder};
+      box-shadow: 0 38px 86px -22px rgba(0,0,0,${dir.isDark ? '0.70' : '0.12'});
+    }
+    .ey { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 800; color: ${dir.inkMuted}; letter-spacing: 0.14em; }
+    .badge { padding: 10px 20px; border-radius: 999px; background: ${dir.proofSoft}; color: ${dir.proofColor}; }
+    .strike {
+      display: inline-block; padding: 12px 22px; border-radius: 16px; margin-bottom: 16px;
       background: ${dir.alertSoft}; color: ${dir.alert};
       font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 800;
-      letter-spacing: 0.06em; text-decoration: line-through; text-decoration-thickness: 3px;
+      text-decoration: line-through; text-decoration-thickness: 3px;
     }
-    .hn {
-      font-size: ${script.heroFontPx}px; font-weight: 900; line-height: 0.92;
-      letter-spacing: -0.06em; color: ${dir.proofColor}; font-variant-numeric: tabular-nums;
-      margin-top: 6px;
-    }
-    .hl { margin-top: 24px; font-size: 48px; font-weight: 840; letter-spacing: -0.04em; color: ${dir.ink}; line-height: 1.08; }
-    .hs { margin-top: 14px; font-size: 28px; font-weight: 540; color: ${dir.inkMuted}; line-height: 1.38; }
+    .hn { font-size: ${script.heroFontPx}px; font-weight: 900; line-height: 0.92; letter-spacing: -0.06em; color: ${dir.proofColor}; font-variant-numeric: tabular-nums; }
+    .hl { margin-top: 22px; font-size: 48px; font-weight: 850; letter-spacing: -0.04em; color: ${dir.ink}; }
+    .hs { margin-top: 10px; font-size: 27px; color: ${dir.inkMuted}; }
   </style></head><body>
     <div class="panel">
-      <div class="eyebrow">
-        <span class="badge" style="background:${dir.proofSoft};color:${dir.proofColor};">✓ REAL RESULT</span>
-        <span>04 / 05</span>
-      </div>
-      <div class="before-strike">BEFORE: ${esc(script.beforeStat)}</div>
+      <div class="ey"><span class="badge">✓ PROBLEM SOLVED</span><span>04 / 05</span></div>
+      <div class="strike">BEFORE: ${esc(script.beforeStat)}</div>
       <div class="hn">${esc(script.heroVal)}</div>
       <div class="hl">${esc(script.heroLabel)}.</div>
       <div class="hs">${esc(script.heroSub)}</div>
     </div>
   </body></html>`;
 
-  // SCENE 4: Memorable, Shareable Brand Differentiation Close
-  const scene4 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
-    .wrap { padding: 20px 14px; color: ${dir.ink}; }
-    .cl { font-size: 82px; font-weight: 880; line-height: 1.04; letter-spacing: -0.05em; color: ${dir.ink}; }
+  // BASE 4: Punchy, Shareable Brand Drop
+  const base4 = `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
+    html, body { width: 960px; height: 1120px; background: transparent; padding: 40px 44px; display: flex; flex-direction: column; justify-content: center; }
+    .ey { display: flex; justify-content: space-between; margin-bottom: 30px; font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 800; color: ${dir.inkMuted}; letter-spacing: 0.14em; }
+    .cl { font-size: 78px; font-weight: 900; line-height: 1.04; letter-spacing: -0.048em; color: ${dir.ink}; }
     .ca { color: ${dir.accent}; }
-    .sub-cta { margin-top: 22px; font-size: 29px; font-weight: 560; color: ${dir.inkMuted}; line-height: 1.36; }
+    .sub { margin-top: 24px; font-size: 30px; font-weight: 600; color: ${dir.inkMuted}; line-height: 1.35; }
     .brand {
       margin-top: 48px; padding: 34px 40px; border-radius: 30px;
       background: ${dir.surfaceBg}; border: 1.5px solid ${dir.surfaceBorder};
-      box-shadow: 0 28px 68px -20px rgba(0, 0, 0, ${dir.isDark ? '0.60' : '0.10'});
+      box-shadow: 0 28px 68px -20px rgba(0,0,0,${dir.isDark ? '0.62' : '0.11'});
       display: flex; align-items: center; justify-content: space-between;
     }
     .logo { height: 48px; width: auto; display: block; }
-    .city { font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 700; letter-spacing: 0.14em; color: ${dir.inkMuted}; }
+    .city { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 800; letter-spacing: 0.14em; color: ${dir.inkMuted}; }
   </style></head><body>
-    <div class="wrap">
-      <div class="eyebrow" style="margin-bottom: 30px;"><span>OLVEN TECH · NEW YORK</span><span>05 / 05</span></div>
-      <div class="cl">Others pitch</div>
-      <div class="cl">6-month rebuilds.</div>
-      <div class="cl ca">We fix it in days.</div>
-      <div class="sub-cta">Follow for real software stories that save real money.</div>
-      <div class="brand">
-        ${logoUri ? `<img class="logo" src="${logoUri}" alt="Olven Tech" />` : `<div style="font-size:38px;font-weight:800;">Olven Tech</div>`}
-        <span class="city">${esc(dir.ctaSub)}</span>
-      </div>
+    <div class="ey"><span>OLVEN TECH · NEW YORK</span><span>05 / 05</span></div>
+    <div class="cl">Don't be the next</div>
+    <div class="cl">9 AM Slack meltdown.</div>
+    <div class="cl ca">We fix it in days.</div>
+    <div class="sub">Follow for wild real tech stories that save real money.</div>
+    <div class="brand">
+      ${logoUri ? `<img class="logo" src="${logoUri}" alt="Olven Tech" />` : `<div style="font-size:38px;font-weight:800;">Olven Tech</div>`}
+      <span class="city">OLVENTECH.COM</span>
     </div>
   </body></html>`;
 
-  return [scene0, scene1, scene2, scene3, scene4];
+  return [base0, base1, base2, base3, base4];
 }
 
-async function renderMultiPlaneAssets(script, dir, workDir) {
+function buildCfoReplyHtml(script, dir, interB64, monoB64) {
+  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
+    html, body { width: 880px; height: 260px; background: transparent; display: flex; align-items: center; justify-content: center; padding: 14px; }
+    .card {
+      width: 100%; padding: 26px 32px; border-radius: 28px;
+      background: ${dir.isDark ? 'rgba(16, 185, 129, 0.18)' : '#ECFDF5'};
+      border: 1.5px solid ${dir.proofColor}66;
+      box-shadow: 0 22px 48px -14px rgba(0,0,0,${dir.isDark ? '0.55' : '0.12'});
+    }
+    .who { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; color: ${dir.proofColor}; margin-bottom: 8px; }
+    .msg { font-size: 27px; font-weight: 740; line-height: 1.32; color: ${dir.ink}; }
+  </style></head><body>
+    <div class="card">
+      <div class="who">💬 CLIENT REPLY · VERIFIED RESULT</div>
+      <div class="msg">"${esc(script.cfoReact)}"</div>
+    </div>
+  </body></html>`;
+}
+
+function buildCtaPillHtml(dir, interB64, monoB64) {
+  const bg = dir.isDark ? '#FFFFFF' : '#141413';
+  const ink = dir.isDark ? '#0A0B0E' : '#FAF8F5';
+  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
+    html, body { width: 900px; height: 160px; background: transparent; display: flex; align-items: center; justify-content: center; padding: 12px; }
+    .pill {
+      padding: 24px 44px; border-radius: 999px; background: ${bg}; color: ${ink};
+      font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 800; letter-spacing: 0.04em;
+      box-shadow: 0 20px 44px -12px rgba(0,0,0,0.45);
+    }
+  </style></head><body><div class="pill">Save &amp; Share  ·  contact@olventech.com</div></body></html>`;
+}
+
+async function renderAllAssets(script, dir, workDir) {
   const interB64 = fontBase64('Inter.woff2');
   const monoB64 = fontBase64('IBMPlexMono.woff2');
-  const heroHtmls = buildHeroCardsHtml(script, dir, interB64, monoB64);
+  const baseHtmls = buildBaseScenesHtml(script, dir, interB64, monoB64);
 
   const execPath = detectChromeExecutable();
   const browser = await chromium.launch({
@@ -682,66 +630,75 @@ async function renderMultiPlaneAssets(script, dir, workDir) {
     args: ['--no-sandbox', '--disable-dev-shm-usage'],
   });
 
-  const assets = { depths: [], heroes: [], chips: [] };
+  const out = { depths: [], bases: [], overlays: {} };
+  async function snap(html, w, h, dpr, filename) {
+    const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: dpr });
+    const page = await ctx.newPage();
+    await page.setContent(html, { waitUntil: 'load' });
+    await page.evaluate(() => document.fonts.ready);
+    const fp = path.join(workDir, filename);
+    await page.screenshot({ path: fp, type: 'png', omitBackground: true });
+    await ctx.close();
+    return fp;
+  }
+
   try {
-    const ctxDepth = await browser.newContext({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
-    const pDepth = await ctxDepth.newPage();
     for (let i = 0; i < 5; i++) {
-      await pDepth.setContent(buildDepthPlaneHtml(i, dir, interB64, monoB64), { waitUntil: 'load' });
-      await pDepth.evaluate(() => document.fonts.ready);
-      const out = path.join(workDir, `depth_${i}.png`);
-      await pDepth.screenshot({ path: out, type: 'png', omitBackground: true });
-      assets.depths.push(out);
+      out.depths.push(await snap(buildDepthHtml(i, dir, interB64, monoB64), 1080, 1920, 1, `depth_${i}.png`));
     }
-    await ctxDepth.close();
-
-    const ctxHero = await browser.newContext({ viewport: { width: 960, height: 1420 }, deviceScaleFactor: 2 });
-    const pHero = await ctxHero.newPage();
+    const baseDims = [[960, 1580], [960, 1380], [960, 1380], [960, 920], [960, 1120]];
     for (let i = 0; i < 5; i++) {
-      await pHero.setContent(heroHtmls[i], { waitUntil: 'load' });
-      await pHero.evaluate(() => document.fonts.ready);
-      const out = path.join(workDir, `hero_${i}.png`);
-      await pHero.screenshot({ path: out, type: 'png', omitBackground: true });
-      assets.heroes.push(out);
+      out.bases.push(await snap(baseHtmls[i], baseDims[i][0], baseDims[i][1], 2, `base_${i}.png`));
     }
-    await ctxHero.close();
-
-    const ctxChip = await browser.newContext({ viewport: { width: 960, height: 340 }, deviceScaleFactor: 2 });
-    const pChip = await ctxChip.newPage();
-    for (let i = 0; i < 5; i++) {
-      await pChip.setContent(buildForegroundChipHtml(i, script, dir, interB64, monoB64), { waitUntil: 'load' });
-      await pChip.evaluate(() => document.fonts.ready);
-      const out = path.join(workDir, `chip_${i}.png`);
-      await pChip.screenshot({ path: out, type: 'png', omitBackground: true });
-      assets.chips.push(out);
-    }
-    await ctxChip.close();
+    // Staggered interactive entertainment overlays!
+    out.overlays.notif2 = await snap(buildNotificationCardHtml(script.notifs[1], 1, interB64, monoB64), 720, 204, 2, 'notif2.png');
+    out.overlays.notif3 = await snap(buildNotificationCardHtml(script.notifs[2], 2, interB64, monoB64), 720, 204, 2, 'notif3.png');
+    out.overlays.chat1 = await snap(buildChatBubbleHtml(script.chat[0], dir, interB64, monoB64), 840, 250, 2, 'chat1.png');
+    out.overlays.chat2 = await snap(buildChatBubbleHtml(script.chat[1], dir, interB64, monoB64), 840, 250, 2, 'chat2.png');
+    out.overlays.chat3 = await snap(buildChatBubbleHtml(script.chat[2], dir, interB64, monoB64), 840, 320, 2, 'chat3.png');
+    out.overlays.fix1 = await snap(buildSwitchCardHtml(script.fixSteps[0], dir, interB64, monoB64), 860, 184, 2, 'fix1.png');
+    out.overlays.fix2 = await snap(buildSwitchCardHtml(script.fixSteps[1], dir, interB64, monoB64), 860, 184, 2, 'fix2.png');
+    out.overlays.fix3 = await snap(buildSwitchCardHtml(script.fixSteps[2], dir, interB64, monoB64), 860, 184, 2, 'fix3.png');
+    out.overlays.cfoReact = await snap(buildCfoReplyHtml(script, dir, interB64, monoB64), 880, 260, 2, 'cfo_react.png');
+    out.overlays.ctaPill = await snap(buildCtaPillHtml(dir, interB64, monoB64), 900, 160, 2, 'cta_pill.png');
   } finally {
     await browser.close();
   }
-  return assets;
+  return out;
 }
 
-/**
- * Asymmetric Apple-style exponential deceleration easing:
- * Fast, confident lift-off (outInfluence ~30) settling smoothly into velvety stillness (inInfluence ~86).
- */
-function addAnimatedProp(cmds, layer, propPath, keyframes, inInf = 84, outInf = 34) {
+function addAnimatedProp(cmds, layer, propPath, keyframes, inInf = 86, outInf = 28) {
   for (const [time, value] of keyframes) {
-    cmds.push({
-      command: 'prop.addKey',
-      params: { layer, path: propPath, time, timeBase: 'comp', value },
-    });
+    cmds.push({ command: 'prop.addKey', params: { layer, path: propPath, time, timeBase: 'comp', value } });
   }
   cmds.push({
     command: 'keys.select',
-    params: {
-      keys: keyframes.map(([time]) => ({ layer, prop: propPath, time, timeBase: 'comp' })),
-      add: false,
-    },
+    params: { keys: keyframes.map(([time]) => ({ layer, prop: propPath, time, timeBase: 'comp' })), add: false },
   });
   cmds.push({ command: 'keys.easyEase', params: { which: 'both' } });
   cmds.push({ command: 'keys.velocity', params: { inInfluence: inInf, outInfluence: outInf } });
+}
+
+function addPopInOverlay(cmds, name, filePath, tIn, tHoldEnd, tOutEnd, x, y, z, scalePct = 50) {
+  cmds.push({ command: 'file.import', params: { paths: [filePath], addToComp: true } });
+  cmds.push({ command: 'layer.rename', params: { layer: '#1', name } });
+  cmds.push({ command: 'layer.setSwitch', params: { layers: [name], switch: 'threeD', value: true } });
+  cmds.push({ command: 'layer.timing', params: { layers: [name], in: tIn - 0.04, out: tOutEnd + 0.06 } });
+
+  const isLast = tOutEnd >= 16.0;
+  const posKeys = isLast
+    ? [[tIn, [x, y + 46, z + 30]], [tIn + 0.42, [x, y, z]], [16.0, [x, y - 6, z - 12]]]
+    : [[tIn, [x, y + 46, z + 30]], [tIn + 0.42, [x, y, z]], [tHoldEnd, [x, y - 5, z - 10]], [tOutEnd, [x, y - 34, z - 24]]];
+  const scaleKeys = isLast
+    ? [[tIn, [scalePct * 0.94, scalePct * 0.94, scalePct * 0.94]], [tIn + 0.40, [scalePct, scalePct, scalePct]], [16.0, [scalePct * 1.02, scalePct * 1.02, scalePct * 1.02]]]
+    : [[tIn, [scalePct * 0.94, scalePct * 0.94, scalePct * 0.94]], [tIn + 0.40, [scalePct, scalePct, scalePct]], [tOutEnd, [scalePct * 1.01, scalePct * 1.01, scalePct * 1.01]]];
+  const opKeys = isLast
+    ? [[tIn, 0], [tIn + 0.30, 100], [16.0, 100]]
+    : [[tIn, 0], [tIn + 0.30, 100], [tHoldEnd, 100], [tOutEnd, 0]];
+
+  addAnimatedProp(cmds, name, 'transform/position', posKeys, 88, 24);
+  addAnimatedProp(cmds, name, 'transform/scale', scaleKeys, 84, 30);
+  addAnimatedProp(cmds, name, 'transform/opacity', opKeys, 70, 45);
 }
 
 function pickDirector(spec, directorOverride) {
@@ -756,280 +713,170 @@ function pickDirector(spec, directorOverride) {
   return DIRECTORS[DIRECTOR_ORDER[h % DIRECTOR_ORDER.length]];
 }
 
-/**
- * Human-Natural, Butter-Smooth Motion Choreography (Apple / OpenAI / Anthropic standard):
- *  - Gentle 64–88px entries over 0.85s (never abrupt 1000px slams!)
- *  - Subtle continuous breathing drift (-24px Z) on every hold (never dead frozen frames!)
- *  - 0.55s overlapping silk cross-dissolves between every act (never hard pops!)
- *  - Staggered +0.20s secondary follow-through on foreground proof pills
- *  - Max ±1.8° micro-parallax (never dizzying 28°/90° flips!)
- */
-function buildSmoothChoreography(motionStyle) {
-  // Overlapping act timings for silky 0.55s cross-dissolves across 16.0s
-  const acts = [
-    { idx: 0, start: 0.00, settle: 0.00, holdEnd: 2.55, exitEnd: 3.15, heroY: 895, chipY: 1355 },
-    { idx: 1, start: 2.75, settle: 3.55, holdEnd: 5.75, exitEnd: 6.35, heroY: 900, chipY: 1380 },
-    { idx: 2, start: 5.95, settle: 6.75, holdEnd: 9.25, exitEnd: 9.85, heroY: 890, chipY: 1390 },
-    { idx: 3, start: 9.45, settle: 10.25, holdEnd: 12.45, exitEnd: 13.05, heroY: 845, chipY: 1315 },
-    { idx: 4, start: 12.65, settle: 13.50, holdEnd: 16.00, exitEnd: 16.00, heroY: 880, chipY: 1375 },
-  ];
-
-  // Calm, continuous architectural camera float across the entire 16s
-  const camKeys =
-    motionStyle === 'anthropic_warm_drift'
-      ? [[0.0, [532, 960, -1085]], [5.5, [548, 956, -1062]], [11.0, [534, 964, -1046]], [16.0, [540, 960, -1032]]]
-      : motionStyle === 'openai_editorial_glide'
-      ? [[0.0, [540, 960, -1090]], [8.0, [540, 956, -1058]], [16.0, [540, 960, -1028]]]
-      : [[0.0, [540, 962, -1088]], [4.5, [548, 957, -1068]], [10.5, [533, 962, -1048]], [16.0, [540, 958, -1030]]];
-
-  const scenes = acts.map((a) => {
-    const isFirst = a.idx === 0;
-    const isLast = a.idx === 4;
-
-    // Gentle, natural motion vectors tailored to each studio style
-    let dxIn = 0, dyIn = 72, dzIn = 70, rotYIn = 0, rotXIn = 0;
-    let dxOut = 0, dyOut = -38, dzOut = -45;
-    if (motionStyle === 'anthropic_warm_drift') {
-      dxIn = 82; dyIn = 18; dzIn = 40; rotYIn = 1.6;
-      dxOut = -48; dyOut = -10; dzOut = -30;
-    } else if (motionStyle === 'openai_editorial_glide') {
-      dxIn = 0; dyIn = 46; dzIn = 95; rotYIn = 0; rotXIn = 0;
-      dxOut = 0; dyOut = -24; dzOut = -55;
-    } else if (motionStyle === 'stripe_precision_reveal') {
-      dxIn = 0; dyIn = 66; dzIn = 55; rotYIn = -1.4; rotXIn = 1.5;
-      dxOut = 0; dyOut = -34; dzOut = -35;
-    } else {
-      // apple_silk_float
-      dxIn = 0; dyIn = 74; dzIn = 65; rotYIn = 1.2; rotXIn = 1.2;
-      dxOut = 0; dyOut = -36; dzOut = -40;
-    }
-
-    // Scene 0 starts crisp & immediately readable at Frame 0 (zero blank thumbnail!)
-    const heroPos = isFirst
-      ? [[0.0, [540, a.heroY, 0]], [a.holdEnd, [540, a.heroY - 8, -24]], [a.exitEnd, [540 + dxOut, a.heroY + dyOut, dzOut]]]
-      : isLast
-      ? [[a.start, [540 + dxIn, a.heroY + dyIn, dzIn]], [a.settle, [540, a.heroY, 0]], [16.0, [540, a.heroY - 6, -24]]]
-      : [[a.start, [540 + dxIn, a.heroY + dyIn, dzIn]], [a.settle, [540, a.heroY, 0]], [a.holdEnd, [540, a.heroY - 8, -24]], [a.exitEnd, [540 + dxOut, a.heroY + dyOut, dzOut]]];
-
-    const heroRotY = isFirst
-      ? [[0.0, 0], [a.holdEnd, -1.2], [a.exitEnd, -1.8]]
-      : isLast
-      ? [[a.start, rotYIn], [a.settle, 0], [16.0, -0.8]]
-      : [[a.start, rotYIn], [a.settle, 0], [a.holdEnd, -1.2], [a.exitEnd, -1.8]];
-
-    const heroRotX = isFirst
-      ? [[0.0, 0], [a.holdEnd, 0.5]]
-      : isLast
-      ? [[a.start, rotXIn], [a.settle, 0], [16.0, 0]]
-      : [[a.start, rotXIn], [a.settle, 0], [a.holdEnd, 0.6]];
-
-    const heroOp = isFirst
-      ? [[0.0, 100], [a.holdEnd, 100], [a.exitEnd, 0]]
-      : isLast
-      ? [[a.start, 0], [a.start + 0.55, 100], [16.0, 100]]
-      : [[a.start, 0], [a.start + 0.52, 100], [a.holdEnd, 100], [a.exitEnd, 0]];
-
-    // Staggered foreground proof pill (+0.20s follow-through for natural human eye rhythm)
-    const cStart = isFirst ? 0.0 : a.start + 0.20;
-    const cSettle = isFirst ? 0.0 : a.settle + 0.16;
-    const chipPos = isFirst
-      ? [[0.0, [540, a.chipY, -140]], [a.holdEnd, [540, a.chipY - 10, -162]], [a.exitEnd - 0.05, [540 + dxOut * 0.7, a.chipY + dyOut, -180]]]
-      : isLast
-      ? [[cStart, [540 + dxIn * 0.65, a.chipY + 56, -110]], [cSettle, [540, a.chipY, -140]], [16.0, [540, a.chipY - 8, -162]]]
-      : [[cStart, [540 + dxIn * 0.65, a.chipY + 56, -110]], [cSettle, [540, a.chipY, -140]], [a.holdEnd, [540, a.chipY - 10, -162]], [a.exitEnd - 0.05, [540 + dxOut * 0.7, a.chipY + dyOut, -180]]];
-
-    const chipOp = isFirst
-      ? [[0.0, 100], [a.holdEnd - 0.05, 100], [a.exitEnd - 0.08, 0]]
-      : isLast
-      ? [[cStart, 0], [cStart + 0.48, 100], [16.0, 100]]
-      : [[cStart, 0], [cStart + 0.48, 100], [a.holdEnd - 0.05, 100], [a.exitEnd - 0.08, 0]];
-
-    const heroScale = isFirst
-      ? [[0.0, [50.0, 50.0, 50.0]], [a.holdEnd, [52.2, 52.2, 52.2]], [a.exitEnd, [53.2, 53.2, 53.2]]]
-      : isLast
-      ? [[a.start, [48.8, 48.8, 48.8]], [a.settle, [50.2, 50.2, 50.2]], [16.0, [52.2, 52.2, 52.2]]]
-      : [[a.start, [48.8, 48.8, 48.8]], [a.settle, [50.2, 50.2, 50.2]], [a.holdEnd, [52.0, 52.0, 52.0]], [a.exitEnd, [53.0, 53.0, 53.0]]];
-
-    const sweep = [[isFirst ? 0.35 : a.settle, [0.05, 0.18]], [isLast ? 15.5 : a.holdEnd, [0.95, 0.82]]];
-
-    return {
-      idx: a.idx,
-      inT: isFirst ? -0.5 : a.start - 0.05,
-      outT: isLast ? 16.5 : a.exitEnd + 0.08,
-      fadeInStart: a.start,
-      fadeOutStart: a.holdEnd,
-      fadeOutEnd: a.exitEnd,
-      heroPos,
-      heroScale,
-      heroRotY,
-      heroRotX,
-      heroOp,
-      chipPos,
-      chipOp,
-      sweep,
-    };
-  });
-
-  return { camKeys, scenes };
-}
-
 async function renderWalkthroughVideo(specPath, outDir, directorOverride = null) {
   const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
   const dir = pickDirector(spec, directorOverride);
-  const choreoPlan = buildSmoothChoreography(dir.motionStyle);
 
   fs.mkdirSync(outDir, { recursive: true });
   const workDir = path.join(outDir, '_ec_work');
   fs.mkdirSync(workDir, { recursive: true });
 
   const trackPath = path.join(MUSIC_DIR, dir.track);
-  if (!fs.existsSync(trackPath)) {
-    throw new Error(`Missing NYC Felt Piano track: ${trackPath}`);
-  }
+  if (!fs.existsSync(trackPath)) throw new Error(`Missing music track: ${trackPath}`);
 
   const t0 = Date.now();
-  const script = compileEditorialScript(spec);
-  const assets = await renderMultiPlaneAssets(script, dir, workDir);
+  const script = compileEntertainmentScript(spec);
+  const assets = await renderAllAssets(script, dir, workDir);
+
+  const acts = [
+    { idx: 0, start: 0.00, settle: 0.00, holdEnd: 3.18, exitEnd: 3.65, y: 970 },
+    { idx: 1, start: 3.35, settle: 3.92, holdEnd: 7.05, exitEnd: 7.50, y: 975 },
+    { idx: 2, start: 7.20, settle: 7.75, holdEnd: 10.30, exitEnd: 10.75, y: 980 },
+    { idx: 3, start: 10.45, settle: 11.00, holdEnd: 13.30, exitEnd: 13.75, y: 815 },
+    { idx: 4, start: 13.45, settle: 14.05, holdEnd: 16.00, exitEnd: 16.00, y: 870 },
+  ];
 
   const compBg = dir.isDark ? '#07090D' : '#F6F3EC';
   const cmds = [
     {
       command: 'comp.new',
       params: {
-        name: 'Main',
-        width: WIDTH,
-        height: HEIGHT,
-        frameRate: FPS,
-        duration: DURATION,
-        background: compBg,
-        shutterAngle: 140,
-        shutterPhase: 0,
-        motionBlurSamples: 4,
-        renderer: 'classic3D',
-        open: true,
+        name: 'Main', width: WIDTH, height: HEIGHT, frameRate: FPS, duration: DURATION,
+        background: compBg, shutterAngle: 120, shutterPhase: 0, motionBlurSamples: 3, renderer: 'classic3D', open: true,
       },
     },
   ];
 
-  // Smoothly cross-dissolved Studio Atmospheric Domes (ZERO 1-frame background pops!)
-  for (const c of choreoPlan.scenes) {
-    const bgName = `Dome_${c.idx}`;
-    const [startColor, endColor] = dir.domes[c.idx];
+  // Smoothly cross-dissolved Atmospheric Domes
+  for (const a of acts) {
+    const bgName = `Dome_${a.idx}`;
+    const [startColor, endColor] = dir.domes[a.idx];
     cmds.push({ command: 'layer.newSolid', params: { name: bgName, color: compBg, width: WIDTH, height: HEIGHT } });
-    cmds.push({ command: 'layer.timing', params: { layers: [bgName], in: c.inT, out: c.outT } });
+    cmds.push({ command: 'layer.timing', params: { layers: [bgName], in: a.idx === 0 ? -0.5 : a.start - 0.05, out: a.idx === 4 ? 16.5 : a.exitEnd + 0.05 } });
     cmds.push({ command: 'effect.apply', params: { effect: 'ec.generate.gradientramp', layers: [bgName] } });
     cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/shape', value: 1 } });
-    cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/start', value: [0.5, 0.28] } });
+    cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/start', value: [0.5, 0.25] } });
     cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/end', value: [0.5, 1.15] } });
     cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/startColor', value: startColor } });
     cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/endColor', value: endColor } });
-    cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/scatter', value: 32.0 } });
-    if (c.idx > 0) {
-      addAnimatedProp(cmds, bgName, 'transform/opacity', [[c.fadeInStart, 0], [c.fadeInStart + 0.50, 100]], 65, 65);
+    cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/scatter', value: 28.0 } });
+    if (a.idx > 0) {
+      addAnimatedProp(cmds, bgName, 'transform/opacity', [[a.start, 0], [a.start + 0.45, 100]], 65, 65);
     }
   }
 
-  cmds.push({
-    command: 'layer.newCamera',
-    params: { name: 'HeroCam', preset: '35mm', position: [540, 960, -1088], poi: [540, 960, 0] },
-  });
+  // Calm continuous architectural camera float
+  cmds.push({ command: 'layer.newCamera', params: { name: 'HeroCam', preset: '35mm', position: [540, 960, -1088], poi: [540, 960, 0] } });
   cmds.push({ command: 'layer.timing', params: { layers: ['HeroCam'], in: -0.5, out: 16.5 } });
-  addAnimatedProp(cmds, 'HeroCam', 'transform/position', choreoPlan.camKeys, 65, 65);
+  addAnimatedProp(cmds, 'HeroCam', 'transform/position', [
+    [0.0, [540, 962, -1088]], [5.5, [546, 958, -1068]], [11.0, [535, 962, -1048]], [16.0, [540, 960, -1032]],
+  ], 65, 65);
 
-  for (const c of choreoPlan.scenes) {
-    // PLANE 1: Background Architectural Depth Plane (Z = +320) with smooth opacity cross-dissolve!
-    const dName = `Depth_${c.idx}`;
-    cmds.push({ command: 'file.import', params: { paths: [assets.depths[c.idx]], addToComp: true } });
+  // Depth + Base Stage Layers
+  for (const a of acts) {
+    const isFirst = a.idx === 0;
+    const isLast = a.idx === 4;
+    const inT = isFirst ? -0.5 : a.start - 0.04;
+    const outT = isLast ? 16.5 : a.exitEnd + 0.06;
+
+    const dName = `Depth_${a.idx}`;
+    cmds.push({ command: 'file.import', params: { paths: [assets.depths[a.idx]], addToComp: true } });
     cmds.push({ command: 'layer.rename', params: { layer: '#1', name: dName } });
     cmds.push({ command: 'layer.setSwitch', params: { layers: [dName], switch: 'threeD', value: true } });
-    cmds.push({ command: 'layer.timing', params: { layers: [dName], in: c.inT, out: c.outT } });
+    cmds.push({ command: 'layer.timing', params: { layers: [dName], in: inT, out: outT } });
     cmds.push({ command: 'prop.set', params: { layer: dName, path: 'transform/scale', value: [130, 130, 130] } });
     cmds.push({ command: 'prop.set', params: { layer: dName, path: 'transform/position', value: [540, 960, 320] } });
-    const dOp = c.idx === 0
-      ? [[0.0, 100], [c.fadeOutStart, 100], [c.fadeOutEnd, 0]]
-      : c.idx === 4
-      ? [[c.fadeInStart, 0], [c.fadeInStart + 0.48, 100], [16.0, 100]]
-      : [[c.fadeInStart, 0], [c.fadeInStart + 0.48, 100], [c.fadeOutStart, 100], [c.fadeOutEnd, 0]];
+    const dOp = isFirst
+      ? [[0.0, 100], [a.holdEnd, 100], [a.exitEnd, 0]]
+      : isLast
+      ? [[a.start, 0], [a.start + 0.42, 100], [16.0, 100]]
+      : [[a.start, 0], [a.start + 0.42, 100], [a.holdEnd, 100], [a.exitEnd, 0]];
     addAnimatedProp(cmds, dName, 'transform/opacity', dOp, 65, 65);
 
-    // PLANE 2: Hero 2x Retina Editorial/Product Panel (Z = 0) — Apple Silk Deceleration + Living Ken Burns Breathing!
-    const hName = `Hero_${c.idx}`;
-    cmds.push({ command: 'file.import', params: { paths: [assets.heroes[c.idx]], addToComp: true } });
-    cmds.push({ command: 'layer.rename', params: { layer: '#1', name: hName } });
-    cmds.push({ command: 'layer.setSwitch', params: { layers: [hName], switch: 'threeD', value: true } });
-    cmds.push({ command: 'layer.setSwitch', params: { layers: [hName], switch: 'motionBlur', value: true } });
-    cmds.push({ command: 'layer.timing', params: { layers: [hName], in: c.inT, out: c.outT } });
+    const bName = `Base_${a.idx}`;
+    cmds.push({ command: 'file.import', params: { paths: [assets.bases[a.idx]], addToComp: true } });
+    cmds.push({ command: 'layer.rename', params: { layer: '#1', name: bName } });
+    cmds.push({ command: 'layer.setSwitch', params: { layers: [bName], switch: 'threeD', value: true } });
+    cmds.push({ command: 'layer.timing', params: { layers: [bName], in: inT, out: outT } });
 
-    addAnimatedProp(cmds, hName, 'transform/scale', c.heroScale, 68, 42);
-    addAnimatedProp(cmds, hName, 'transform/position', c.heroPos, 86, 28);
-    addAnimatedProp(cmds, hName, 'transform/rotationY', c.heroRotY, 84, 30);
-    addAnimatedProp(cmds, hName, 'transform/rotationX', c.heroRotX, 84, 30);
-    addAnimatedProp(cmds, hName, 'transform/opacity', c.heroOp, 68, 45);
+    const bPos = isFirst
+      ? [[0.0, [540, a.y, 0]], [a.holdEnd, [540, a.y - 6, -16]], [a.exitEnd, [540, a.y - 38, -40]]]
+      : isLast
+      ? [[a.start, [540, a.y + 56, 48]], [a.settle, [540, a.y, 0]], [16.0, [540, a.y - 6, -18]]]
+      : [[a.start, [540, a.y + 56, 48]], [a.settle, [540, a.y, 0]], [a.holdEnd, [540, a.y - 6, -16]], [a.exitEnd, [540, a.y - 38, -40]]];
+    const bScale = isFirst
+      ? [[0.0, [50, 50, 50]], [a.exitEnd, [51.6, 51.6, 51.6]]]
+      : isLast
+      ? [[a.start, [48.8, 48.8, 48.8]], [a.settle, [50, 50, 50]], [16.0, [51.8, 51.8, 51.8]]]
+      : [[a.start, [48.8, 48.8, 48.8]], [a.settle, [50, 50, 50]], [a.exitEnd, [51.4, 51.4, 51.4]]];
+    const bOp = isFirst
+      ? [[0.0, 100], [a.holdEnd, 100], [a.exitEnd, 0]]
+      : isLast
+      ? [[a.start, 0], [a.start + 0.42, 100], [16.0, 100]]
+      : [[a.start, 0], [a.start + 0.42, 100], [a.holdEnd, 100], [a.exitEnd, 0]];
 
-    // Restrained, tasteful optical specular light sweep on structured cards (Scenes 1–3 only)
-    if (c.idx >= 1 && c.idx <= 3) {
-      cmds.push({ command: 'effect.apply', params: { effect: 'ec.generate.cclightsweep', layers: [hName] } });
-      cmds.push({ command: 'prop.set', params: { layer: hName, path: 'effects/#1/direction', value: -24.0 } });
-      cmds.push({ command: 'prop.set', params: { layer: hName, path: 'effects/#1/width', value: 96.0 } });
-      cmds.push({ command: 'prop.set', params: { layer: hName, path: 'effects/#1/sweepIntensity', value: dir.isDark ? 18.0 : 12.0 } });
-      cmds.push({ command: 'prop.set', params: { layer: hName, path: 'effects/#1/edgeIntensity', value: 22.0 } });
-      cmds.push({ command: 'prop.set', params: { layer: hName, path: 'effects/#1/edgeThickness', value: 1.4 } });
-      addAnimatedProp(cmds, hName, 'effects/#1/center', c.sweep, 55, 55);
-    }
-
-    // PLANE 3: Foreground Floating Proof Chip (Z = -140) with natural staggered follow-through!
-    const fName = `FgChip_${c.idx}`;
-    cmds.push({ command: 'file.import', params: { paths: [assets.chips[c.idx]], addToComp: true } });
-    cmds.push({ command: 'layer.rename', params: { layer: '#1', name: fName } });
-    cmds.push({ command: 'layer.setSwitch', params: { layers: [fName], switch: 'threeD', value: true } });
-    cmds.push({ command: 'layer.setSwitch', params: { layers: [fName], switch: 'motionBlur', value: true } });
-    cmds.push({ command: 'layer.timing', params: { layers: [fName], in: c.inT, out: c.outT } });
-    cmds.push({ command: 'prop.set', params: { layer: fName, path: 'transform/scale', value: [44, 44, 44] } });
-
-    addAnimatedProp(cmds, fName, 'transform/position', c.chipPos, 86, 28);
-    addAnimatedProp(cmds, fName, 'transform/rotationY', c.heroRotY.map(([t, v]) => [t, v * 0.5]), 82, 30);
-    addAnimatedProp(cmds, fName, 'transform/opacity', c.chipOp, 68, 45);
+    addAnimatedProp(cmds, bName, 'transform/position', bPos, 86, 26);
+    addAnimatedProp(cmds, bName, 'transform/scale', bScale, 72, 40);
+    addAnimatedProp(cmds, bName, 'transform/opacity', bOp, 68, 45);
   }
 
-  // Subtle Cinema Finish Adjustment Layer (Restrained vignette + anti-banding micro-grain; ZERO radial smear!)
+  // 10 MULTI-BEAT POP-IN ENTERTAINMENT OVERLAYS (Synced to the exact millisecond with mix_reel_sfx.py!)
+  // Act 1: Notification #2 & #3 pop onto the iPhone lockscreen cleanly beneath Notification #1
+  addPopInOverlay(cmds, 'Notif_2', assets.overlays.notif2, 0.95, 3.18, 3.65, 540, 1105, -35, 50);
+  addPopInOverlay(cmds, 'Notif_3', assets.overlays.notif3, 2.05, 3.18, 3.65, 540, 1315, -50, 50);
+
+  // Act 2: Live #emergency-chat messages pop in 1-by-1
+  addPopInOverlay(cmds, 'Chat_1', assets.overlays.chat1, 3.80, 7.05, 7.50, 540, 660, -35, 50);
+  addPopInOverlay(cmds, 'Chat_2', assets.overlays.chat2, 4.95, 7.05, 7.50, 540, 935, -45, 50);
+  addPopInOverlay(cmds, 'Chat_3', assets.overlays.chat3, 6.08, 7.05, 7.50, 540, 1265, -60, 50);
+
+  // Act 3: 3 Interactive Glowing Fix Switches flip ON 1-by-1
+  addPopInOverlay(cmds, 'Fix_1', assets.overlays.fix1, 7.65, 10.30, 10.75, 540, 860, -35, 50);
+  addPopInOverlay(cmds, 'Fix_2', assets.overlays.fix2, 8.55, 10.30, 10.75, 540, 1075, -45, 50);
+  addPopInOverlay(cmds, 'Fix_3', assets.overlays.fix3, 9.45, 10.30, 10.75, 540, 1290, -55, 50);
+
+  // Act 4: Happy CFO Reply pops in under the giant Payoff
+  addPopInOverlay(cmds, 'Cfo_React', assets.overlays.cfoReact, 11.75, 13.30, 13.75, 540, 1390, -60, 50);
+
+  // Act 5: Save & Share CTA Pill
+  addPopInOverlay(cmds, 'Cta_Pill', assets.overlays.ctaPill, 13.85, 16.00, 16.00, 540, 1480, -60, 50);
+
+  // Subtle Cinema Finish Adjustment Layer
   cmds.push({ command: 'layer.newAdjustment', params: { name: 'CinemaGrade' } });
   cmds.push({ command: 'effect.apply', params: { effect: 'ec.stylize.ccvignette', layers: ['CinemaGrade'] } });
-  cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#1/amount', value: dir.isDark ? 11.0 : 6.0 } });
-  cmds.push({ command: 'effect.apply', params: { effect: 'ec.noise.addgrain', layers: ['CinemaGrade'] } });
-  cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#2/viewingMode', value: 2 } });
-  cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#2/tweaking/intensity', value: 0.09 } });
-  cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#2/color/monochromatic', value: true } });
+  cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#1/amount', value: dir.isDark ? 10.0 : 5.0 } });
 
   const cmdsPath = path.join(workDir, 'build_comp.json');
   const projPath = path.join(workDir, 'olven_reel.ecproj');
   const rawMp4 = path.join(workDir, 'video_silent.mp4');
+  const mixedAudio = path.join(workDir, 'mixed_audio.m4a');
   const outMp4 = path.join(outDir, 'walkthrough-video.mp4');
   fs.writeFileSync(cmdsPath, JSON.stringify(cmds, null, 2));
+
+  // Synthesize millisecond-synced UI SFX + upbeat 116-BPM pulse over studio music bed!
+  const mixerPy = path.join(__dirname, 'mix_reel_sfx.py');
+  let finalAudioPath = trackPath;
+  if (fs.existsSync(mixerPy)) {
+    execFileSync('python3', [mixerPy, trackPath, mixedAudio], { stdio: 'inherit' });
+    finalAudioPath = mixedAudio;
+  }
 
   const ecCli = detectEffectCraftCli();
   execFileSync(ecCli, ['--empty', 'run', '--commands', cmdsPath, '--save-as', projPath], { stdio: 'pipe' });
   execFileSync(ecCli, [
-    '--project', projPath,
-    'render', '--comp', 'Main',
-    '--out', rawMp4,
-    '--format', 'h264',
-    '--fps', String(FPS),
-    '--bitrate', '9200',
-    '--quality', 'best',
-    '--audio', 'off',
+    '--project', projPath, 'render', '--comp', 'Main', '--out', rawMp4,
+    '--format', 'h264', '--fps', String(FPS), '--bitrate', '9000', '--quality', 'best', '--audio', 'off',
   ], { stdio: 'inherit' });
 
-  // Mux approved NYC Felt Piano + Rec.709 color space tags (stream copy video — 0 quality loss!)
+  // Mux Rec.709 H.264 + Synced Entertainment Audio
   execFileSync('ffmpeg', [
     '-y', '-v', 'error',
-    '-i', rawMp4,
-    '-i', trackPath,
+    '-i', rawMp4, '-i', finalAudioPath,
     '-map', '0:v:0', '-map', '1:a:0',
     '-c:v', 'copy',
     '-bsf:v', 'h264_metadata=colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1',
     '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
-    '-movflags', '+faststart',
-    '-t', String(DURATION),
+    '-movflags', '+faststart', '-t', String(DURATION),
     outMp4,
   ], { stdio: 'inherit' });
 
@@ -1038,24 +885,19 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
   if (fs.statSync(outMp4).size > MAX_BYTES) {
     const cappedMp4 = path.join(workDir, 'video_capped.mp4');
     execFileSync('ffmpeg', [
-      '-y', '-v', 'error',
-      '-i', outMp4,
+      '-y', '-v', 'error', '-i', outMp4,
       '-c:v', 'libx264', '-preset', 'slow', '-profile:v', 'high', '-level', '4.1',
-      '-pix_fmt', 'yuv420p', '-b:v', '8800k', '-maxrate', '9400k', '-bufsize', '18000k',
+      '-pix_fmt', 'yuv420p', '-b:v', '8600k', '-maxrate', '9200k', '-bufsize', '18000k',
       '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709',
-      '-c:a', 'copy', '-movflags', '+faststart',
-      cappedMp4,
+      '-c:a', 'copy', '-movflags', '+faststart', cappedMp4,
     ], { stdio: 'inherit' });
     fs.renameSync(cappedMp4, outMp4);
   }
 
   fs.rmSync(workDir, { recursive: true, force: true });
-
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
   const mb = (fs.statSync(outMp4).size / (1024 * 1024)).toFixed(2);
-  console.log(
-    `[OK] Rendered Tier-1 Smooth 3D Video [${dir.name} | motion=${dir.motionStyle} | ${dir.track}, 9.2Mbps Rec.709 in ${elapsed}s, ${mb} MB] -> ${outMp4}`
-  );
+  console.log(`[OK] Rendered Entertainment Viral 3D Video [${dir.name} | 13 synced UI beats + SFX, Rec.709 in ${elapsed}s, ${mb} MB] -> ${outMp4}`);
 }
 
 if (require.main === module) {
