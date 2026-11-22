@@ -1,13 +1,13 @@
-Relying on developers to remember a WHERE tenant_id clause on every endpoint will eventually fail a Fortune 500 security review.
+Rescanning 1.4 billion immutable rows every 15 minutes is the fastest way to burn $38,000 a month on Snowflake.
 
-We recently stepped in for a B2B SaaS platform whose $420k enterprise deal stalled in security review. Their app ran on a shared Postgres schema where tenant isolation lived strictly inside ORM helper functions. Two raw SQL export jobs bypassed those helpers completely, and one missed filter on a reporting query nearly exposed records across organizations.
+We audited a B2B analytics platform whose warehouse bill had tripled in eight months. Their customer dashboards queried raw append-only event tables directly through views, forcing an XL compute cluster to stay awake 24/7 and scan years of unchanged history every time a user opened a report.
 
-How we hardened tenant isolation at Olven Tech:
+How we cut their bill by 61% at Olven Tech:
 
-1. Transaction-scoped claims: Every API request sets SET LOCAL app.org_id inside the database transaction right after JWT verification, compatible with PgBouncer transaction pooling.
-2. Forced Postgres RLS: Enabled FORCE ROW LEVEL SECURITY across all 44 tenant tables so the database kernel rejects cross-tenant reads regardless of ORM or raw SQL bugs.
-3. Composite indexing + CI fuzzing: Added (org_id, id) indexes to keep overhead under 0.4ms and wired a CI integration suite that tries cross-org reads on every PR.
+1. Watermarked incremental rollups: Replaced full-table views with hourly tenant rollup tables updated strictly from newly landed partitions since the last committed watermark.
+2. Clustering key alignment: Aligned micro-partition clustering on (tenant_id, event_date) so dashboard queries prune 96% of storage blocks automatically.
+3. Right-sized compute isolation: Split ingestion onto an X-Small auto-suspending warehouse and moved dashboard reads to a Small pool.
 
-Result: Zero cross-tenant exposure surface, sub-millisecond query overhead, and the $420k enterprise contract cleared security review in 11 days.
+Result: Monthly Snowflake spend dropped by $23,200 ($278k/yr saved), P95 dashboard latency fell from 14.2 seconds to 380ms, and freshness actually improved from 15 minutes to 5 minutes.
 
-If enterprise security questionnaires are slowing down your sales cycle, email contact@olventech.com.
+If your cloud data bill is growing faster than revenue, email contact@olventech.com.

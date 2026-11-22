@@ -1,0 +1,10 @@
+Burning $38k/month on Snowflake usually comes down to rescanning billions of unchanged historical rows on every refresh.
+
+We re-architected a 1.4B-row B2B analytics pipeline:
+1. Replaced full-table views with watermarked incremental rollups.
+2. Clustered tables on (tenant_id, event_date) to prune 96% of scanned bytes.
+3. Downsized always-on XL clusters to auto-suspending Small compute.
+
+Result: $278k/yr saved, P95 dashboard load cut from 14.2s to 380ms, and 3x fresher data.
+
+Want a FinOps architecture audit? Email contact@olventech.com.

@@ -1,0 +1,6 @@
+Most runaway Snowflake bills happen because dashboards rescan billions of immutable rows every 15 minutes.
+
+Moving a 1.4B-row B2B pipeline to watermarked incremental rollups + clustering:
+- Cut spend by 61% ($278k/yr saved)
+- Dropped P95 load from 14.2s to 380ms
+- 96% fewer bytes scanned (contact@olventech.com)
