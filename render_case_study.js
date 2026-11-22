@@ -138,8 +138,8 @@ function baseFontsCss() {
 }
 
 /**
- * GENRE 1 (editorial_light_blueprint — LIGHT):
- * Apple Porcelain Titanium Liquid Glass Hero Metric Sheet
+ * GENRE 1 (editorial_light_blueprint — ANTHROPIC WARM ALABASTER EDITORIAL):
+ * High-status Claude / FT Editorial Metric Sheet with Warm Alabaster, Terracotta accent, and Before->After proof strip
  */
 function renderBillboardPoster(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
@@ -148,93 +148,120 @@ function renderBillboardPoster(spec, p) {
   const m2 = spec.metrics[2] || m1;
   const valLen = String(m0.value).length;
   const heroSize = isWide
-    ? (valLen > 7 ? 116 : 154)
-    : (valLen > 7 ? 140 : 188);
+    ? (valLen > 7 ? 112 : 148)
+    : (valLen > 7 ? 132 : 180);
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background: #F1EFEA; color: #0A0D14;
-      padding: ${isWide ? '48px 66px' : '68px 68px'};
+      background: radial-gradient(ellipse 92% 76% at 50% 18%, #FBF9F4 0%, #F4EFE6 56%, #EAE2D6 100%);
+      color: #141413;
+      padding: ${isWide ? '44px 66px' : '64px 66px'};
       display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
     .orb1 {
-      position: absolute; width: 760px; height: 760px; border-radius: 50%;
-      top: -210px; right: -160px;
-      background: radial-gradient(circle, rgba(0, 82, 255, 0.22) 0%, rgba(99, 102, 241, 0.08) 48%, transparent 72%);
-      filter: blur(40px);
+      position: absolute; width: 780px; height: 780px; border-radius: 50%;
+      top: -260px; right: -180px;
+      background: radial-gradient(circle, rgba(201, 100, 66, 0.16) 0%, rgba(217, 119, 87, 0.05) 52%, transparent 74%);
+      filter: blur(44px);
     }
     .orb2 {
       position: absolute; width: 680px; height: 680px; border-radius: 50%;
-      bottom: -240px; left: -160px;
-      background: radial-gradient(circle, rgba(196, 174, 140, 0.34) 0%, rgba(148, 163, 184, 0.10) 55%, transparent 75%);
-      filter: blur(48px);
+      bottom: -260px; left: -160px;
+      background: radial-gradient(circle, rgba(168, 148, 120, 0.22) 0%, transparent 72%);
+      filter: blur(52px);
     }
-    .top-pill {
+    .top-bar {
       position: relative; z-index: 3;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 28px; border-radius: 999px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600;
-      letter-spacing: 0.13em; text-transform: uppercase; color: #4A5568;
+      padding-bottom: 18px; border-bottom: 1px solid rgba(20, 20, 19, 0.11);
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: #5C574F;
+    }
+    .ny-pill {
+      padding: 7px 16px; border-radius: 999px;
+      background: #141413; color: #FAF8F4;
+      font-size: 13px; letter-spacing: 0.12em;
     }
     .hero-card {
       position: relative; z-index: 3;
-      border-radius: 38px;
-      padding: ${isWide ? '46px 54px' : '64px 58px'};
+      border-radius: 34px;
+      background: rgba(254, 253, 250, 0.92);
+      border: 1px solid rgba(20, 20, 19, 0.09);
+      box-shadow: 0 36px 80px -28px rgba(20, 20, 19, 0.12), inset 0 1px 0 #FFFFFF;
+      padding: ${isWide ? '40px 52px' : '58px 56px'};
       display: flex; flex-direction: column; justify-content: center;
       overflow: hidden;
     }
-    .hero-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 40%;
-      background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 100%);
-      pointer-events: none;
+    .contrast-strip {
+      display: inline-flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      margin-bottom: ${isWide ? '18px' : '26px'};
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .c-bad {
+      padding: 6px 14px; border-radius: 999px;
+      background: rgba(201, 100, 66, 0.12); color: #A64323;
+      border: 1px solid rgba(201, 100, 66, 0.28);
+    }
+    .c-arr { color: #8A8379; font-weight: 800; }
+    .c-good {
+      padding: 6px 14px; border-radius: 999px;
+      background: rgba(15, 118, 110, 0.10); color: #0F766E;
+      border: 1px solid rgba(15, 118, 110, 0.26);
     }
     .eyebrow {
-      font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 600;
-      letter-spacing: 0.14em; text-transform: uppercase; color: #64748B;
-      margin-bottom: 16px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: #7C756B;
+      margin-bottom: 10px;
     }
     .hero-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: ${heroSize}px; font-weight: 850; line-height: 0.94;
-      letter-spacing: -0.058em; color: #0052FF;
+      letter-spacing: -0.055em; color: #C96442;
       font-variant-numeric: tabular-nums;
-      margin-bottom: ${isWide ? '20px' : '30px'};
+      margin-bottom: ${isWide ? '18px' : '28px'};
     }
     .headline {
-      font-size: ${isWide ? '40px' : '50px'}; font-weight: 800; line-height: 1.09;
-      letter-spacing: -0.038em; color: #0A0D14; max-width: 96%;
-      margin-bottom: ${isWide ? '26px' : '38px'};
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: ${isWide ? '38px' : '48px'}; font-weight: 800; line-height: 1.09;
+      letter-spacing: -0.038em; color: #141413; max-width: 96%;
+      margin-bottom: ${isWide ? '24px' : '36px'};
     }
     .sub-pills {
       display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
     }
     .sub-pill {
-      padding: ${isWide ? '18px 24px' : '24px 28px'}; border-radius: 22px;
-      background: rgba(255,255,255,0.62);
-      border: 1px solid rgba(255,255,255,0.9);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
+      padding: ${isWide ? '18px 24px' : '22px 26px'}; border-radius: 20px;
+      background: #F6F3EC;
+      border: 1px solid rgba(20, 20, 19, 0.08);
     }
-    .sp-val { font-size: ${isWide ? '30px' : '36px'}; font-weight: 800; letter-spacing: -0.035em; color: #0A0D14; }
-    .sp-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #64748B; margin-top: 4px; }
+    .sp-val { font-size: ${isWide ? '30px' : '36px'}; font-weight: 800; letter-spacing: -0.035em; color: #141413; font-variant-numeric: tabular-nums; }
+    .sp-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #6B655C; margin-top: 4px; }
     .footer {
       position: relative; z-index: 3;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 28px; border-radius: 24px;
+      padding-top: 18px; border-top: 1px solid rgba(20, 20, 19, 0.11);
     }
     .domain {
-      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600;
-      letter-spacing: 0.1em; color: #475569;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
+      letter-spacing: 0.1em; color: #5C574F;
     }
   </style></head><body>
     <div class="orb1"></div>
     <div class="orb2"></div>
-    <div class="top-pill glass-light">
+    <div class="top-bar">
       <span>${esc(spec.eyebrow)}</span>
-      <span>OLVEN · NEW YORK</span>
+      <span class="ny-pill">OLVEN TECH · NEW YORK</span>
     </div>
-    <div class="hero-card glass-light">
+    <div class="hero-card">
+      <div class="contrast-strip">
+        <span class="c-bad">${esc(spec.before_badge)}</span>
+        <span class="c-arr">→</span>
+        <span class="c-good">${esc(spec.after_badge || 'DETERMINISTIC FIX')}</span>
+      </div>
       <div class="eyebrow">${esc(m0.label)}</div>
       <div class="hero-num">${esc(m0.value)}</div>
       <div class="headline">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
@@ -249,8 +276,8 @@ function renderBillboardPoster(spec, p) {
         </div>
       </div>
     </div>
-    <div class="footer glass-light">
-      ${seamlessLogo(32, '#0A0D14', '#F1EFEA')}
+    <div class="footer">
+      ${seamlessLogo(30, '#141413', '#EFE9DF')}
       <div class="domain">OLVENTECH.COM · ENTERPRISE SYSTEMS</div>
     </div>
   </body></html>`;
@@ -393,122 +420,155 @@ function renderSlackIncident(spec, p) {
 }
 
 /**
- * GENRE 3 (circuit_breaker_state_machine — LIGHT):
- * iPadOS / macOS Frosted Glass Architecture Freeform Studio
+ * GENRE 3 (circuit_breaker_state_machine — OPENAI CERAMIC ARCHITECTURE STUDIO):
+ * Ultra-clean OpenAI / Apple gallery studio canvas comparing legacy fragility vs. Olven deterministic architecture
  */
 function renderWhiteboardDiagram(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
   const bNodes = (spec.before_nodes || []).slice(0, 3);
   const aNodes = (spec.after_nodes || []).slice(0, 3);
   const m0 = spec.metrics[0];
+  const m1 = spec.metrics[1] || m0;
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background-color: #EEF2F7;
-      background-image: radial-gradient(rgba(15, 23, 42, 0.14) 1.5px, transparent 1.5px);
-      background-size: 28px 28px;
-      color: #0F172A;
-      padding: ${isWide ? '44px 62px' : '64px 58px'};
+      background: radial-gradient(ellipse 90% 70% at 50% 0%, #FFFFFF 0%, #F7F9FC 58%, #EEF2F8 100%);
+      color: #0B0F17;
+      padding: ${isWide ? '40px 62px' : '58px 58px'};
       display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
     .orb {
       position: absolute; width: 780px; height: 780px; border-radius: 50%;
-      top: -220px; right: -160px;
-      background: radial-gradient(circle, rgba(14, 165, 233, 0.16) 0%, rgba(16, 185, 129, 0.10) 50%, transparent 72%);
-      filter: blur(45px);
+      top: -280px; right: -180px;
+      background: radial-gradient(circle, rgba(29, 78, 216, 0.11) 0%, rgba(16, 185, 129, 0.06) 50%, transparent 74%);
+      filter: blur(48px);
     }
     .canvas-win {
       position: relative; z-index: 3; flex: 1;
-      border-radius: 36px; padding: ${isWide ? '34px 44px' : '48px 46px'};
+      border-radius: 34px; padding: ${isWide ? '34px 44px' : '46px 46px'};
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(11, 15, 23, 0.09);
+      box-shadow: 0 36px 84px -26px rgba(15, 23, 42, 0.12), inset 0 1px 0 #FFFFFF;
       display: flex; flex-direction: column; justify-content: space-between;
     }
     .bar {
       display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 22px; border-bottom: 1px solid rgba(15, 23, 42, 0.10);
+      padding-bottom: 18px; border-bottom: 1px solid rgba(11, 15, 23, 0.08);
     }
-    .tool-pill {
-      padding: 8px 20px; border-radius: 999px;
-      background: rgba(15, 23, 42, 0.06);
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600;
-      color: #334155; letter-spacing: 0.08em; text-transform: uppercase;
+    .eyebrow-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      color: #475569; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .ny-chip {
+      padding: 7px 16px; border-radius: 999px;
+      background: #0B0F17; color: #FFFFFF;
+      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
     }
     .title {
-      font-size: ${isWide ? '36px' : '46px'}; font-weight: 850;
-      letter-spacing: -0.04em; line-height: 1.08; color: #0B1120;
-      margin: ${isWide ? '18px 0 22px' : '28px 0 36px'};
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: ${isWide ? '38px' : '50px'}; font-weight: 850;
+      letter-spacing: -0.042em; line-height: 1.06; color: #0B0F17;
+      margin: ${isWide ? '12px 0 10px' : '16px 0 14px'};
     }
+    .sub {
+      font-size: ${isWide ? '20px' : '22px'}; line-height: 1.42; color: #475569;
+      font-weight: 500; margin-bottom: ${isWide ? '16px' : '22px'}; max-width: 94%;
+    }
+    .lanes { display: flex; flex-direction: column; gap: ${isWide ? '16px' : '22px'}; }
     .lane {
-      padding: ${isWide ? '22px 26px' : '30px 30px'};
-      border-radius: 26px; margin-bottom: ${isWide ? '18px' : '26px'};
+      padding: ${isWide ? '22px 26px' : '28px 30px'};
+      border-radius: 24px;
     }
     .lane-bad {
-      background: rgba(254, 242, 242, 0.72);
-      border: 1.5px dashed rgba(225, 29, 72, 0.42);
+      background: #FFF9F8;
+      border: 1px solid rgba(220, 38, 38, 0.24);
     }
     .lane-good {
-      background: rgba(236, 253, 245, 0.78);
-      border: 1.5px solid rgba(16, 185, 129, 0.46);
-      box-shadow: 0 20px 44px -18px rgba(16, 185, 129, 0.22);
+      background: linear-gradient(150deg, #F5FBF8 0%, #EEF7F3 100%);
+      border: 1.5px solid rgba(5, 150, 105, 0.36);
+      box-shadow: 0 18px 40px -20px rgba(5, 150, 105, 0.20);
     }
     .lane-tag {
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px;
-      display: flex; justify-content: space-between;
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px;
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .tag-bad { color: #BE123C; }
+    .tag-bad { color: #B91C1C; }
     .tag-good { color: #047857; }
-    .flow { display: flex; align-items: center; gap: 14px; }
+    .pill-bad {
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(220, 38, 38, 0.10); color: #B91C1C; font-size: 13px;
+    }
+    .pill-good {
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(5, 150, 105, 0.12); color: #047857; font-size: 13px;
+    }
+    .flow { display: flex; align-items: center; gap: 12px; }
     .node {
-      flex: 1; padding: ${isWide ? '18px 16px' : '24px 18px'}; border-radius: 18px;
-      background: rgba(255,255,255,0.92);
-      border: 1px solid rgba(15, 23, 42, 0.10);
-      box-shadow: 0 8px 20px -10px rgba(15, 23, 42, 0.14), inset 0 1px 0 #FFF;
-      font-size: ${isWide ? '19px' : '21px'}; font-weight: 750;
+      flex: 1; padding: ${isWide ? '18px 14px' : '22px 16px'}; border-radius: 16px;
+      background: #FFFFFF;
+      border: 1px solid rgba(15, 23, 42, 0.09);
+      box-shadow: 0 6px 16px -10px rgba(15, 23, 42, 0.12);
+      font-size: ${isWide ? '18px' : '20px'}; font-weight: 750;
       text-align: center; color: #0F172A; letter-spacing: -0.02em;
     }
-    .arr { font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 800; color: #94A3B8; }
+    .node-good {
+      border-color: rgba(5, 150, 105, 0.22);
+    }
+    .arr { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 800; color: #94A3B8; }
     .arr-g { color: #059669; }
     .win-foot {
       display: flex; justify-content: space-between; align-items: center;
-      padding-top: 20px; border-top: 1px solid rgba(15, 23, 42, 0.10);
+      padding-top: 18px; border-top: 1px solid rgba(11, 15, 23, 0.08);
     }
+    .foot-metrics { display: flex; gap: 12px; align-items: center; }
     .res-badge {
-      padding: 10px 22px; border-radius: 999px;
-      background: #0F172A; color: #FFFFFF;
-      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
+      padding: 10px 20px; border-radius: 999px;
+      background: #1D4ED8; color: #FFFFFF;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
       letter-spacing: 0.06em;
+    }
+    .res-sub {
+      padding: 10px 18px; border-radius: 999px;
+      background: #F1F5F9; color: #0F172A;
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      letter-spacing: 0.05em;
     }
   </style></head><body>
     <div class="orb"></div>
-    <div class="canvas-win glass-light">
+    <div class="canvas-win">
       <div class="bar">
-        <div class="mac-dots">
-          <span class="mdot md-r"></span><span class="mdot md-y"></span><span class="mdot md-g"></span>
-        </div>
-        <div class="tool-pill">Freeform · Systems Architecture</div>
-        <div class="tool-pill">${esc(spec.after_badge)}</div>
+        <div class="eyebrow-tag">${esc(spec.eyebrow)}</div>
+        <div class="ny-chip">OLVEN ARCHITECTURE · NY</div>
       </div>
-      <div class="title">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
       <div>
+        <div class="title">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
+        <div class="sub">${esc(shorten(spec.subhead, isWide ? 120 : 145))}</div>
+      </div>
+      <div class="lanes">
         <div class="lane lane-bad">
-          <div class="lane-tag tag-bad"><span>✕ ${esc(spec.before_title)}</span><span>${esc(spec.before_badge)}</span></div>
+          <div class="lane-tag tag-bad"><span>✕ LEGACY PATH · ${esc(spec.before_title.replace(/^Before:\s*/i, ''))}</span><span class="pill-bad">${esc(spec.before_badge)}</span></div>
           <div class="flow">
             ${bNodes.map((n, i) => `<div class="node">${esc(n)}</div>${i < bNodes.length - 1 ? '<span class="arr">→</span>' : ''}`).join('')}
           </div>
         </div>
         <div class="lane lane-good">
-          <div class="lane-tag tag-good"><span>✓ ${esc(spec.after_title)}</span><span>PRODUCTION VERIFIED</span></div>
+          <div class="lane-tag tag-good"><span>✓ OLVEN PRODUCTION · ${esc(spec.after_title.replace(/^After:\s*/i, ''))}</span><span class="pill-good">${esc(spec.after_badge || 'PRODUCTION VERIFIED')}</span></div>
           <div class="flow">
-            ${aNodes.map((n, i) => `<div class="node">${esc(n)}</div>${i < aNodes.length - 1 ? '<span class="arr arr-g">→</span>' : ''}`).join('')}
+            ${aNodes.map((n, i) => `<div class="node node-good">${esc(n)}</div>${i < aNodes.length - 1 ? '<span class="arr arr-g">→</span>' : ''}`).join('')}
           </div>
         </div>
       </div>
       <div class="win-foot">
-        ${seamlessLogo(30, '#0F172A', '#FFFFFF')}
-        <div class="res-badge">${esc(m0.value)} · ${esc(m0.label)}</div>
+        ${seamlessLogo(28, '#0B0F17', '#FFFFFF')}
+        <div class="foot-metrics">
+          <div class="res-sub">${esc(m1.value)} ${esc(m1.label)}</div>
+          <div class="res-badge">${esc(m0.value)} · ${esc(m0.label)}</div>
+        </div>
       </div>
     </div>
   </body></html>`;
@@ -628,8 +688,8 @@ function renderCodeDiffWindow(spec, p) {
 }
 
 /**
- * GENRE 5 (revenue_ledger_reconciliation — LIGHT):
- * Apple Glacier Frosted Glass Live Telemetry Cliff Sheet
+ * GENRE 5 (revenue_ledger_reconciliation — STRIPE / DEEPMIND MIDNIGHT NAVY TELEMETRY):
+ * Deep Obsidian-Navy executive telemetry cliff with luminous Sky/Emerald drop and >140 RGB contrast vs light neighbors
  */
 function renderTelemetryCliff(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
@@ -640,101 +700,112 @@ function renderTelemetryCliff(spec, p) {
     ${baseFontsCss()}
     body {
       width: ${p.width}px; height: ${p.height}px;
-      background: #EDF4F2; color: #091318;
-      padding: ${isWide ? '44px 66px' : '66px 62px'};
+      background: radial-gradient(ellipse 92% 76% at 50% 8%, #12203E 0%, #091124 54%, #050914 100%);
+      color: #F8FAFC;
+      padding: ${isWide ? '40px 66px' : '58px 60px'};
       display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
     .orb1 {
       position: absolute; width: 720px; height: 720px; border-radius: 50%;
-      top: -200px; left: -140px;
-      background: radial-gradient(circle, rgba(244, 63, 94, 0.14) 0%, transparent 70%);
-      filter: blur(50px);
+      top: -240px; left: -140px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, transparent 70%);
+      filter: blur(54px);
     }
     .orb2 {
       position: absolute; width: 780px; height: 780px; border-radius: 50%;
-      bottom: -220px; right: -140px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.24) 0%, rgba(14, 165, 233, 0.10) 52%, transparent 74%);
-      filter: blur(50px);
+      bottom: -240px; right: -140px;
+      background: radial-gradient(circle, rgba(52, 211, 153, 0.20) 0%, rgba(56, 189, 248, 0.08) 52%, transparent 74%);
+      filter: blur(54px);
     }
     .card {
       position: relative; z-index: 3; flex: 1;
-      border-radius: 38px; padding: ${isWide ? '38px 48px' : '54px 50px'};
+      border-radius: 34px; padding: ${isWide ? '34px 46px' : '48px 48px'};
+      background: linear-gradient(155deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 100%);
+      border: 1.5px solid rgba(148, 163, 184, 0.20);
+      box-shadow: 0 40px 90px -24px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255,255,255,0.18);
       display: flex; flex-direction: column; justify-content: space-between;
     }
     .hdr { display: flex; justify-content: space-between; align-items: center; }
+    .ey { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; color: #94A3B8; letter-spacing: 0.12em; text-transform: uppercase; }
     .tag {
-      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase; color: #047857;
+      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: #7DD3FC;
+      padding: 6px 14px; border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.34);
     }
     .hl {
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: ${isWide ? '38px' : '48px'}; font-weight: 850;
-      letter-spacing: -0.04em; line-height: 1.08; color: #091318;
-      margin: ${isWide ? '18px 0 18px' : '26px 0 30px'};
+      letter-spacing: -0.04em; line-height: 1.07; color: #FFFFFF;
+      margin: ${isWide ? '12px 0 8px' : '16px 0 12px'};
+    }
+    .sub {
+      font-size: ${isWide ? '19px' : '21px'}; line-height: 1.42; color: #94A3B8; font-weight: 500;
     }
     .chart-box {
-      padding: 24px 28px; border-radius: 26px;
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(255,255,255,0.95);
-      box-shadow: inset 0 1px 0 #FFF;
+      padding: 24px 26px; border-radius: 24px;
+      background: rgba(5, 10, 24, 0.62);
+      border: 1px solid rgba(148, 163, 184, 0.16);
     }
     .stats {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-      margin-top: ${isWide ? '18px' : '28px'};
+      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
     }
     .st {
-      padding: ${isWide ? '20px 26px' : '26px 30px'}; border-radius: 24px;
-      background: rgba(255,255,255,0.74);
-      border: 1px solid rgba(255,255,255,0.95);
+      padding: ${isWide ? '20px 24px' : '26px 28px'}; border-radius: 22px;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid rgba(148, 163, 184, 0.16);
     }
-    .sv { font-size: ${isWide ? '44px' : '54px'}; font-weight: 850; letter-spacing: -0.045em; color: #059669; font-variant-numeric: tabular-nums; }
-    .sl { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: #475569; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 6px; }
+    .sv { font-family: 'Plus Jakarta Sans', sans-serif; font-size: ${isWide ? '44px' : '56px'}; font-weight: 850; letter-spacing: -0.045em; color: #38BDF8; font-variant-numeric: tabular-nums; }
+    .sv-g { color: #34D399; }
+    .sl { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; color: #94A3B8; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 6px; }
     .ft {
       display: flex; justify-content: space-between; align-items: center;
-      margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(9, 19, 24, 0.08);
+      padding-top: 16px; border-top: 1px solid rgba(148, 163, 184, 0.14);
     }
-    .ft-r { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: #475569; letter-spacing: 0.08em; }
+    .ft-r { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; color: #94A3B8; letter-spacing: 0.09em; }
   </style></head><body>
     <div class="orb1"></div>
     <div class="orb2"></div>
-    <div class="card glass-light">
+    <div class="card">
+      <div class="hdr">
+        <div class="ey">${esc(spec.eyebrow)}</div>
+        <div class="tag">VERIFIED TELEMETRY · ${esc(spec.after_badge)}</div>
+      </div>
       <div>
-        <div class="hdr">
-          <div class="mac-dots">
-            <span class="mdot md-r"></span><span class="mdot md-y"></span><span class="mdot md-g"></span>
-          </div>
-          <div class="tag">LIVE TELEMETRY · ${esc(spec.after_badge)}</div>
-        </div>
         <div class="hl">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
-        <div class="chart-box">
-          <svg viewBox="0 0 920 260" width="100%" height="${isWide ? '185' : '250'}" fill="none">
-            <line x1="0" y1="60" x2="920" y2="60" stroke="rgba(15,23,42,0.08)" stroke-dasharray="6 6"/>
-            <line x1="0" y1="140" x2="920" y2="140" stroke="rgba(15,23,42,0.08)" stroke-dasharray="6 6"/>
-            <line x1="0" y1="215" x2="920" y2="215" stroke="rgba(15,23,42,0.08)" stroke-dasharray="6 6"/>
-            <path d="M 16 112 L 84 68 L 152 104 L 222 44 L 292 86 L 364 38 L 430 62" stroke="#E11D48" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-            <line x1="452" y1="18" x2="452" y2="245" stroke="#0F172A" stroke-width="2" stroke-dasharray="6 6"/>
-            <rect x="358" y="8" width="188" height="32" rx="16" fill="#0F172A"/>
-            <text x="452" y="29" text-anchor="middle" fill="#FFFFFF" font-family="IBM Plex Mono, monospace" font-size="14" font-weight="700">▼ FIX DEPLOYED</text>
-            <path d="M 430 62 L 468 212 L 560 218 L 690 215 L 820 217 L 904 216" stroke="#059669" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="904" cy="216" r="9" fill="#059669"/>
-          </svg>
-        </div>
-        <div class="stats">
-          <div class="st"><div class="sv">${esc(m0.value)}</div><div class="sl">${esc(m0.label)}</div></div>
-          <div class="st"><div class="sv">${esc(m1.value)}</div><div class="sl">${esc(m1.label)}</div></div>
-        </div>
+        <div class="sub">${esc(shorten(spec.subhead, isWide ? 115 : 140))}</div>
+      </div>
+      <div class="chart-box">
+        <svg viewBox="0 0 920 280" width="100%" height="${isWide ? '190' : '280'}" fill="none">
+          <line x1="0" y1="68" x2="920" y2="68" stroke="rgba(148,163,184,0.14)" stroke-dasharray="6 6"/>
+          <line x1="0" y1="152" x2="920" y2="152" stroke="rgba(148,163,184,0.14)" stroke-dasharray="6 6"/>
+          <line x1="0" y1="232" x2="920" y2="232" stroke="rgba(148,163,184,0.14)" stroke-dasharray="6 6"/>
+          <text x="18" y="34" fill="#FBBF24" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700">BEFORE · ${esc(shorten(spec.before_badge, 24))}</text>
+          <path d="M 16 122 L 84 78 L 152 114 L 222 52 L 292 94 L 364 46 L 430 70" stroke="#F59E0B" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="452" y1="18" x2="452" y2="262" stroke="#E2E8F0" stroke-width="2" stroke-dasharray="6 6"/>
+          <rect x="342" y="8" width="220" height="32" rx="16" fill="#F8FAFC"/>
+          <text x="452" y="29" text-anchor="middle" fill="#091124" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700">▼ OLVEN FIX DEPLOYED</text>
+          <text x="632" y="212" fill="#34D399" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700">PRODUCTION STEADY-STATE</text>
+          <path d="M 430 70 L 468 230 L 560 234 L 690 232 L 820 233 L 904 232" stroke="#34D399" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="904" cy="232" r="8.5" fill="#34D399"/>
+        </svg>
+      </div>
+      <div class="stats">
+        <div class="st"><div class="sv">${esc(m0.value)}</div><div class="sl">${esc(m0.label)}</div></div>
+        <div class="st"><div class="sv sv-g">${esc(m1.value)}</div><div class="sl">${esc(m1.label)}</div></div>
       </div>
       <div class="ft">
-        ${seamlessLogo(30, '#091318', '#FFFFFF')}
-        <div class="ft-r">OLVENTECH.COM · VERIFIED TELEMETRY</div>
+        ${seamlessLogo(28, '#FFFFFF', '#091124')}
+        <div class="ft-r">OLVENTECH.COM · MANHATTAN, NY</div>
       </div>
     </div>
   </body></html>`;
 }
 
 /**
- * GENRE 6 (cdc_hash_diff_funnel — SPLIT):
- * Apple Keynote Twin Titanium Glass Showcase (Smoked Legacy Glass vs. Illuminated Production Glass)
+ * GENRE 6 (cdc_hash_diff_funnel — APPLE KEYNOTE TWIN TITANIUM SPLIT):
+ * Smoked Obsidian ("WHAT MOST TEAMS BUILD") vs. Warm Alabaster ("HOW OLVEN ENGINEERS IT")
  */
 function renderMagazineSplit(spec, p) {
   const isWide = p.layout === 'landscape' || p.layout === 'landscape-tall';
@@ -747,54 +818,60 @@ function renderMagazineSplit(spec, p) {
     body {
       width: ${p.width}px; height: ${p.height}px;
       background:
-        radial-gradient(circle at 22% 18%, rgba(226, 232, 240, 0.08) 0%, transparent 44%),
-        radial-gradient(circle at 78% 82%, rgba(0, 82, 255, 0.09) 0%, transparent 46%),
-        linear-gradient(90deg, #090B10 0%, #090B10 50%, #F1EFEA 50%, #F1EFEA 100%);
-      padding: ${isWide ? '44px 58px' : '64px 54px'};
+        radial-gradient(circle at 22% 18%, rgba(226, 232, 240, 0.07) 0%, transparent 44%),
+        radial-gradient(circle at 78% 82%, rgba(201, 100, 66, 0.08) 0%, transparent 46%),
+        linear-gradient(90deg, #07090E 0%, #07090E 50%, #F6F3EC 50%, #F6F3EC 100%);
+      padding: ${isWide ? '42px 58px' : '62px 54px'};
       display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
     }
     .grid {
       position: relative; z-index: 3; flex: 1;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 26px;
     }
     .slab {
-      border-radius: 36px; padding: ${isWide ? '38px 36px' : '54px 42px'};
+      border-radius: 34px; padding: ${isWide ? '36px 36px' : '50px 42px'};
       display: flex; flex-direction: column; justify-content: space-between;
     }
     .slab-dark { color: #F4F4F5; }
-    .slab-light { color: #0A0D14; }
+    .slab-light {
+      color: #141413;
+      background: rgba(254, 253, 250, 0.94);
+      border: 1px solid rgba(20, 20, 19, 0.10);
+      box-shadow: 0 36px 80px -24px rgba(20, 20, 19, 0.14), inset 0 1px 0 #FFFFFF;
+    }
     .lbl {
-      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 18px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 16px;
     }
-    .lbl-b { color: #FDA4AF; }
-    .lbl-g { color: #0052FF; }
+    .lbl-b { color: #FCA5A5; }
+    .lbl-g { color: #0F766E; }
     .title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: ${isWide ? '32px' : '40px'}; font-weight: 850; line-height: 1.08;
-      letter-spacing: -0.04em; margin-bottom: ${isWide ? '24px' : '36px'};
+      letter-spacing: -0.04em; margin-bottom: ${isWide ? '22px' : '32px'};
     }
-    .strike { text-decoration: line-through; text-decoration-color: #F43F5E; text-decoration-thickness: 3px; opacity: 0.85; }
-    .pts { display: flex; flex-direction: column; gap: ${isWide ? '18px' : '26px'}; }
-    .pt { font-size: ${isWide ? '20px' : '23px'}; line-height: 1.38; font-weight: 500; }
-    .pt-d { color: #CBD5E1; padding-left: 16px; border-left: 2.5px solid rgba(244, 63, 94, 0.65); }
-    .pt-l { color: #1E293B; padding-left: 16px; border-left: 2.5px solid #0052FF; }
+    .strike { text-decoration: line-through; text-decoration-color: #EF4444; text-decoration-thickness: 3px; opacity: 0.84; }
+    .pts { display: flex; flex-direction: column; gap: ${isWide ? '18px' : '24px'}; }
+    .pt { font-size: ${isWide ? '20px' : '22px'}; line-height: 1.40; font-weight: 500; }
+    .pt-d { color: #CBD5E1; padding-left: 16px; border-left: 2.5px solid rgba(239, 68, 68, 0.65); }
+    .pt-l { color: #1E293B; padding-left: 16px; border-left: 2.5px solid #0F766E; }
     .badge {
       padding: 12px 20px; border-radius: 16px; width: fit-content;
-      font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 700;
     }
-    .b-bad { background: rgba(244, 63, 94, 0.16); color: #FDA4AF; border: 1px solid rgba(244, 63, 94, 0.35); }
-    .b-good { background: #0052FF; color: #FFFFFF; }
+    .b-bad { background: rgba(239, 68, 68, 0.16); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.35); }
+    .b-good { background: #141413; color: #FAF8F4; }
     .ft {
-      position: relative; z-index: 3; margin-top: 24px;
+      position: relative; z-index: 3; margin-top: 22px;
       display: flex; justify-content: space-between; align-items: center;
       padding: 14px 28px; border-radius: 22px;
-      background: rgba(12, 15, 22, 0.88);
+      background: rgba(12, 15, 22, 0.90);
       backdrop-filter: blur(30px);
       border: 1px solid rgba(255,255,255,0.16);
       color: #CBD5E1;
     }
-    .ft-r { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; letter-spacing: 0.08em; }
+    .ft-r { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; letter-spacing: 0.09em; }
   </style></head><body>
     <div class="grid">
       <div class="slab slab-dark glass-dark">
@@ -807,9 +884,9 @@ function renderMagazineSplit(spec, p) {
         </div>
         <div class="badge b-bad">${esc(spec.before_badge)}</div>
       </div>
-      <div class="slab slab-light glass-light">
+      <div class="slab slab-light">
         <div>
-          <div class="lbl lbl-g">✓ WHAT SURVIVES PRODUCTION</div>
+          <div class="lbl lbl-g">✓ HOW OLVEN ENGINEERS IT</div>
           <div class="title">${esc(spec.after_title.replace(/^After:\s*/i, ''))}</div>
           <div class="pts">
             ${aPts.map((pt) => `<div class="pt pt-l">${esc(pt)}</div>`).join('')}
@@ -820,7 +897,7 @@ function renderMagazineSplit(spec, p) {
     </div>
     <div class="ft">
       ${seamlessLogo(28, '#FFFFFF', '#0C0F16')}
-      <div class="ft-r">OLVENTECH.COM · NEW YORK</div>
+      <div class="ft-r">OLVENTECH.COM · MANHATTAN, NY</div>
     </div>
   </body></html>`;
 }
@@ -1127,8 +1204,8 @@ const EDITORIAL_GRADES = {
     pc: { sharpen: 46, contrast: 3, vibrance: 6, noise: 0.55 },
   },
   editorial_light_blueprint: {
-    name: 'Bright Editorial Paper',
-    lc: ['light.contrast=5', 'light.whites=5', 'color.vibrance=10'],
+    name: 'Anthropic Warm Alabaster',
+    lc: ['wb.temp=6600', 'light.contrast=5', 'light.whites=4', 'color.vibrance=10'],
     pc: { sharpen: 44, contrast: 3, vibrance: 8, noise: 0.50 },
   },
   security_policy_shield_matrix: {
@@ -1137,9 +1214,9 @@ const EDITORIAL_GRADES = {
     pc: { sharpen: 46, contrast: 4, vibrance: 10, noise: 0.70 },
   },
   circuit_breaker_state_machine: {
-    name: 'Crisp Architectural Blueprint',
-    lc: ['light.contrast=6', 'color.vibrance=12', 'light.highlights=-4'],
-    pc: { sharpen: 48, contrast: 4, vibrance: 8, noise: 0.50 },
+    name: 'OpenAI Pure Ceramic Studio',
+    lc: ['light.contrast=6', 'color.vibrance=11', 'light.highlights=-3'],
+    pc: { sharpen: 48, contrast: 4, vibrance: 8, noise: 0.45 },
   },
   split_latency_waterfall: {
     name: 'Pro Display XDR Blue Hour',
@@ -1147,9 +1224,9 @@ const EDITORIAL_GRADES = {
     pc: { sharpen: 46, contrast: 4, vibrance: 10, noise: 0.65 },
   },
   revenue_ledger_reconciliation: {
-    name: 'Warm Manhattan Magazine',
-    lc: ['wb.temp=6700', 'light.contrast=5', 'color.vibrance=10'],
-    pc: { sharpen: 44, contrast: 3, vibrance: 8, noise: 0.55 },
+    name: 'Midnight Navy XDR Telemetry',
+    lc: ['light.contrast=8', 'light.blacks=-4', 'color.vibrance=14'],
+    pc: { sharpen: 46, contrast: 4, vibrance: 10, noise: 0.65 },
   },
   cdc_hash_diff_funnel: {
     name: 'SoHo Matte Contrast',
