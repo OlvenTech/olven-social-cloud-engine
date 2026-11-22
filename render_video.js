@@ -284,86 +284,71 @@ function compileEditorialScript(spec) {
   const m1 = (spec.metrics && spec.metrics[1]) || { value: '$0', label: 'LEAKAGE', sub: 'Zero lost events' };
   const m2 = (spec.metrics && spec.metrics[2]) || { value: '0', label: 'DOWNTIME', sub: 'Full audit trail' };
 
-  const bNodes = (spec.before_nodes || ['Direct API Call', 'Rate Limit Hit', 'Silent Data Loss']).slice(0, 3);
-  const aNodes = (spec.after_nodes || ['Postgres Outbox', 'Idempotent Worker', 'Atomic Commit']).slice(0, 3);
+  const bNodes = ((spec.viral_before_nodes && spec.viral_before_nodes.length) ? spec.viral_before_nodes : (spec.before_nodes || ['Direct API Call', 'Rate Limit Hit', 'Silent Data Loss'])).slice(0, 3);
+  const aNodes = ((spec.viral_after_nodes && spec.viral_after_nodes.length) ? spec.viral_after_nodes : (spec.after_nodes || ['Lock Payment First', 'Stamp 1 Unique ID', 'Verify Before Retry'])).slice(0, 3);
 
-  const domainRaw = String(spec.eyebrow || 'BACKEND SYSTEMS').split('·')[0].trim();
-  const domainShort = domainRaw.split(/\s+/).slice(0, 2).join(' ').toUpperCase();
+  const domainRaw = String(spec.eyebrow || 'REAL CLIENT STORY').split('·')[1] || String(spec.eyebrow || 'REAL RESULT').split('·')[0];
+  const domainShort = domainRaw.trim().split(/\s+/).slice(0, 2).join(' ').toUpperCase();
 
-  const badBadge = String(spec.before_badge || '').trim();
-  const hl = stripHtml(spec.headline || 'Your backend is leaking revenue.');
+  const badBadge = String(spec.viral_before_stat || spec.before_badge || '').trim();
+  const hl = stripHtml(spec.viral_headline || spec.headline || 'One tiny bug cost $64,000.');
   const hlLower = (hl + ' ' + JSON.stringify(spec.keywords || [])).toLowerCase();
 
-  // Psychological Loss-Aversion & Pattern-Interrupt 3-line hooks
-  let hookL1 = 'Your backend';
-  let hookL2 = 'is quietly';
-  let hookAccent = 'leaking margin.';
+  let hookL1 = 'One silent bug';
+  let hookL2 = 'was quietly';
+  let hookAccent = 'burning cash.';
 
-  if (/\b(snowflake|bigquery|warehouse|rollup|scan)\b/.test(hlLower)) {
-    hookL1 = 'Your cloud bill';
-    hookL2 = 'is rescanning';
-    hookAccent = 'dead rows.';
+  if (Array.isArray(spec.viral_hook_lines) && spec.viral_hook_lines.length === 3) {
+    [hookL1, hookL2, hookAccent] = spec.viral_hook_lines.map((s) => stripHtml(s));
+  } else if (/\b(snowflake|bigquery|warehouse|rollup|scan)\b/.test(hlLower)) {
+    hookL1 = 'Their cloud bill';
+    hookL2 = 'was paying to';
+    hookAccent = 'scan old data.';
   } else if (/\b(ach|wire|disbursement|double|payout|bank)\b/.test(hlLower)) {
-    hookL1 = 'Blind retries';
-    hookL2 = 'send bank wires';
-    hookAccent = 'twice.';
+    hookL1 = 'A 30-second glitch';
+    hookL2 = 'wired the same';
+    hookAccent = '$64,000 twice.';
   } else if (/\b(retry|retries|storm|backoff|bulkhead|jitter)\b/.test(hlLower)) {
-    hookL1 = 'Fixed retries';
-    hookL2 = 'turn small dips';
-    hookAccent = 'into outages.';
+    hookL1 = 'A 15-second dip';
+    hookL2 = 'crashed their app';
+    hookAccent = 'for 42 minutes.';
   } else if (/\b(pagerduty|slo|burn-rate|cpu|3 am|alert)\b/.test(hlLower)) {
-    hookL1 = '3 AM CPU alerts';
-    hookL2 = 'hide your real';
-    hookAccent = 'outages.';
+    hookL1 = '84 fake 3 AM';
+    hookL2 = 'alarms made them';
+    hookAccent = 'miss a real crash.';
   } else if (/\b(lead|hubspot|routing|revops)\b/.test(hlLower)) {
-    hookL1 = '19-minute lead';
-    hookL2 = 'delays quietly';
-    hookAccent = 'kill pipeline.';
-  } else if (/\b(netsuite|reconcil|close)\b/.test(hlLower)) {
-    hookL1 = 'Fragile webhooks';
-    hookL2 = 'break every';
-    hookAccent = 'month-end close.';
-  } else if (/\b(stripe|billing|usage|metering)\b/.test(hlLower)) {
-    hookL1 = 'Your billing';
-    hookL2 = 'pipeline leaks';
-    hookAccent = m0.value.includes('$') ? m0.value : (m1.value.includes('$') ? m1.value : 'real revenue.');
-  } else if (/\b(llm|agent|refund|policy|prompt)\b/.test(hlLower)) {
-    hookL1 = 'System prompts';
-    hookL2 = 'are not a';
-    hookAccent = 'security wall.';
-  } else if (/\b(inventory|oversell|shopify|sku)\b/.test(hlLower)) {
-    hookL1 = '15-minute crons';
-    hookL2 = 'oversell your';
-    hookAccent = 'live inventory.';
-  } else if (/\b(tenant|isolation|rls)\b/.test(hlLower)) {
-    hookL1 = 'One missed WHERE';
-    hookL2 = 'filter leaks';
-    hookAccent = 'tenant data.';
-  } else if (/\b(webhook|outbox|erp|wms)\b/.test(hlLower)) {
-    hookL1 = 'Failed webhooks';
-    hookL2 = 'silently drop';
-    hookAccent = 'paid orders.';
-  } else if (/\b(kafka|queue|backpressure|dead-letter|dlq)\b/.test(hlLower)) {
-    hookL1 = 'Unbounded queues';
-    hookL2 = 'turn spikes into';
-    hookAccent = 'full outages.';
-  } else if (/\b(soc-2|soc2|audit|compliance|ledger)\b/.test(hlLower)) {
-    hookL1 = 'Mutable logs';
-    hookL2 = 'fail enterprise';
-    hookAccent = 'SOC-2 audits.';
+    hookL1 = 'A 19-minute delay';
+    hookL2 = 'was killing';
+    hookAccent = 'hot sales leads.';
+  } else if (/\b(stripe|billing|usage|metering|quickbooks|proration)\b/.test(hlLower)) {
+    hookL1 = '$19,000/month';
+    hookL2 = 'kept vanishing';
+    hookAccent = 'from their books.';
+  } else if (/\b(deadlock|32 workers|fulfillment|warehouse)\b/.test(hlLower)) {
+    hookL1 = 'Adding 32 workers';
+    hookL2 = 'made this company';
+    hookAccent = '9x SLOWER.';
+  } else if (/\b(soc-2|soc2|audit|screenshot|compliance)\b/.test(hlLower)) {
+    hookL1 = '110 hours of';
+    hookL2 = 'audit screenshots.';
+    hookAccent = 'Now 1 click.';
+  } else if (/\b(edi|sftp|typo|chargeback|fines)\b/.test(hlLower)) {
+    hookL1 = '1 tiny typo in';
+    hookL2 = 'a midnight file';
+    hookAccent = 'cost $95,000/yr.';
   } else {
     const words = hl.split(/\s+/);
-    hookL1 = words.slice(0, 2).join(' ');
-    hookL2 = words.slice(2, 4).join(' ');
+    hookL1 = words.slice(0, 3).join(' ');
+    hookL2 = words.slice(3, 6).join(' ');
     hookAccent = m0.value;
   }
 
-  if (hookAccent.length > 18) hookAccent = m0.value;
+  if (hookAccent.length > 20) hookAccent = m0.value;
   if (!/[.!?%]$/.test(hookAccent) && !hookAccent.includes('/')) hookAccent = hookAccent + '.';
 
   let heroMetric = m0;
   for (const m of [m0, m1, m2]) {
-    if (String(m.value).includes('$') || String(m.value).includes('%')) {
+    if (String(m.value).includes('$') || String(m.value).includes('%') || String(m.value).includes('x')) {
       heroMetric = m;
       break;
     }
@@ -375,14 +360,8 @@ function compileEditorialScript(spec) {
   const cleanTag = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   const heroLabel = cleanTag(heroMetric.label).toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
   const heroSub = cleanTag(heroMetric.sub);
-  const painKicker = badBadge
-    ? `${badBadge.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}`
-    : `${cleanTag(m1.sub)}`;
-  const hookFoot = cleanTag(heroMetric.sub || m1.sub || 'Verified in production');
-
-  const diag0 = cleanTag(spec.before_title || bNodes[0]).replace(/^Before:\s*/i, '');
-  const diag1 = cleanTag(bNodes[1] || 'Direct API Coupling');
-  const diag2 = cleanTag(bNodes[2] || 'Silent Data Loss');
+  const painKicker = badBadge ? badBadge.toUpperCase() : cleanTag(m1.sub).toUpperCase();
+  const hookFoot = cleanTag(spec.viral_subhead || heroMetric.sub || 'Real client result · fixed in days.');
 
   return {
     domainShort,
@@ -390,16 +369,17 @@ function compileEditorialScript(spec) {
     hookL2,
     hookAccent,
     hookFoot,
-    diagLines: [diag0, diag1, diag2],
+    beforeStat: badBadge || cleanTag(spec.before_title || 'BROKEN LEGACY FLOW').replace(/^Before:\s*/i, ''),
+    diagLines: [cleanTag(bNodes[0]), cleanTag(bNodes[1] || 'System Stalled'), cleanTag(bNodes[2] || 'Silent Cash Leak')],
     painKicker,
     archSteps: [
       { num: '01', title: cleanTag(aNodes[0]) },
       { num: '02', title: cleanTag(aNodes[1]) },
       { num: '03', title: cleanTag(aNodes[2]) },
     ],
-    archFoot: cleanTag(spec.after_badge || 'Zero lost events · Full audit trail'),
+    archFoot: cleanTag(spec.after_badge || 'Fixed in days · Zero rebuild'),
     heroVal: cleanTag(heroMetric.value),
-    heroFontPx: cleanTag(heroMetric.value).length >= 7 ? 148 : (cleanTag(heroMetric.value).length >= 5 ? 176 : 204),
+    heroFontPx: cleanTag(heroMetric.value).length >= 7 ? 148 : (cleanTag(heroMetric.value).length >= 5 ? 176 : 208),
     heroLabel,
     heroSub,
     subA: { val: cleanTag(subA.value), lbl: cleanTag(subA.label).toLowerCase() },
@@ -408,15 +388,28 @@ function compileEditorialScript(spec) {
 }
 
 function buildDepthPlaneHtml(idx, dir, interB64, monoB64) {
-  const stroke = dir.isDark ? 'rgba(255,255,255,0.075)' : 'rgba(15,23,42,0.065)';
-  const ghostInk = dir.isDark ? 'rgba(255,255,255,0.040)' : 'rgba(15,23,42,0.038)';
+  const stroke = dir.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.07)';
+  const ghostInk = dir.isDark ? 'rgba(255,255,255,0.038)' : 'rgba(15,23,42,0.036)';
   const num = `0${idx + 1}`;
+
+  // Sleek 5-segment Story Progress Bar (boosts Reels & LinkedIn watch-through completion!)
+  const progSegments = [0, 1, 2, 3, 4].map((i) => {
+    const active = i <= idx;
+    const bg = active ? dir.accent : (dir.isDark ? 'rgba(255,255,255,0.16)' : 'rgba(15,23,42,0.12)');
+    const op = i === idx ? '1' : (active ? '0.55' : '1');
+    return `<div style="flex:1;height:6px;border-radius:999px;background:${bg};opacity:${op};"></div>`;
+  }).join('');
+  const progressBar = `
+    <div style="position:absolute;top:118px;left:110px;right:110px;display:flex;gap:14px;z-index:5;">
+      ${progSegments}
+    </div>
+  `;
 
   let inner = '';
   if (dir.depthMotif === 'editorial_hairlines') {
     inner = `
       <div style="position:absolute;inset:72px;border:1px solid ${stroke};border-radius:36px;"></div>
-      <div style="position:absolute;top:128px;right:84px;font-family:'Inter',sans-serif;font-weight:800;font-size:320px;line-height:0.85;letter-spacing:-0.06em;color:${ghostInk};">${num}</div>
+      <div style="position:absolute;top:152px;right:84px;font-family:'Inter',sans-serif;font-weight:800;font-size:300px;line-height:0.85;letter-spacing:-0.06em;color:${ghostInk};">${num}</div>
       <div style="position:absolute;bottom:108px;left:108px;font-family:'IBM Plex Mono',monospace;font-size:18px;letter-spacing:0.22em;color:${stroke};">OLVEN TECH · ${dir.label}</div>
     `;
   } else if (dir.depthMotif === 'studio_grid') {
@@ -427,7 +420,7 @@ function buildDepthPlaneHtml(idx, dir, interB64, monoB64) {
   } else if (dir.depthMotif === 'telemetry_dotgrid') {
     inner = `
       <div style="position:absolute;inset:64px;background-image:radial-gradient(${stroke} 2px, transparent 2px);background-size:48px 48px;"></div>
-      <div style="position:absolute;top:164px;left:96px;right:96px;height:1px;background:linear-gradient(90deg,transparent,${dir.accent}33,transparent);"></div>
+      <div style="position:absolute;top:174px;left:96px;right:96px;height:1px;background:linear-gradient(90deg,transparent,${dir.accent}33,transparent);"></div>
       <div style="position:absolute;bottom:164px;left:96px;right:96px;height:1px;background:linear-gradient(90deg,transparent,${dir.proofColor}33,transparent);"></div>
     `;
   } else {
@@ -443,11 +436,11 @@ function buildDepthPlaneHtml(idx, dir, interB64, monoB64) {
     @font-face { font-family: 'IBM Plex Mono'; src: url('data:font/woff2;base64,${monoB64}') format('woff2'); font-weight: 400 700; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 1080px; height: 1920px; background: transparent; overflow: hidden; position: relative; }
-  </style></head><body>${inner}</body></html>`;
+  </style></head><body>${progressBar}${inner}</body></html>`;
 }
 
 function buildForegroundChipHtml(idx, script, dir, interB64, monoB64) {
-  const pillBg = dir.isDark ? 'rgba(22, 26, 36, 0.90)' : 'rgba(255, 255, 255, 0.94)';
+  const pillBg = dir.isDark ? 'rgba(22, 26, 36, 0.92)' : 'rgba(255, 255, 255, 0.96)';
   const pillBorder = dir.isDark ? 'rgba(255,255,255,0.18)' : 'rgba(15,23,42,0.12)';
   const pillInk = dir.ink;
 
@@ -482,7 +475,7 @@ function buildForegroundChipHtml(idx, script, dir, interB64, monoB64) {
 
   let body = '';
   if (idx === 0) {
-    body = `<div class="pill"><span class="dot" style="background:${dir.accent};"></span><span>PRODUCTION CASE · ${esc(script.domainShort)}</span></div>`;
+    body = `<div class="pill" style="border-color:${dir.accent}55;"><span class="dot" style="background:${dir.accent};"></span><span>REAL STORY · ${esc(script.domainShort)}</span></div>`;
   } else if (idx === 1) {
     body = `<div class="pill" style="border-color:${dir.alert}55;"><span class="dot" style="background:${dir.alert};"></span><span style="color:${dir.alert};">${esc(script.painKicker)}</span></div>`;
   } else if (idx === 2) {
@@ -494,10 +487,9 @@ function buildForegroundChipHtml(idx, script, dir, interB64, monoB64) {
         <div class="mini"><div class="mv">${esc(script.subB.val)}</div><div class="ml">${esc(script.subB.lbl)}</div></div>
       </div>`;
   } else {
-    // High-status calm executive sign-off (NEVER "DM AUDIT" agency spam!)
     const ctaBg = dir.isDark ? '#FFFFFF' : '#141413';
     const ctaInk = dir.isDark ? '#0A0B0E' : '#FAF8F5';
-    body = `<div class="pill" style="background:${ctaBg};color:${ctaInk};border:none;padding:24px 48px;font-size:23px;letter-spacing:0.06em;text-transform:none;"><span>contact@olventech.com</span></div>`;
+    body = `<div class="pill" style="background:${ctaBg};color:${ctaInk};border:none;padding:24px 44px;font-size:21px;letter-spacing:0.05em;text-transform:none;"><span>Save this  ·  contact@olventech.com</span></div>`;
   }
 
   return `<!doctype html><html><head><meta charset="utf-8"><style>${chipCss}</style></head><body>${body}</body></html>`;
@@ -519,7 +511,7 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
       display: flex; flex-direction: column; justify-content: center; padding: 40px;
     }
     .panel {
-      position: relative; border-radius: 40px; padding: 64px 58px; overflow: hidden;
+      position: relative; border-radius: 40px; padding: 62px 56px; overflow: hidden;
       background: ${dir.surfaceBg};
       border: 1.5px solid ${dir.surfaceBorder};
       box-shadow: 0 36px 84px -22px rgba(0, 0, 0, ${dir.isDark ? '0.68' : '0.11'});
@@ -527,7 +519,7 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
     }
     .eyebrow {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 40px; font-family: 'IBM Plex Mono', monospace;
+      margin-bottom: 36px; font-family: 'IBM Plex Mono', monospace;
       font-size: 19px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
       color: ${dir.inkMuted};
     }
@@ -539,22 +531,22 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
     }
   `;
 
-  // SCENE 0: Pure Editorial Pattern-Interrupt Hook (45%+ negative space — OpenAI / Claude / Apple Keynote style!)
+  // SCENE 0: Viral Scroll-Stop Story Hook (0.7-second 5th-grade read!)
   const scene0 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
     .wrap { padding: 20px 14px; color: ${dir.ink}; }
     .brand-ey {
-      display: inline-flex; align-items: center; gap: 14px; margin-bottom: 44px;
+      display: inline-flex; align-items: center; gap: 14px; margin-bottom: 40px;
       font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 700;
       letter-spacing: 0.16em; color: ${dir.inkMuted};
     }
     .bdot { width: 10px; height: 10px; border-radius: 50%; background: ${dir.accent}; }
-    .h { font-size: 112px; font-weight: 880; line-height: 1.0; letter-spacing: -0.052em; color: ${dir.ink}; }
-    .ha { font-size: 118px; font-weight: 900; line-height: 0.98; letter-spacing: -0.056em; color: ${dir.accent}; margin-top: 10px; }
-    .rule { margin-top: 48px; height: 4px; width: 110px; border-radius: 99px; background: ${dir.accent}; opacity: 0.85; }
-    .ft { margin-top: 26px; font-size: 30px; font-weight: 550; line-height: 1.35; color: ${dir.inkMuted}; max-width: 780px; }
+    .h { font-size: 104px; font-weight: 880; line-height: 1.02; letter-spacing: -0.052em; color: ${dir.ink}; }
+    .ha { font-size: 112px; font-weight: 900; line-height: 0.98; letter-spacing: -0.056em; color: ${dir.accent}; margin-top: 10px; }
+    .rule { margin-top: 44px; height: 4px; width: 110px; border-radius: 99px; background: ${dir.accent}; opacity: 0.85; }
+    .ft { margin-top: 24px; font-size: 29px; font-weight: 560; line-height: 1.38; color: ${dir.inkMuted}; max-width: 800px; }
   </style></head><body>
     <div class="wrap">
-      <div class="brand-ey"><span class="bdot"></span><span>OLVEN TECH · NEW YORK</span></div>
+      <div class="brand-ey"><span class="bdot"></span><span>OLVEN TECH · REAL CLIENT STORY</span></div>
       <div class="h">${esc(script.hookL1)}</div>
       <div class="h">${esc(script.hookL2)}</div>
       <div class="ha">${esc(script.hookAccent)}</div>
@@ -563,36 +555,35 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
     </div>
   </body></html>`;
 
-  // SCENE 1: Clean Executive Diagnostic Panel (Before State — calm hierarchy, zero noisy terminal clutter)
+  // SCENE 1: Plain-English Domino Chain ("How It Happened" — instant human curiosity!)
   const scene1 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
-    .title { font-size: 54px; font-weight: 840; letter-spacing: -0.042em; line-height: 1.08; margin-bottom: 40px; color: ${dir.ink}; }
+    .title { font-size: 54px; font-weight: 850; letter-spacing: -0.042em; line-height: 1.08; margin-bottom: 36px; color: ${dir.ink}; }
     .item {
-      display: flex; align-items: flex-start; gap: 22px; padding: 26px 0;
+      display: flex; align-items: center; gap: 22px; padding: 26px 0;
       border-top: 1px solid ${dir.surfaceBorder};
     }
     .idx {
-      font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 800;
       color: ${dir.alert}; background: ${dir.alertSoft};
-      padding: 8px 14px; border-radius: 12px; margin-top: 4px; flex-shrink: 0;
+      padding: 10px 16px; border-radius: 14px; flex-shrink: 0;
     }
-    .txt { font-size: 38px; font-weight: 720; letter-spacing: -0.03em; line-height: 1.22; color: ${dir.ink}; }
-    .txt-muted { color: ${dir.inkMuted}; font-weight: 600; }
+    .txt { font-size: 38px; font-weight: 760; letter-spacing: -0.03em; line-height: 1.2; color: ${dir.ink}; }
   </style></head><body>
     <div class="panel">
       <div class="eyebrow">
-        <span class="badge" style="background:${dir.alertSoft};color:${dir.alert};">● BEFORE · THE BOTTLENECK</span>
+        <span class="badge" style="background:${dir.alertSoft};color:${dir.alert};">● WHAT WENT WRONG</span>
         <span>02 / 05</span>
       </div>
-      <div class="title">Where the system was breaking.</div>
-      <div class="item"><span class="idx">×</span><div class="txt txt-muted">${esc(script.diagLines[0])}</div></div>
-      <div class="item"><span class="idx">×</span><div class="txt">${esc(script.diagLines[1])}</div></div>
-      <div class="item"><span class="idx">×</span><div class="txt">${esc(script.diagLines[2])}</div></div>
+      <div class="title">How one glitch spiraled fast.</div>
+      <div class="item"><span class="idx">01</span><div class="txt">${esc(script.diagLines[0])}</div></div>
+      <div class="item"><span class="idx">02</span><div class="txt">${esc(script.diagLines[1])}</div></div>
+      <div class="item"><span class="idx">03</span><div class="txt">${esc(script.diagLines[2])}</div></div>
     </div>
   </body></html>`;
 
-  // SCENE 2: The Olven Architecture Difference (Clean 3-step studio engineering flow)
+  // SCENE 2: The Simple 3-Step Fix (Plain English — Zero Jargon!)
   const scene2 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
-    .title { font-size: 56px; font-weight: 850; letter-spacing: -0.042em; line-height: 1.06; margin-bottom: 38px; color: ${dir.ink}; }
+    .title { font-size: 56px; font-weight: 850; letter-spacing: -0.042em; line-height: 1.06; margin-bottom: 36px; color: ${dir.ink}; }
     .step {
       display: flex; align-items: center; gap: 24px; padding: 30px 34px; border-radius: 26px;
       background: ${dir.surfaceBg}; border: 1.5px solid ${dir.surfaceBorder};
@@ -608,10 +599,10 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
   </style></head><body>
     <div style="padding: 12px;">
       <div class="eyebrow" style="margin-bottom: 20px;">
-        <span class="badge" style="background:${dir.proofSoft};color:${dir.proofColor};">● OLVEN ARCHITECTURE</span>
+        <span class="badge" style="background:${dir.proofSoft};color:${dir.proofColor};">✓ THE OLVEN FIX</span>
         <span>03 / 05</span>
       </div>
-      <div class="title">How we re-engineered it.</div>
+      <div class="title">Fixed in days. 3 simple steps.</div>
       ${script.archSteps.map((s, i) => `
         <div class="step"><span class="num">${s.num}</span><span class="st">${esc(s.title)}</span></div>
         ${i < 2 ? '<div class="conn"></div>' : ''}
@@ -619,35 +610,43 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
     </div>
   </body></html>`;
 
-  // SCENE 3: Monumental Production Proof Reveal (Instant Visual Dopamine)
+  // SCENE 3: Dopamine BEFORE -> AFTER Payoff Reveal (Struck-through pain -> Huge Emerald Win!)
   const scene3 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
+    .before-strike {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 12px 22px; border-radius: 16px; margin-bottom: 18px;
+      background: ${dir.alertSoft}; color: ${dir.alert};
+      font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 800;
+      letter-spacing: 0.06em; text-decoration: line-through; text-decoration-thickness: 3px;
+    }
     .hn {
       font-size: ${script.heroFontPx}px; font-weight: 900; line-height: 0.92;
       letter-spacing: -0.06em; color: ${dir.proofColor}; font-variant-numeric: tabular-nums;
-      margin-top: 8px;
+      margin-top: 6px;
     }
-    .hl { margin-top: 28px; font-size: 50px; font-weight: 840; letter-spacing: -0.04em; color: ${dir.ink}; line-height: 1.08; }
-    .hs { margin-top: 16px; font-size: 29px; font-weight: 520; color: ${dir.inkMuted}; line-height: 1.38; }
+    .hl { margin-top: 24px; font-size: 48px; font-weight: 840; letter-spacing: -0.04em; color: ${dir.ink}; line-height: 1.08; }
+    .hs { margin-top: 14px; font-size: 28px; font-weight: 540; color: ${dir.inkMuted}; line-height: 1.38; }
   </style></head><body>
     <div class="panel">
       <div class="eyebrow">
-        <span class="badge" style="background:${dir.proofSoft};color:${dir.proofColor};">● VERIFIED IN PRODUCTION</span>
+        <span class="badge" style="background:${dir.proofSoft};color:${dir.proofColor};">✓ REAL RESULT</span>
         <span>04 / 05</span>
       </div>
+      <div class="before-strike">BEFORE: ${esc(script.beforeStat)}</div>
       <div class="hn">${esc(script.heroVal)}</div>
       <div class="hl">${esc(script.heroLabel)}.</div>
       <div class="hs">${esc(script.heroSub)}</div>
     </div>
   </body></html>`;
 
-  // SCENE 4: Quiet, High-Status Manhattan Executive Close
-  const [c1, c2, c3] = dir.ctaHeadline;
+  // SCENE 4: Memorable, Shareable Brand Differentiation Close
   const scene4 = `<!doctype html><html><head><meta charset="utf-8"><style>${baseCss}
     .wrap { padding: 20px 14px; color: ${dir.ink}; }
-    .cl { font-size: 92px; font-weight: 880; line-height: 1.02; letter-spacing: -0.05em; color: ${dir.ink}; }
+    .cl { font-size: 82px; font-weight: 880; line-height: 1.04; letter-spacing: -0.05em; color: ${dir.ink}; }
     .ca { color: ${dir.accent}; }
+    .sub-cta { margin-top: 22px; font-size: 29px; font-weight: 560; color: ${dir.inkMuted}; line-height: 1.36; }
     .brand {
-      margin-top: 56px; padding: 34px 40px; border-radius: 30px;
+      margin-top: 48px; padding: 34px 40px; border-radius: 30px;
       background: ${dir.surfaceBg}; border: 1.5px solid ${dir.surfaceBorder};
       box-shadow: 0 28px 68px -20px rgba(0, 0, 0, ${dir.isDark ? '0.60' : '0.10'});
       display: flex; align-items: center; justify-content: space-between;
@@ -656,10 +655,11 @@ function buildHeroCardsHtml(script, dir, interB64, monoB64) {
     .city { font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 700; letter-spacing: 0.14em; color: ${dir.inkMuted}; }
   </style></head><body>
     <div class="wrap">
-      <div class="eyebrow" style="margin-bottom: 34px;"><span>OLVEN TECH · MANHATTAN, NY</span><span>05 / 05</span></div>
-      <div class="cl">${esc(c1)}</div>
-      <div class="cl">${esc(c2)}</div>
-      <div class="cl ca">${esc(c3)}</div>
+      <div class="eyebrow" style="margin-bottom: 30px;"><span>OLVEN TECH · NEW YORK</span><span>05 / 05</span></div>
+      <div class="cl">Others pitch</div>
+      <div class="cl">6-month rebuilds.</div>
+      <div class="cl ca">We fix it in days.</div>
+      <div class="sub-cta">Follow for real software stories that save real money.</div>
       <div class="brand">
         ${logoUri ? `<img class="logo" src="${logoUri}" alt="Olven Tech" />` : `<div style="font-size:38px;font-weight:800;">Olven Tech</div>`}
         <span class="city">${esc(dir.ctaSub)}</span>
@@ -844,6 +844,12 @@ function buildSmoothChoreography(motionStyle) {
       ? [[cStart, 0], [cStart + 0.48, 100], [16.0, 100]]
       : [[cStart, 0], [cStart + 0.48, 100], [a.holdEnd - 0.05, 100], [a.exitEnd - 0.08, 0]];
 
+    const heroScale = isFirst
+      ? [[0.0, [50.0, 50.0, 50.0]], [a.holdEnd, [52.2, 52.2, 52.2]], [a.exitEnd, [53.2, 53.2, 53.2]]]
+      : isLast
+      ? [[a.start, [48.8, 48.8, 48.8]], [a.settle, [50.2, 50.2, 50.2]], [16.0, [52.2, 52.2, 52.2]]]
+      : [[a.start, [48.8, 48.8, 48.8]], [a.settle, [50.2, 50.2, 50.2]], [a.holdEnd, [52.0, 52.0, 52.0]], [a.exitEnd, [53.0, 53.0, 53.0]]];
+
     const sweep = [[isFirst ? 0.35 : a.settle, [0.05, 0.18]], [isLast ? 15.5 : a.holdEnd, [0.95, 0.82]]];
 
     return {
@@ -854,6 +860,7 @@ function buildSmoothChoreography(motionStyle) {
       fadeOutStart: a.holdEnd,
       fadeOutEnd: a.exitEnd,
       heroPos,
+      heroScale,
       heroRotY,
       heroRotX,
       heroOp,
@@ -918,7 +925,7 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/endColor', value: endColor } });
     cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/scatter', value: 32.0 } });
     if (c.idx > 0) {
-      addAnimatedProp(cmds, bgName, 'transform/opacity', [[c.fadeInStart, 0], [c.fadeInStart + 0.60, 100]], 65, 65);
+      addAnimatedProp(cmds, bgName, 'transform/opacity', [[c.fadeInStart, 0], [c.fadeInStart + 0.50, 100]], 65, 65);
     }
   }
 
@@ -941,19 +948,19 @@ async function renderWalkthroughVideo(specPath, outDir, directorOverride = null)
     const dOp = c.idx === 0
       ? [[0.0, 100], [c.fadeOutStart, 100], [c.fadeOutEnd, 0]]
       : c.idx === 4
-      ? [[c.fadeInStart, 0], [c.fadeInStart + 0.55, 100], [16.0, 100]]
-      : [[c.fadeInStart, 0], [c.fadeInStart + 0.55, 100], [c.fadeOutStart, 100], [c.fadeOutEnd, 0]];
+      ? [[c.fadeInStart, 0], [c.fadeInStart + 0.48, 100], [16.0, 100]]
+      : [[c.fadeInStart, 0], [c.fadeInStart + 0.48, 100], [c.fadeOutStart, 100], [c.fadeOutEnd, 0]];
     addAnimatedProp(cmds, dName, 'transform/opacity', dOp, 65, 65);
 
-    // PLANE 2: Hero 2x Retina Editorial/Product Panel (Z = 0) — Apple Silk Deceleration!
+    // PLANE 2: Hero 2x Retina Editorial/Product Panel (Z = 0) — Apple Silk Deceleration + Living Ken Burns Breathing!
     const hName = `Hero_${c.idx}`;
     cmds.push({ command: 'file.import', params: { paths: [assets.heroes[c.idx]], addToComp: true } });
     cmds.push({ command: 'layer.rename', params: { layer: '#1', name: hName } });
     cmds.push({ command: 'layer.setSwitch', params: { layers: [hName], switch: 'threeD', value: true } });
     cmds.push({ command: 'layer.setSwitch', params: { layers: [hName], switch: 'motionBlur', value: true } });
     cmds.push({ command: 'layer.timing', params: { layers: [hName], in: c.inT, out: c.outT } });
-    cmds.push({ command: 'prop.set', params: { layer: hName, path: 'transform/scale', value: [50, 50, 50] } });
 
+    addAnimatedProp(cmds, hName, 'transform/scale', c.heroScale, 68, 42);
     addAnimatedProp(cmds, hName, 'transform/position', c.heroPos, 86, 28);
     addAnimatedProp(cmds, hName, 'transform/rotationY', c.heroRotY, 84, 30);
     addAnimatedProp(cmds, hName, 'transform/rotationX', c.heroRotX, 84, 30);
