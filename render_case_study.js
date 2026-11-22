@@ -637,15 +637,25 @@ function renderCodeDiffWindow(spec, p) {
       font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; color: #DDD6FE;
     }
     .diff-body {
-      flex: 1; padding: ${isWide ? '26px 32px' : '40px 36px'};
+      flex: 1; padding: ${isWide ? '24px 32px' : '38px 38px'};
       font-family: 'IBM Plex Mono', monospace;
-      font-size: ${isWide ? '20px' : '23px'}; line-height: 1.68;
-      display: flex; flex-direction: column; justify-content: center; gap: 10px;
+      font-size: ${isWide ? '20px' : '24px'}; line-height: 1.55;
+      display: flex; flex-direction: column; justify-content: center; gap: ${isWide ? '12px' : '16px'};
     }
-    .line { padding: 10px 20px; border-radius: 12px; }
-    .del { background: rgba(244, 63, 94, 0.14); color: #FDA4AF; border-left: 3px solid #F43F5E; }
-    .add { background: rgba(16, 185, 129, 0.14); color: #6EE7B7; border-left: 3px solid #10B981; }
-    .cmt { color: #94A3B8; padding-left: 20px; font-size: 0.9em; }
+    .hero-strip {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+      padding: ${isWide ? '16px 22px' : '26px 30px'}; border-radius: 22px; margin-bottom: ${isWide ? '10px' : '18px'};
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(99, 102, 241, 0.12) 100%);
+      border: 1px solid rgba(52, 211, 153, 0.34);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .hs-num { font-size: ${isWide ? '54px' : '74px'}; font-weight: 900; letter-spacing: -0.05em; color: #34D399; line-height: 0.95; }
+    .hs-sub { font-size: ${isWide ? '20px' : '24px'}; font-weight: 700; color: #E2E8F0; text-align: right; }
+    .hs-bad { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; color: #FDA4AF; text-decoration: line-through; margin-bottom: 6px; letter-spacing: 0.06em; }
+    .line { padding: ${isWide ? '12px 20px' : '16px 24px'}; border-radius: 14px; }
+    .del { background: rgba(244, 63, 94, 0.14); color: #FDA4AF; border-left: 3.5px solid #F43F5E; }
+    .add { background: rgba(16, 185, 129, 0.14); color: #6EE7B7; border-left: 3.5px solid #10B981; }
+    .cmt { color: #94A3B8; padding-left: 6px; font-size: 0.82em; letter-spacing: 0.08em; font-weight: 700; }
     .ide-foot {
       padding: 22px 32px;
       background: rgba(255,255,255,0.04);
@@ -657,7 +667,7 @@ function renderCodeDiffWindow(spec, p) {
     <div class="orb1"></div>
     <div class="orb2"></div>
     <div class="head">
-      <div class="eyebrow">PR #418 · PRODUCTION REFACTOR</div>
+      <div class="eyebrow">${esc(spec.eyebrow || 'REAL CLIENT RESULT · OLVEN TECH')}</div>
       <div class="hl">${esc(shorten(spec.headline, isWide ? 72 : 84))}</div>
     </div>
     <div class="ide glass-dark">
@@ -665,16 +675,20 @@ function renderCodeDiffWindow(spec, p) {
         <div class="mac-dots">
           <span class="mdot md-r"></span><span class="mdot md-y"></span><span class="mdot md-g"></span>
         </div>
-        <div class="file">src/workers/pipeline.ts</div>
-        <div class="merged">MERGED · PROD</div>
+        <div class="file">BEFORE vs. AFTER · OLVEN TECH</div>
+        <div class="merged">SHIPPED IN DAYS</div>
       </div>
       <div class="diff-body">
-        <div class="cmt">// Legacy brittle path (${esc(spec.before_badge)})</div>
-        <div class="line del">- await directDispatch("${esc(b0)}");</div>
-        <div class="line del">- await unguardedSync("${esc(b1)}");</div>
-        <div class="cmt" style="margin-top:14px;">// Olven deterministic architecture (${esc(spec.after_badge)})</div>
-        <div class="line add">+ await tx.persistOutbox("${esc(a0)}");</div>
-        <div class="line add">+ await worker.commitIdempotent("${esc(a1)}");</div>
+        <div class="hero-strip">
+          <div class="hs-num">${esc(m0.value)}</div>
+          <div class="hs-sub"><span class="hs-bad">BEFORE: ${esc(shorten(spec.before_badge, 26))}</span>${esc(m0.label)} · ${esc(m1.value)} ${esc(m1.label)}</div>
+        </div>
+        <div class="cmt">✕ WHAT WAS BREAKING</div>
+        <div class="line del">−  ${esc(b0)}  →  ${esc(b1)}</div>
+        <div class="line del">−  ${esc(shorten((spec.before_nodes && spec.before_nodes[2]) || spec.before_badge, 28))}  →  ${esc(shorten((spec.before_nodes && spec.before_nodes[3]) || 'Revenue Lost', 28))}</div>
+        <div class="cmt" style="margin-top:10px;">✓ WHAT OLVEN SHIPPED</div>
+        <div class="line add">+  ${esc(a0)}  →  ${esc(a1)}</div>
+        <div class="line add">+  ${esc(shorten((spec.after_nodes && spec.after_nodes[2]) || spec.after_badge, 28))}  →  ${esc(shorten((spec.after_nodes && spec.after_nodes[3]) || m0.value, 28))}</div>
       </div>
       <div class="ide-foot">
         ${seamlessLogo(28, '#F8FAFC', '#070B14')}
@@ -1141,7 +1155,20 @@ function renderIphoneKeynoteHardware(spec, p) {
   </body></html>`;
 }
 
-function buildHtmlForArchetype(spec, p) {
+function toViralSpec(raw) {
+  return {
+    ...raw,
+    headline: raw.viral_headline || raw.headline,
+    subhead: raw.viral_subhead || raw.subhead,
+    before_nodes: (raw.viral_before_nodes && raw.viral_before_nodes.length) ? raw.viral_before_nodes : raw.before_nodes,
+    after_nodes: (raw.viral_after_nodes && raw.viral_after_nodes.length) ? raw.viral_after_nodes : raw.after_nodes,
+    before_points: (raw.viral_before_points && raw.viral_before_points.length) ? raw.viral_before_points : raw.before_points,
+    after_points: (raw.viral_after_points && raw.viral_after_points.length) ? raw.viral_after_points : raw.after_points,
+  };
+}
+
+function buildHtmlForArchetype(rawSpec, p) {
+  const spec = toViralSpec(rawSpec);
   const arch = spec.visual_archetype || 'manhattan_swiss_poster';
   switch (arch) {
     case 'manhattan_swiss_poster': return renderManhattanSwissPoster(spec, p);
@@ -1307,7 +1334,7 @@ async function renderCaseStudy(specPath, outDir) {
         style_system: (lcCli && pcCli)
           ? 'artcraft-lightcraft-photocraft-manhattan-suite'
           : (pcCli ? 'artcraft-photocraft-apple-liquid-glass' : 'apple-liquid-glass-native-supersampled'),
-        headline: spec.headline,
+        headline: spec.viral_headline || spec.headline,
         rendered_at: new Date().toISOString()
       }, null, 2)
     );
