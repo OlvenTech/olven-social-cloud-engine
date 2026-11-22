@@ -17,12 +17,12 @@ PKT = ZoneInfo("Asia/Karachi")
 ARCHETYPE_ROTATION = [
     "manhattan_swiss_poster",
     "split_latency_waterfall",
+    "editorial_light_blueprint",
+    "revenue_ledger_reconciliation",
     "iphone_keynote_hardware",
     "security_policy_shield_matrix",
-    "editorial_light_blueprint",
-    "cdc_hash_diff_funnel",
-    "revenue_ledger_reconciliation",
     "circuit_breaker_state_machine",
+    "cdc_hash_diff_funnel",
 ]
 
 
@@ -1649,6 +1649,238 @@ Oldest fragile script still running at your company? (contact@olventech.com)"""
         }
     }
 }
+
+ENTERTAINMENT_PACKS = {
+    19: {
+        "time": "9:14 AM",
+        "notifs": [
+            {"app": "TREASURY BANK", "tag": "WIRE", "time": "9:14 AM", "title": "Wire Sent: -$32,000.00", "body": "Paid to Apex Supply Co. (ACH #8841)", "tone": "warn"},
+            {"app": "TREASURY BANK", "tag": "WIRE", "time": "9:14 AM", "title": "Wire Sent: -$32,000.00 (AGAIN)", "body": "Auto-retry fired after 30s timeout. Total: $64,000.", "tone": "danger"},
+            {"app": "SLACK · #FINANCE", "tag": "CFO", "time": "now", "title": "Sarah (CFO) is typing...", "body": "\"WAIT... WHY DID WE JUST WIRE THEM $64,000?!\"", "tone": "panic"},
+        ],
+        "chat": [
+            {"who": "Sarah · CFO", "side": "left", "role": "cfo", "msg": "Tell me we did NOT just send the same $32,000 wire twice."},
+            {"who": "Dev On-Call", "side": "right", "role": "dev", "msg": "Uh... bank API lagged 30s so our queue assumed it failed and retried."},
+            {"who": "Olven Tech", "side": "left", "role": "olven", "msg": "Fixed it. Locked the ledger + unique payment IDs. Duplicate wires: $0.00."},
+        ],
+        "cfo_react": "Zero double wires & 91% less bank cleanup. You guys saved my quarter.",
+        "receipt": [
+            ["Wire #1 (Actually Went Through)", "$32,000"],
+            ["30-Second Bank Timeout Panic", "$0"],
+            ["Blind Auto-Retry Wire #2", "$32,000"],
+            ["18 Days Chasing Bank Recalls", "PAIN"],
+        ],
+        "receipt_total_bad": "$64,000 SENT TWICE",
+        "receipt_stamp": "STOP GUESSING",
+        "browser_query": "wire transfer status #8841...",
+        "browser_bad_quote": "\"Wait why did my bank balance just drop by $64,000?!\"",
+        "browser_good_quote": "\"$0.00 duplicates across $14M/mo. Finance finally sleeps.\"",
+    },
+    20: {
+        "time": "2:04 PM",
+        "notifs": [
+            {"app": "STORE MONITOR", "tag": "ALERT", "time": "2:01 PM", "title": "Database CPU Hit 94%", "body": "Every search bar keystroke is scanning 11M rows.", "tone": "warn"},
+            {"app": "CHECKOUT LIVE", "tag": "DROP", "time": "2:03 PM", "title": "Buyers Leaving Cart (-14%)", "body": "Search bar stuck spinning for 2.4 seconds.", "tone": "danger"},
+            {"app": "SLACK · #GROWTH", "tag": "CEO", "time": "now", "title": "Mark (CEO) in #engineering", "body": "\"Should we double our AWS bill today??\"", "tone": "panic"},
+        ],
+        "chat": [
+            {"who": "Mark · CEO", "side": "left", "role": "cfo", "msg": "Checkout freezes every day at 2 PM. Do we need a 2x bigger server?!"},
+            {"who": "Dev On-Call", "side": "right", "role": "dev", "msg": "It's our search bar. One keystroke scans 11 million products at once."},
+            {"who": "Olven Tech", "side": "left", "role": "olven", "msg": "Keep your server. Moved search to a live CDC index: 48ms & +14% sales."},
+        ],
+        "cfo_react": "50x faster search, 71% lower server load, and +14% more buyers checking out.",
+        "receipt": [
+            ["1 Buyer Types 'Blue Jacket'", "11M ROWS"],
+            ["Main Database CPU Spikes", "94% LOAD"],
+            ["Spinner Stalls Checkout", "2.4 SEC"],
+            ["Impatient Shoppers Leave", "-14% SALES"],
+        ],
+        "receipt_total_bad": "2.4 SEC WAIT",
+        "receipt_stamp": "TOO SLOW",
+        "browser_query": "industrial safety valve 2-inch",
+        "browser_bad_quote": "\"Still spinning after 2.4 seconds... buying from your competitor.\"",
+        "browser_good_quote": "\"Found it in 48ms. Checking out right now.\"",
+    },
+    21: {
+        "time": "9:42 AM",
+        "notifs": [
+            {"app": "WAREHOUSE OPS", "tag": "STALL", "time": "9:10 AM", "title": "140 Database Crashes", "body": "32 workers collided on the exact same stock rows.", "tone": "warn"},
+            {"app": "FULFILLMENT", "tag": "DELAY", "time": "9:30 AM", "title": "4.2-Hour Label Backlog", "body": "Warehouse pickers standing around with zero labels.", "tone": "danger"},
+            {"app": "SLACK · #OPS", "tag": "COO", "time": "now", "title": "Ops Director is panicking", "body": "\"WE ADDED 32 WORKERS — WHY ARE WE 9X SLOWER?!\"", "tone": "panic"},
+        ],
+        "chat": [
+            {"who": "VP of Ops", "side": "left", "role": "cfo", "msg": "We added 32 workers to go faster. Why are 45,000 orders stuck 4 hours?!"},
+            {"who": "Dev On-Call", "side": "right", "role": "dev", "msg": "All 32 rushed the same inventory rows at once. 140 traffic jams."},
+            {"who": "Olven Tech", "side": "left", "role": "olven", "msg": "Gave each warehouse its own lane + sorted locks. Cleared in 26 mins."},
+        ],
+        "cfo_react": "9.4x faster fulfillment on the exact same server. $0 spent on hardware.",
+        "receipt": [
+            ["Added 32 Parallel Workers", "CHAOS"],
+            ["Morning Database Crashes", "140 / DAY"],
+            ["Warehouse Pickers Waiting", "4.2 HOURS"],
+            ["Quoted Server Upgrade", "$100,000"],
+        ],
+        "receipt_total_bad": "9X SLOWER",
+        "receipt_stamp": "GRIDLOCK",
+        "browser_query": "morning_wave_45000_orders",
+        "browser_bad_quote": "\"32 workers fighting over 1 doorway = 4.2-hour standstill.\"",
+        "browser_good_quote": "\"45,000 orders cleared in 26 mins. $0 new servers.\"",
+    },
+    22: {
+        "time": "11:20 AM",
+        "notifs": [
+            {"app": "AI BILLING", "tag": "COST", "time": "11:05 AM", "title": "$0.42 Per Single PDF", "body": "AI is re-reading identical legal cover sheets.", "tone": "warn"},
+            {"app": "PRODUCT UX", "tag": "SLOW", "time": "11:15 AM", "title": "46-Second Loading Screen", "body": "19% of uploads fail JSON and re-run 3x.", "tone": "danger"},
+            {"app": "SLACK · #FOUNDERS", "tag": "CEO", "time": "now", "title": "Founder checking margins", "body": "\"Users love our AI feature... and it's bankrupting us.\"", "tone": "panic"},
+        ],
+        "chat": [
+            {"who": "Founder", "side": "left", "role": "cfo", "msg": "Our AI contract reader costs $0.42 a PDF and takes 46 seconds. Help."},
+            {"who": "Dev On-Call", "side": "right", "role": "dev", "msg": "We're dumping all 40 pages — even blank ones — into one giant prompt."},
+            {"who": "Olven Tech", "side": "left", "role": "olven", "msg": "Skipped filler pages + cached repeat clauses. Bill down 68%, 4x faster."},
+        ],
+        "cfo_react": "Same AI accuracy (99.8%), 4x faster speed, and 68% off our monthly token bill.",
+        "receipt": [
+            ["Cover Page (AI Read It)", "$0.08"],
+            ["Blank Signature Sheet", "$0.06"],
+            ["Same Legal Filler (x28 pgs)", "$0.24"],
+            ["Actual Useful Data", "$0.04"],
+        ],
+        "receipt_total_bad": "$0.42 / PDF · 46s",
+        "receipt_stamp": "BURNING CASH",
+        "browser_query": "40_page_vendor_contract.pdf",
+        "browser_bad_quote": "\"Still loading after 46 seconds?! And costing $0.42 each?!\"",
+        "browser_good_quote": "\"Done in 11.8 seconds for $0.13 (-68% AI cost).\"",
+    },
+    23: {
+        "time": "4:55 PM",
+        "notifs": [
+            {"app": "STRIPE vs QB", "tag": "DRIFT", "time": "4:12 PM", "title": "$19,000/mo Missing", "body": "Books don't match Stripe after EUR/GBP upgrades.", "tone": "warn"},
+            {"app": "ZAPIER SYNC", "tag": "BROKEN", "time": "4:30 PM", "title": "Proration Credits Dropped", "body": "2022 'temporary' automation silently broke.", "tone": "danger"},
+            {"app": "SLACK · #FINANCE", "tag": "CFO", "time": "now", "title": "Board meeting in 72 hours", "body": "\"Cancel my weekend. I'm living in Excel again.\"", "tone": "panic"},
+        ],
+        "chat": [
+            {"who": "Controller", "side": "left", "role": "cfo", "msg": "Board meeting is Monday and $19,000/mo is missing between Stripe and QuickBooks."},
+            {"who": "RevOps", "side": "right", "role": "dev", "msg": "That 'temporary' Zapier sync dropped every EUR/GBP seat upgrade credit."},
+            {"who": "Olven Tech", "side": "left", "role": "olven", "msg": "Replaced it with a line-level Postgres ledger. Variance is now $0.00."},
+        ],
+        "cfo_react": "$0.00 books variance across USD, EUR & GBP — and 3 full days back every quarter.",
+        "receipt": [
+            ["Temporary 2022 Zapier Sync", "BROKEN"],
+            ["EUR & GBP FX Rate Drift", "-$11,400"],
+            ["Dropped Upgrade Credits", "-$7,600"],
+            ["Finance Locked in Excel", "3 DAYS"],
+        ],
+        "receipt_total_bad": "$19,000/MO DRIFT",
+        "receipt_stamp": "MISSING CASH",
+        "browser_query": "stripe_vs_quickbooks_q4.xlsx",
+        "browser_bad_quote": "\"Where did $19,000/month vanish before the board meeting?!\"",
+        "browser_good_quote": "\"$0.00 variance. Clean books posted automatically.\"",
+    },
+    24: {
+        "time": "1:18 PM",
+        "notifs": [
+            {"app": "STATUS PAGE", "tag": "DOWN", "time": "1:02 PM", "title": "Entire Platform Offline", "body": "Traffic just spiked 11x out of nowhere.", "tone": "warn"},
+            {"app": "SECURITY OPS", "tag": "SHOCK", "time": "1:08 PM", "title": "Not a Hacker Attack", "body": "Our own 10,000 workers are DDoS-ing our servers.", "tone": "danger"},
+            {"app": "SLACK · #INCIDENT", "tag": "CTO", "time": "now", "title": "42 Minutes Offline", "body": "\"A 15-second blip crashed EVERYTHING?!\"", "tone": "panic"},
+        ],
+        "chat": [
+            {"who": "CTO", "side": "left", "role": "cfo", "msg": "Are we getting DDoS'd right now?! Traffic jumped 11x and everything died!"},
+            {"who": "Dev On-Call", "side": "right", "role": "dev", "msg": "Worse... we DDoS'd ourselves. 10,000 workers retried every 5s in lockstep."},
+            {"who": "Olven Tech", "side": "left", "role": "olven", "msg": "Added a 10% Redis retry cap + random jitter. Recovery is now 14 seconds."},
+        ],
+        "cfo_react": "Zero cascading outages in 9 months. Even big vendor blips heal in 14 seconds.",
+        "receipt": [
+            ["Upstream Partner Hiccup", "15 SEC"],
+            ["10,000 Workers Retry Together", "11X SPIKE"],
+            ["Self-Inflicted DDoS Crash", "42 MINS"],
+            ["Angry Enterprise Customers", "ALL OF THEM"],
+        ],
+        "receipt_total_bad": "42 MIN OUTAGE",
+        "receipt_stamp": "SELF-DDOS",
+        "browser_query": "api.platform.com/checkout",
+        "browser_bad_quote": "\"503 Service Unavailable for 42 minutes from a 15-sec blip?!\"",
+        "browser_good_quote": "\"Auto-recovered in 14 seconds. Zero customers noticed.\"",
+    },
+    25: {
+        "time": "11:48 PM",
+        "notifs": [
+            {"app": "COMPLIANCE", "tag": "AUDIT", "time": "9:00 PM", "title": "SOC-2 Auditor Needs Proof", "body": "30-day logs already deleted 11 months of history.", "tone": "warn"},
+            {"app": "SPRINT BOARD", "tag": "STALL", "time": "10:30 PM", "title": "Product Roadmap Frozen", "body": "Senior engineers burned 110 hours taking screenshots.", "tone": "danger"},
+            {"app": "SLACK · #ENG", "tag": "STAFF", "time": "now", "title": "$200K Principal Engineer", "body": "\"I did not get a CS degree to take 400 screenshots.\"", "tone": "panic"},
+        ],
+        "chat": [
+            {"who": "Principal Eng", "side": "left", "role": "cfo", "msg": "It's 11:48 PM and I've spent 110 hours taking AWS screenshots for SOC-2."},
+            {"who": "VP Eng", "side": "right", "role": "dev", "msg": "And our product launch is 2 weeks late because of it."},
+            {"who": "Olven Tech", "side": "left", "role": "olven", "msg": "Built a 7-year tamper-proof vault + 15-sec export button. Go ship product."},
+        ],
+        "cfo_react": "90% less audit prep, 15-second auditor exports, and zero SOC-2 Type II findings.",
+        "receipt": [
+            ["$200K/Yr Senior Engineers", "110 HOURS"],
+            ["Manual CloudWatch Screenshots", "400+ FILES"],
+            ["Logs Auto-Deleted After 30d", "MISSING"],
+            ["Product Roadmap Delayed", "2 WEEKS"],
+        ],
+        "receipt_total_bad": "110 HRS WASTED",
+        "receipt_stamp": "AUTOMATE THIS",
+        "browser_query": "export_soc2_evidence_pack",
+        "browser_bad_quote": "\"Two weeks of screenshots every single audit cycle...\"",
+        "browser_good_quote": "\"1 click. 15 seconds. Zero findings.\"",
+    },
+    26: {
+        "time": "3:14 AM",
+        "notifs": [
+            {"app": "PAGERDUTY", "tag": "NOISE", "time": "3:04 AM", "title": "ALARM #82: CPU Hit 81%!", "body": "Auto-scaled fine in 90 sec. Zero users affected.", "tone": "warn"},
+            {"app": "PAGERDUTY", "tag": "NOISE", "time": "3:09 AM", "title": "ALARM #83: CPU Hit 82%!", "body": "Also completely harmless. Good luck sleeping.", "tone": "warn"},
+            {"app": "CHECKOUT", "tag": "REAL", "time": "3:14 AM", "title": "REAL CRASH MISSED 28 MINS", "body": "Exhausted team muted phone after 84 fake alarms.", "tone": "danger"},
+        ],
+        "chat": [
+            {"who": "On-Call Eng", "side": "left", "role": "cfo", "msg": "84 fake 3 AM alarms this month. I literally slept through a real outage."},
+            {"who": "CTO", "side": "right", "role": "dev", "msg": "Checkout was broken for 28 minutes and nobody saw it in the noise."},
+            {"who": "Olven Tech", "side": "left", "role": "olven", "msg": "Switched to real customer-impact SLO alerts. Night alarms down 92%."},
+        ],
+        "cfo_react": "92% fewer 3 AM wake-ups AND real crashes caught 9x faster (3.1 minutes).",
+        "receipt": [
+            ["Harmless 3 AM CPU Alarms", "78 / MO"],
+            ["Engineers Sleeping Through Real Crash", "28 MINS"],
+            ["Senior Staff Quitting", "HIGH RISK"],
+            ["Actual Customer Issues", "ONLY 6"],
+        ],
+        "receipt_total_bad": "84 NIGHT ALARMS",
+        "receipt_stamp": "BOY CRIED WOLF",
+        "browser_query": "pagerduty_3am_oncall_log",
+        "browser_bad_quote": "\"84 fake alarms/mo trained everyone to ignore the real crash.\"",
+        "browser_good_quote": "\"-92% night pages. Real issues caught in 3.1 mins.\"",
+    },
+    27: {
+        "time": "8:02 AM",
+        "notifs": [
+            {"app": "MIDNIGHT CRON", "tag": "CRASH", "time": "12:04 AM", "title": "1 Typo Froze 400 Orders", "body": "Line 12 had a bad comma. Entire batch stopped silently.", "tone": "warn"},
+            {"app": "RETAIL PORTAL", "tag": "FINE", "time": "7:55 AM", "title": "Late Ship Notice Penalty", "body": "Big-box retailer deducted chargebacks ($95K/yr pace).", "tone": "danger"},
+            {"app": "SLACK · #OPS", "tag": "COO", "time": "now", "title": "Ops Manager opening raw X12", "body": "\"WHO TOUCHED THE MIDNIGHT SCRIPT?!\"", "tone": "panic"},
+        ],
+        "chat": [
+            {"who": "Ops Lead", "side": "left", "role": "cfo", "msg": "400 valid orders froze overnight and retail just hit us with late fines!"},
+            {"who": "IT Admin", "side": "right", "role": "dev", "msg": "Line 12 had 1 bad character so the whole midnight script silently died."},
+            {"who": "Olven Tech", "side": "left", "role": "olven", "msg": "Split every order solo + 90s live notices + 1-click Slack fix. Fines: $0."},
+        ],
+        "cfo_react": "$95,000/year in retail fines gone to $0 and 86% less manual morning cleanup.",
+        "receipt": [
+            ["1 Typo on Line 12", "CRASH"],
+            ["Good Orders Stuck Overnight", "400 POS"],
+            ["Big-Box Late-Notice Fines", "$95,000/YR"],
+            ["Ops Digging in Raw X12", "EVERY AM"],
+        ],
+        "receipt_total_bad": "$95,000/YR FINES",
+        "receipt_stamp": "STOP BATCHING",
+        "browser_query": "midnight_sftp_edi_parser.sh",
+        "browser_bad_quote": "\"One bad line froze 400 orders and cost $95,000/year?!\"",
+        "browser_good_quote": "\"90-second live notices. $0 in retail penalties.\"",
+    },
+}
+
+for _k, _ent in ENTERTAINMENT_PACKS.items():
+    if _k in ADDITIONAL_CASE_NOTES:
+        ADDITIONAL_CASE_NOTES[_k]["entertainment"] = _ent
 
 
 def write_research_dossier(day_num, spec, signals, out_dir):
