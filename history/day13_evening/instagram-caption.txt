@@ -1,0 +1,15 @@
+Every day at 2 PM, one slow search bar was quietly costing this store 14% of its sales.
+
+They almost doubled their server bill before finding the real problem: every search scanned 11M Postgres rows and choked checkout at 94% CPU.
+
+The 3-step Olven Tech fix:
+1. Split search onto its own dedicated index.
+2. Streamed live price & SKU updates via CDC in under 1.2s.
+3. Delivered instant 48ms search results.
+
+Result: 50x faster search, 71% lower server load, and +14% more buyers checking out.
+
+Save this if you run an online store or SaaS app.
+How fast do you leave a slow website? Comment below.
+
+contact@olventech.com #SaaS #TechTips

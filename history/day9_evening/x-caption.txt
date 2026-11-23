@@ -1,8 +1,0 @@
-Retrying a failed webhook 3 times in 30 seconds drops orders whenever an ERP is down for 40 minutes.
-
-Our Postgres write-ahead outbox (1.2M events/mo):
-- 6.4ms payload persistence
-- Circuit-breaker pause & ordered replay
-- 0 lost rows
-
-contact@olventech.com

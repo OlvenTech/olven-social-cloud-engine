@@ -1,0 +1,5 @@
+A store almost doubled its cloud bill because checkout froze at 2 PM every day.
+
+The real villain? A search bar scanning 11M Postgres rows per keystroke (94% CPU). Moving to a live CDC search index cut wait time from 2.4s to 48ms and boosted sales +14%.
+
+How long do you wait before closing a slow site? (contact@olventech.com)

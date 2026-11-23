@@ -1,5 +1,5 @@
-A company wired $64,000 twice in one quarter because a 30-second bank API timeout tricked their software into auto-retrying.
+A store almost doubled its cloud bill because checkout froze at 2 PM every day.
 
-We added Postgres ledger locks + unique payout keys across $14M/mo -> $0.00 double wires.
+The real villain? A search bar scanning 11M Postgres rows per keystroke (94% CPU). Moving to a live CDC search index cut wait time from 2.4s to 48ms and boosted sales +14%.
 
-Wildest software glitch you have ever seen? (contact@olventech.com)
+How long do you wait before closing a slow site? (contact@olventech.com)

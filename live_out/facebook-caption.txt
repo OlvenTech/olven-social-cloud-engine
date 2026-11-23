@@ -1,7 +1,5 @@
-A company accidentally wired the same supplier $64,000 twice in one quarter because of a 30-second bank API hiccup.
+A fast-growing store was about to double its monthly server bill because checkout froze every afternoon at 2 PM.
 
-No human mistake. No hack. Their software just assumed a slow response meant "failed" and automatically sent the wire a second time.
+Turns out their search bar was scanning 11 million Postgres products on every keystroke, pushing database CPU to 94%. Olven Tech moved search to a live CDC-synced index, cutting wait time from 2.4 seconds to 48 milliseconds and lifting buyer sales by 14%.
 
-At Olven Tech, we rebuilt their $14M/month payout flow with Postgres ledger locks and status-first checks, dropping duplicate payments to $0.00 and cutting manual finance work by 91%.
-
-Have you ever seen a tiny software glitch turn into an expensive headache? Tell us in the comments. (Need a quick audit? Email contact@olventech.com.)
+How many seconds do you wait before leaving a slow website? Tell us below! (Need a speed audit? Email contact@olventech.com.)

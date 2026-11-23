@@ -1,7 +1,0 @@
-Third-party SaaS outages are inevitable, but losing 300 customer orders during a 40-minute ERP outage is an architectural choice.
-
-Many webhook integrations fail because they retry three times within 30 seconds and then drop the payload while the vendor API is returning HTTP 503.
-
-We replaced a client's fragile webhook handlers (1.2M events/month) with a Postgres write-ahead outbox, circuit breaker, and 12-hour backoff replay engine. Even during two major vendor outages over the last six months, they lost zero records and spent zero engineering hours on manual backfills.
-
-Want outage-proof system integrations? Reach us at contact@olventech.com.

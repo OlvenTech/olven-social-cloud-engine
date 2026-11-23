@@ -1,26 +1,25 @@
-A company accidentally wired the same supplier $32,000 twice.
+Every day at 2 PM, this online store watched its checkout slow to a crawl.
 
-Three weeks later, it happened again. $64,000 gone out the door.
+They thought they needed bigger servers.
+They were ready to double their cloud bill.
 
-Nobody clicked send twice.
-Nobody got hacked.
+The real culprit? Their own search bar.
 
-A 30-second internet hiccup did it.
+Every time a buyer typed a single word, the site asked its main Postgres database to scan 11 million products line by line. At peak afternoon hours, CPU spiked to 94%, searches took 2.4 seconds, and impatient buyers simply closed the tab.
 
-Here is what actually happened inside their $14M/month payout system:
+You do not need a bigger server when your search bar is fighting your checkout.
 
-The bank accepted their wire, then paused for 30 seconds before sending back a confirmation. Their software saw the timeout, assumed the transfer failed, automatically retried the API call, and wired the money a second time.
+Here is how Olven Tech fixed it in days:
 
-Finance spent 18 days chasing bank recalls just to recover their own cash.
+1. Separated search from checkout: Moved product lookup onto a dedicated search index so browsing never slows down paying buyers.
+2. Live auto-sync: Connected a real-time CDC stream from Postgres so every price or SKU update shows up in under 1.2 seconds.
+3. Typo-tolerant instant results: Buyers now get exact product matches in 48 milliseconds.
 
-We fixed it inside their existing stack in days with 3 simple rules:
+What happened next?
+- Search became 50x faster (2.4 seconds down to 48ms)
+- Database CPU dropped 71% with zero new server costs
+- Buyer checkout conversion jumped +14%
 
-1. Lock first, pay second: Every payout gets locked in a Postgres ledger before touching the bank API.
-2. One permanent fingerprint: Every transfer carries a unique idempotency key so retries can never trigger a second wire.
-3. Ask before retrying: If a bank times out, the system checks transfer status first instead of guessing.
+Quick question: how many seconds do YOU wait for a slow website before closing the tab? 2 seconds? 3?
 
-Result: $0.00 in duplicate payouts across $14M/month and 91% less manual finance cleanup.
-
-Be honest: what is the scariest "tiny glitch" you have ever seen slip into a live business?
-
-(If your software moves real money and you want to make sure this never happens to you, send a quick note to contact@olventech.com.) #StartupFounders #TechLeadership
+(If slow pages or search are quietly costing your business sales, email contact@olventech.com.) #Ecommerce #BusinessGrowth

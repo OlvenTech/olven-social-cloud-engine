@@ -1,7 +1,9 @@
-A company wired the same supplier $32,000 twice. Then it happened again ($64K gone).
+Every day at 2 PM, one store's checkout froze. They almost doubled their server bill.
 
-Not a hack. A 30-sec bank API timeout tricked their software into retrying.
+The real bug? Their search bar scanned 11M Postgres rows per keystroke (94% CPU).
 
-Fixed with Postgres ledger locks + unique payout keys -> $0.00 duplicates across $14M/mo.
+Moved search to a live CDC index:
+- 2.4s -> 48ms (50x faster)
+- Sales conversio...
 
 contact@olventech.com
