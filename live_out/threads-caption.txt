@@ -1,3 +1,5 @@
-Most teams get quoted an 8-hour weekend outage to migrate 180M production rows.
+A company wired $64,000 twice in one quarter because a 30-second bank API timeout tricked their software into auto-retrying.
 
-Binlog CDC + chunked SHA-256 parity hashing + 72h dark reads let us cut over MySQL to Postgres in 4.1 seconds with 0 lost rows. (contact@olventech.com)
+We added Postgres ledger locks + unique payout keys across $14M/mo -> $0.00 double wires.
+
+Wildest software glitch you have ever seen? (contact@olventech.com)

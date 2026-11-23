@@ -1,7 +1,7 @@
-Most teams get quoted an 8-hour weekend outage to move 180M rows from MySQL to Postgres.
+A company wired the same supplier $32,000 twice. Then it happened again ($64K gone).
 
-We cut over in 4.1 seconds via binlog CDC + chunked SHA-256 parity verification + 72h dark reads:
-- 100% row parity across 180M rows
-- 0 dropped writes
+Not a hack. A 30-sec bank API timeout tricked their software into retrying.
+
+Fixed with Postgres ledger locks + unique payout keys -> $0.00 duplicates across $14M/mo.
 
 contact@olventech.com

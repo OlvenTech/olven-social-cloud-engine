@@ -1,0 +1,7 @@
+A company wired the same supplier $32,000 twice. Then it happened again ($64K gone).
+
+Not a hack. A 30-sec bank API timeout tricked their software into retrying.
+
+Fixed with Postgres ledger locks + unique payout keys -> $0.00 duplicates across $14M/mo.
+
+contact@olventech.com

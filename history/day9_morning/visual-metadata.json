@@ -1,5 +1,0 @@
-{
-  "visual_archetype": "split_latency_waterfall",
-  "doc_id": "DAY 09 (MORNING) · DETERMINISTIC GUARDRAILS FOR PRODUCTION AI AGENTS",
-  "headline": "Why Production AI Agents Need a Deterministic Policy Gate Before Calling Write APIs"
-}

@@ -1,5 +1,7 @@
-Most companies assume migrating 180 million production ledger rows from MySQL to Postgres requires an 8-hour weekend maintenance freeze.
+A company accidentally wired the same supplier $64,000 twice in one quarter because of a 30-second bank API hiccup.
 
-At Olven Tech, we paired continuous binlog CDC replication with chunked SHA-256 parity verification and 72 hours of dark-read shadowing, cutting the write-pause window from 8 hours down to 4.1 seconds with 100% verified row parity.
+No human mistake. No hack. Their software just assumed a slow response meant "failed" and automatically sent the wire a second time.
 
-Planning a zero-downtime migration? Reach our engineering team at contact@olventech.com.
+At Olven Tech, we rebuilt their $14M/month payout flow with Postgres ledger locks and status-first checks, dropping duplicate payments to $0.00 and cutting manual finance work by 91%.
+
+Have you ever seen a tiny software glitch turn into an expensive headache? Tell us in the comments. (Need a quick audit? Email contact@olventech.com.)

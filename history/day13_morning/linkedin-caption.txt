@@ -1,0 +1,26 @@
+A company accidentally wired the same supplier $32,000 twice.
+
+Three weeks later, it happened again. $64,000 gone out the door.
+
+Nobody clicked send twice.
+Nobody got hacked.
+
+A 30-second internet hiccup did it.
+
+Here is what actually happened inside their $14M/month payout system:
+
+The bank accepted their wire, then paused for 30 seconds before sending back a confirmation. Their software saw the timeout, assumed the transfer failed, automatically retried the API call, and wired the money a second time.
+
+Finance spent 18 days chasing bank recalls just to recover their own cash.
+
+We fixed it inside their existing stack in days with 3 simple rules:
+
+1. Lock first, pay second: Every payout gets locked in a Postgres ledger before touching the bank API.
+2. One permanent fingerprint: Every transfer carries a unique idempotency key so retries can never trigger a second wire.
+3. Ask before retrying: If a bank times out, the system checks transfer status first instead of guessing.
+
+Result: $0.00 in duplicate payouts across $14M/month and 91% less manual finance cleanup.
+
+Be honest: what is the scariest "tiny glitch" you have ever seen slip into a live business?
+
+(If your software moves real money and you want to make sure this never happens to you, send a quick note to contact@olventech.com.) #StartupFounders #TechLeadership

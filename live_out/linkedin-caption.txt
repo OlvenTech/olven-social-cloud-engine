@@ -1,15 +1,26 @@
-Most engineering orgs get quoted an 8-hour weekend outage to move 180M rows from MySQL to Postgres.
+A company accidentally wired the same supplier $32,000 twice.
 
-We cut over the entire financial ledger in 4.1 seconds. Zero dropped writes. Zero SLA breach.
+Three weeks later, it happened again. $64,000 gone out the door.
 
-A B2B SaaS platform needed off legacy MySQL without breaking strict enterprise uptime contracts. A standard dump-and-restore carried two unacceptable risks: an 8-hour maintenance freeze, plus silent decimal rounding and UTC timestamp drift across 180 million accounting rows.
+Nobody clicked send twice.
+Nobody got hacked.
 
-Here is the exact zero-downtime architecture Olven Tech shipped inside their live stack:
+A 30-second internet hiccup did it.
 
-1. Continuous binlog CDC: Backfilled historical chunks at throttled IOPS while streaming live MySQL binlog mutations into Postgres until replication lag held steady at 110ms.
-2. Continuous SHA-256 parity hashing: Ran a background verifier comparing normalized decimal and timestamp checksums across every chunk of all 180M rows until mismatch count hit zero.
-3. 72-hour dark-read shadow + reverse CDC: Mirrored 10% of production reads to Postgres to validate query plans under live load, armed reverse CDC as an instant rollback net, then executed a 4.1-second write cutover.
+Here is what actually happened inside their $14M/month payout system:
 
-Outcome: 100% hash-verified row parity, zero dropped transactions, and zero downtime notices sent to enterprise customers.
+The bank accepted their wire, then paused for 30 seconds before sending back a confirmation. Their software saw the timeout, assumed the transfer failed, automatically retried the API call, and wired the money a second time.
 
-Most consultancies pitch multi-month rebuilds or painful freeze windows. At Olven Tech, we engineer deterministic cutovers directly inside production systems. Planning a high-stakes database migration? Write to our principal engineers at contact@olventech.com.
+Finance spent 18 days chasing bank recalls just to recover their own cash.
+
+We fixed it inside their existing stack in days with 3 simple rules:
+
+1. Lock first, pay second: Every payout gets locked in a Postgres ledger before touching the bank API.
+2. One permanent fingerprint: Every transfer carries a unique idempotency key so retries can never trigger a second wire.
+3. Ask before retrying: If a bank times out, the system checks transfer status first instead of guessing.
+
+Result: $0.00 in duplicate payouts across $14M/month and 91% less manual finance cleanup.
+
+Be honest: what is the scariest "tiny glitch" you have ever seen slip into a live business?
+
+(If your software moves real money and you want to make sure this never happens to you, send a quick note to contact@olventech.com.) #StartupFounders #TechLeadership
