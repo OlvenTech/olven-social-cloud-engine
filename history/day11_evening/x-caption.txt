@@ -1,8 +1,0 @@
-Relying on app-layer WHERE tenant_id filters fails Fortune 500 security reviews.
-
-We enforced Postgres FORCE RLS with transaction-scoped org claims across 44 tables:
-- 0 cross-tenant leak surface
-- <0.4ms query overhead
-- $420k ARR unblocked
-
-contact@olventech.com

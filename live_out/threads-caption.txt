@@ -1,5 +1,5 @@
-A store almost doubled its cloud bill because checkout froze at 2 PM every day.
+A company added 32 automated workers to speed up 45K morning orders. It made them 9x SLOWER (4.2-hour stall, 140 Postgres lock crashes/day).
 
-The real villain? A search bar scanning 11M Postgres rows per keystroke (94% CPU). Moving to a live CDC search index cut wait time from 2.4s to 48ms and boosted sales +14%.
+Organizing the queue into clean warehouse lanes + sorted SKU locks cut wait time to 26 minutes with $0 new servers.
 
-How long do you wait before closing a slow site? (contact@olventech.com)
+Ever seen "adding more" backfire? (contact@olventech.com)

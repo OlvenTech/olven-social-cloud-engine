@@ -1,0 +1,7 @@
+A company added 32 workers to process 45K orders faster. Instead, their warehouse stalled for 4.2 hours (140 Postgres lock crashes/day).
+
+Fixed with sorted SKU lock order + separate warehouse queues:
+- 4.2h -> 26 mins
+- 9.4x faster ($0 new servers)
+
+contact@olventech.com

@@ -1,5 +1,5 @@
-A fast-growing store was about to double its monthly server bill because checkout froze every afternoon at 2 PM.
+Adding 32 automated workers to process 45,000 morning orders actually slowed one company's warehouse down to a 4.2-hour delay every single day.
 
-Turns out their search bar was scanning 11 million Postgres products on every keystroke, pushing database CPU to 94%. Olven Tech moved search to a live CDC-synced index, cutting wait time from 2.4 seconds to 48 milliseconds and lifting buyer sales by 14%.
+Why? All 32 workers collided on the same Postgres inventory rows, triggering 140 lock traffic jams every morning. Olven Tech organized the queue into clean per-warehouse lanes with sorted SKU locks, clearing orders in 26 minutes (9.4x faster) with $0 spent on new servers.
 
-How many seconds do you wait before leaving a slow website? Tell us below! (Need a speed audit? Email contact@olventech.com.)
+Have you ever seen throwing more resources at a bottleneck make it worse? Tell us in the comments! (contact@olventech.com)

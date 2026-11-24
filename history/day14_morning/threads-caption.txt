@@ -1,0 +1,5 @@
+A company added 32 automated workers to speed up 45K morning orders. It made them 9x SLOWER (4.2-hour stall, 140 Postgres lock crashes/day).
+
+Organizing the queue into clean warehouse lanes + sorted SKU locks cut wait time to 26 minutes with $0 new servers.
+
+Ever seen "adding more" backfire? (contact@olventech.com)
