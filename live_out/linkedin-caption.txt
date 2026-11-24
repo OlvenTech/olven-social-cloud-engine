@@ -1,28 +1,22 @@
-A company added 32 automated workers to speed up their morning orders.
+Most AI startups do not fail because the AI is dumb.
 
-Instead, their whole warehouse got 9x SLOWER.
+They fail because paying $0.42 per PDF and making users wait 46 seconds kills their entire margin.
 
-Imagine 32 people trying to walk through the exact same narrow doorway at once. Nobody moves. Everyone gets stuck.
+A legal-tech team came to us with an AI contract reader customers loved, except every single 40-page upload made users stare at a loading spinner while token bills exploded.
 
-That is literally what happened inside their Postgres inventory database every morning before 10 AM:
-- 45,000 orders poured in
-- 32 queue workers grabbed overlapping items in opposite orders
-- The database crashed into 140 lock traffic jams every single morning
-- Real human warehouse pickers stood idle for 4.2 hours waiting for shipping labels
+When Olven Tech looked under the hood, 70% of every contract was identical cover sheets, blank pages, and repeat legal filler getting re-read by an expensive AI model over and over again.
 
-They thought they needed a massive $100K server upgrade.
+We did not change their AI vendor. We changed the architecture in 3 steps:
 
-They spent $0 on hardware. Here is how Olven Tech fixed the traffic jam:
-
-1. One strict order: Every multi-item order now locks SKU rows in the exact same sorted order, making gridlock impossible.
-2. Separate lanes: Gave every warehouse its own dedicated queue lane so facilities stop bumping into each other.
-3. Smart lane-changing: If one batch is busy, workers skip straight to the next open order instead of waiting in line.
+1. Skip the filler: A lightweight classifier filters out cover pages and boilerplate before the heavy model ever sees it.
+2. Remember what you already read: Added a SHA-256 cache in Redis and Postgres so recurring clauses load in 4ms at $0 cost (41% instant cache hits).
+3. Run key pages at once: Processed only the 5-8 important pages in parallel behind strict schema and math checks.
 
 Result:
-- 140 daily crashes dropped to 0
-- 4.2-hour morning backlog dropped to 26 minutes
-- 9.4x faster throughput on the exact same server
+- AI spend dropped 68% ($0.42 down to $0.13 per doc)
+- Speed jumped 4x (46 seconds down to 11.8s)
+- Output accuracy hit 99.8%
 
-Have you ever seen a company throw MORE people or MORE budget at a problem, only to make it slower? Share your best story below!
+Hot take: 90% of "AI problems" right now are actually basic engineering problems wearing an AI costume. Agree or disagree?
 
-(Dealing with slow operations or backend bottlenecks? Email contact@olventech.com.) #Operations #Leadership
+(Building an AI product whose speed or token bill is getting scary? Email contact@olventech.com.) #AI #Startups

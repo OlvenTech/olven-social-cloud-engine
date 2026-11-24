@@ -1,0 +1,5 @@
+Hot take: 90% of "AI cost problems" are actually basic engineering problems.
+
+A client paid $0.42/PDF & waited 46s. Adding smart page filtering + SHA-256 Redis caching + parallel schema checks cut their AI bill 68% and made it 4x faster (11.8s).
+
+Agree or disagree? (contact@olventech.com)

@@ -1,0 +1,5 @@
+An AI startup was paying $0.42 per contract and making users wait 46 seconds because their app dumped entire 40-page PDFs into one giant prompt every single time.
+
+Olven Tech added smart page filtering, SHA-256 Redis caching for repeat clauses, and parallel schema validation, slashing their AI bill by 68% and speeding up results 4x (11.8 seconds).
+
+Are companies overpaying for AI right now because of messy setup? Drop your thoughts below! (contact@olventech.com)

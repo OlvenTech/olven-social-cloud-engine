@@ -1,5 +1,0 @@
-If your Snowflake or BigQuery bill is scaling faster than your customer count, check whether your dashboards are rescanning raw event tables every 15 minutes.
-
-We replaced full-table scans on a 1.4B-row analytics platform with watermarked incremental rollups and partition clustering, saving $278,000/year while cutting dashboard load times from 14.2 seconds to 380ms.
-
-Reach us at contact@olventech.com.

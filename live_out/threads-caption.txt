@@ -1,5 +1,5 @@
-A company added 32 automated workers to speed up 45K morning orders. It made them 9x SLOWER (4.2-hour stall, 140 Postgres lock crashes/day).
+Hot take: 90% of "AI cost problems" are actually basic engineering problems.
 
-Organizing the queue into clean warehouse lanes + sorted SKU locks cut wait time to 26 minutes with $0 new servers.
+A client paid $0.42/PDF & waited 46s. Adding smart page filtering + SHA-256 Redis caching + parallel schema checks cut their AI bill 68% and made it 4x faster (11.8s).
 
-Ever seen "adding more" backfire? (contact@olventech.com)
+Agree or disagree? (contact@olventech.com)

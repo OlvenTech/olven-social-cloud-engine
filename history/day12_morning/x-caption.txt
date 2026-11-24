@@ -1,7 +1,0 @@
-Rescanning 1.4B immutable rows every 15 minutes burns $38k/mo on Snowflake.
-
-We replaced full-table BI views with watermarked incremental rollups:
-- 61% lower Snowflake spend ($278k/yr saved)
-- Dashboard P95 cut from 14.2s to 380ms
-
-contact@olventech.com
