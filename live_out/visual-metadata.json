@@ -1,7 +1,6 @@
 {
-  "visual_archetype": "manhattan_swiss_poster",
-  "grade_profile": "Klein Print Vivid",
-  "style_system": "artcraft-lightcraft-photocraft-manhattan-suite",
-  "headline": "The $19,000/Month Leak Hidden Between Stripe & QuickBooks",
-  "rendered_at": "2026-11-25T07:03:31.792Z"
+  "engine": "olven-5.0-transatlantic-european-atelier",
+  "visual_archetype": "nordic_stockholm_slate",
+  "scene_key": "nordic_stockholm_slate",
+  "poster_headline": "One Retry Loop.\n11x Self-DDoS."
 }

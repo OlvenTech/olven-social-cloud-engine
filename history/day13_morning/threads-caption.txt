@@ -1,5 +1,0 @@
-A company wired $64,000 twice in one quarter because a 30-second bank API timeout tricked their software into auto-retrying.
-
-We added Postgres ledger locks + unique payout keys across $14M/mo -> $0.00 double wires.
-
-Wildest software glitch you have ever seen? (contact@olventech.com)

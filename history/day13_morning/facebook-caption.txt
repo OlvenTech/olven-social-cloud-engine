@@ -1,7 +1,0 @@
-A company accidentally wired the same supplier $64,000 twice in one quarter because of a 30-second bank API hiccup.
-
-No human mistake. No hack. Their software just assumed a slow response meant "failed" and automatically sent the wire a second time.
-
-At Olven Tech, we rebuilt their $14M/month payout flow with Postgres ledger locks and status-first checks, dropping duplicate payments to $0.00 and cutting manual finance work by 91%.
-
-Have you ever seen a tiny software glitch turn into an expensive headache? Tell us in the comments. (Need a quick audit? Email contact@olventech.com.)

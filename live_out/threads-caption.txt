@@ -1,5 +1,3 @@
-No-code billing glue gets you started. It silently breaks when enterprise deals arrive.
-
-A SaaS finance team lost 3 days/quarter hunting $19K/mo of drift between Stripe & QuickBooks. A clean Postgres invoice ledger brought variance to $0.00.
-
-Most fragile automation you have ever seen? (contact@olventech.com)
+Wait until you find out the 42-minute DDoS attack was just your own app's retry loop firing 11x traffic.
+Jitter + token buckets -> 14s recovery, 0 outages in 9 months.
+contact@olventech.com
