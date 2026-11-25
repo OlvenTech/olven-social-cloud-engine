@@ -1,915 +1,655 @@
 #!/usr/bin/env node
 /**
- * Olven Tech — Entertainment-First Viral 3D Story Engine (ArtCraft EffectCraft v0.24.1)
+ * Olven Tech 5.0 — 4-World Transatlantic Executive "Flow Style 1" 30fps Cinema Reel Engine
+ * (16.0s, 480 real animated frames @ 30fps, 1080x1920, H.264 High Rec.709 + 192k AAC)
  *
- * Designed for MAXIMUM views, watch-through completion, shares, comments & inbound B2B clients:
- *  - ZERO boring static text slides — 13 individual visual + audio dopamine beats across 16.0s!
- *  - Beat 1 (0.0–3.6s): Live 3D iPhone 16 Pro Lockscreen Meltdown (3 notifications pop in 1-by-1 with real dings!)
- *  - Beat 2 (3.4–7.4s): Live Workplace Group-Chat Drama (#emergency-chat — CFO panic -> Dev sweat -> Olven Tech enters!)
- *  - Beat 3 (7.2–10.7s): Interactive Apple Fix Switches (3 glowing emerald toggles flip ON with ascending clicks!)
- *  - Beat 4 (10.5–13.7s): Giant Struck-Through BEFORE -> Glowing Emerald AFTER Payoff + Happy CFO Reply Bubble!
- *  - Beat 5 (13.5–16.0s): Punchy Shareable Brand Drop ("Don't be the next 9 AM Slack meltdown.")
- *  - 100% Butter-Smooth Apple exponential deceleration (inInfluence: 88, outInfluence: 25), silky 0.45s cross-dissolves,
- *    ZERO 90-deg flips, ZERO 1-frame luminance flashes, ZERO radial smear!
- *  - Synced 116-BPM upbeat pulse + Apple-style UI SFX via mix_reel_sfx.py (pure Python stdlib + FFmpeg).
- *  - Output: 1080x1920 30fps H.264 9.2 Mbps Rec.709 (strictly <= 19.4 MB CDN-safe).
+ * ZERO cartoons. ZERO video-game UI. ZERO static slides. ZERO UI dashboards.
+ * Every world speaks the exact clean physical-architecture motion language of Flow Style 1,
+ * elevated with European heritage typography (Playfair Display & Cormorant Garamond Italics)
+ * and refined American/European executive palettes:
+ *   1. flow_bottleneck_zurich  — Zurich Warm Linen -> Obsidian Emerald (32 Anodized Spheres Jam -> 8 Express Lanes)
+ *   2. flow_wire_ledger_geneva — Wall Street Cotton -> Obsidian & 24K Gold (2s Bank Lag Double-Wire -> SHA-256 Lock)
+ *   3. flow_monolith_milan     — Aerospace Obsidian -> Mayfair Emerald/Gold (400 Titanium Orders Halted by 1 Comma -> Bypass Rail)
+ *   4. flow_optics_milan       — Venetian Oxblood -> Deep Obsidian Emerald (Blank Pages Burning Cash -> Optical Pre-Filter)
  */
 const fs = require('fs');
 const path = require('path');
-const { execFileSync } = require('child_process');
+const { spawn, execFileSync } = require('child_process');
 
 let chromium;
 try { ({ chromium } = require('playwright')); } catch {
-  try { ({ chromium } = require('playwright-core')); } catch {
-    chromium = require('/home/antigravity/.npm/_npx/e41f203b7505f1fb/node_modules/playwright-core').chromium;
-  }
+  const localCore = path.join(__dirname, 'node_modules/playwright-core');
+  ({ chromium } = require(fs.existsSync(localCore) ? localCore : '/home/antigravity/.npm/_npx/e41f203b7505f1fb/node_modules/playwright-core'));
 }
 
 const WIDTH = 1080;
 const HEIGHT = 1920;
 const FPS = 30;
 const DURATION = 16.0;
-
+const TOTAL_FRAMES = Math.round(FPS * DURATION); // 480 real animated frames
 const ASSETS_DIR = path.join(__dirname, 'assets');
-const MUSIC_DIR = path.join(ASSETS_DIR, 'music');
 
-const DIRECTORS = {
-  apple_obsidian_titanium: {
-    name: 'apple_obsidian_titanium',
-    label: 'NEW YORK · REAL STORIES',
-    isDark: true,
-    track: 'nyc_felt_piano_mvt2.mp3',
-    domes: [
-      [[0.068, 0.095, 0.160, 1.0], [0.020, 0.025, 0.040, 1.0]],
-      [[0.092, 0.065, 0.105, 1.0], [0.022, 0.024, 0.036, 1.0]],
-      [[0.048, 0.112, 0.145, 1.0], [0.018, 0.025, 0.038, 1.0]],
-      [[0.048, 0.128, 0.115, 1.0], [0.018, 0.026, 0.035, 1.0]],
-      [[0.064, 0.088, 0.155, 1.0], [0.020, 0.024, 0.038, 1.0]],
-    ],
-    ink: '#F8FAFC',
-    inkMuted: '#94A3B8',
-    accent: '#60A5FA',
-    proofColor: '#34D399',
-    proofSoft: 'rgba(52, 211, 153, 0.16)',
-    alert: '#FB7185',
-    alertSoft: 'rgba(251, 113, 133, 0.16)',
-    surfaceBg: 'rgba(18, 24, 38, 0.90)',
-    surfaceBorder: 'rgba(255, 255, 255, 0.15)',
-    depthMotif: 'spatial_rings',
-  },
+const b64File = (fp) => fs.readFileSync(fp).toString('base64');
+const RAW_LOGO_SVG = fs.readFileSync(path.join(ASSETS_DIR, 'horizontal_dark.svg'), 'utf8')
+  .replace(/<\?xml[\s\S]*?\?>/g, '')
+  .replace(/<path[^>]*id="path1-3"[^>]*\/>/g, '');
 
-  anthropic_warm_editorial: {
-    name: 'anthropic_warm_editorial',
-    label: 'NEW YORK · REAL STORIES',
-    isDark: false,
-    track: 'nyc_felt_piano_mvt1.mp3',
-    domes: [
-      [[0.968, 0.954, 0.926, 1.0], [0.916, 0.896, 0.854, 1.0]],
-      [[0.962, 0.946, 0.920, 1.0], [0.910, 0.888, 0.848, 1.0]],
-      [[0.966, 0.954, 0.930, 1.0], [0.914, 0.898, 0.864, 1.0]],
-      [[0.972, 0.958, 0.932, 1.0], [0.922, 0.904, 0.862, 1.0]],
-      [[0.964, 0.950, 0.924, 1.0], [0.914, 0.894, 0.852, 1.0]],
-    ],
-    ink: '#141413',
-    inkMuted: '#57534E',
-    accent: '#C96442',
-    proofColor: '#059669',
-    proofSoft: '#E2F6EF',
-    alert: '#DC2626',
-    alertSoft: '#FEECEC',
-    surfaceBg: 'rgba(255, 253, 249, 0.95)',
-    surfaceBorder: 'rgba(20, 20, 19, 0.11)',
-    depthMotif: 'editorial_hairlines',
-  },
-
-  stripe_linear_precision: {
-    name: 'stripe_linear_precision',
-    label: 'NEW YORK · REAL STORIES',
-    isDark: true,
-    track: 'nyc_felt_piano_mvt3.mp3',
-    domes: [
-      [[0.075, 0.082, 0.175, 1.0], [0.022, 0.026, 0.052, 1.0]],
-      [[0.102, 0.074, 0.140, 1.0], [0.024, 0.026, 0.048, 1.0]],
-      [[0.052, 0.118, 0.148, 1.0], [0.020, 0.028, 0.046, 1.0]],
-      [[0.045, 0.132, 0.120, 1.0], [0.018, 0.028, 0.042, 1.0]],
-      [[0.072, 0.080, 0.168, 1.0], [0.022, 0.026, 0.050, 1.0]],
-    ],
-    ink: '#FFFFFF',
-    inkMuted: '#94A3B8',
-    accent: '#818CF8',
-    proofColor: '#34D399',
-    proofSoft: 'rgba(52, 211, 153, 0.16)',
-    alert: '#F59E0B',
-    alertSoft: 'rgba(245, 158, 11, 0.16)',
-    surfaceBg: 'rgba(18, 22, 38, 0.90)',
-    surfaceBorder: 'rgba(255, 255, 255, 0.14)',
-    depthMotif: 'telemetry_dotgrid',
-  },
-
-  openai_ceramic_studio: {
-    name: 'openai_ceramic_studio',
-    label: 'NEW YORK · REAL STORIES',
-    isDark: false,
-    track: 'nyc_felt_piano_mvt1.mp3',
-    domes: [
-      [[0.985, 0.990, 1.000, 1.0], [0.922, 0.946, 0.988, 1.0]],
-      [[0.988, 0.985, 0.996, 1.0], [0.938, 0.935, 0.975, 1.0]],
-      [[0.982, 0.994, 0.994, 1.0], [0.918, 0.958, 0.960, 1.0]],
-      [[0.984, 0.996, 0.990, 1.0], [0.918, 0.962, 0.945, 1.0]],
-      [[0.985, 0.990, 1.000, 1.0], [0.922, 0.946, 0.988, 1.0]],
-    ],
-    ink: '#0A0B0E',
-    inkMuted: '#4B5563',
-    accent: '#1D4ED8',
-    proofColor: '#047857',
-    proofSoft: '#E2F6EF',
-    alert: '#DC2626',
-    alertSoft: '#FEECEC',
-    surfaceBg: 'rgba(255, 255, 255, 0.95)',
-    surfaceBorder: 'rgba(15, 23, 42, 0.10)',
-    depthMotif: 'studio_grid',
-  },
-
-  manhattan_executive_noir: {
-    name: 'manhattan_executive_noir',
-    label: 'MANHATTAN · REAL STORIES',
-    isDark: true,
-    track: 'nyc_felt_piano_mvt2.mp3',
-    domes: [
-      [[0.090, 0.082, 0.072, 1.0], [0.024, 0.022, 0.020, 1.0]],
-      [[0.102, 0.076, 0.070, 1.0], [0.026, 0.022, 0.020, 1.0]],
-      [[0.075, 0.095, 0.082, 1.0], [0.022, 0.024, 0.022, 1.0]],
-      [[0.082, 0.098, 0.078, 1.0], [0.022, 0.024, 0.020, 1.0]],
-      [[0.088, 0.082, 0.072, 1.0], [0.024, 0.022, 0.020, 1.0]],
-    ],
-    ink: '#FAF7F0',
-    inkMuted: '#A8A29E',
-    accent: '#E5B84B',
-    proofColor: '#4ADE80',
-    proofSoft: 'rgba(74, 222, 128, 0.16)',
-    alert: '#F87171',
-    alertSoft: 'rgba(248, 113, 113, 0.16)',
-    surfaceBg: 'rgba(26, 23, 20, 0.92)',
-    surfaceBorder: 'rgba(250, 247, 240, 0.14)',
-    depthMotif: 'editorial_hairlines',
-  },
-
-  google_deepmind_luminous: {
-    name: 'google_deepmind_luminous',
-    label: 'NEW YORK · REAL STORIES',
-    isDark: false,
-    track: 'nyc_felt_piano_mvt3.mp3',
-    domes: [
-      [[0.980, 0.990, 1.000, 1.0], [0.908, 0.945, 0.995, 1.0]],
-      [[0.988, 0.984, 0.988, 1.0], [0.944, 0.926, 0.935, 1.0]],
-      [[0.978, 0.994, 0.988, 1.0], [0.906, 0.958, 0.935, 1.0]],
-      [[0.980, 0.995, 0.990, 1.0], [0.910, 0.960, 0.940, 1.0]],
-      [[0.980, 0.990, 1.000, 1.0], [0.908, 0.945, 0.995, 1.0]],
-    ],
-    ink: '#0F172A',
-    inkMuted: '#475569',
-    accent: '#1A73E8',
-    proofColor: '#188038',
-    proofSoft: '#E6F4EA',
-    alert: '#D93025',
-    alertSoft: '#FCE8E6',
-    surfaceBg: 'rgba(255, 255, 255, 0.95)',
-    surfaceBorder: 'rgba(26, 115, 232, 0.14)',
-    depthMotif: 'spatial_rings',
-  },
-};
-
-const DIRECTOR_ORDER = [
-  'anthropic_warm_editorial',
-  'apple_obsidian_titanium',
-  'openai_ceramic_studio',
-  'stripe_linear_precision',
-  'google_deepmind_luminous',
-  'manhattan_executive_noir',
-];
-
-function esc(s) {
-  return String(s || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function stripHtml(s) {
-  return String(s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
-}
-
-function fontBase64(filename) {
-  const fp = path.join(ASSETS_DIR, filename);
-  return fs.existsSync(fp) ? fs.readFileSync(fp).toString('base64') : '';
-}
-
-function loadTransparentLogoDataUri(inkHex, cutoutHex) {
-  const fp = path.join(ASSETS_DIR, 'horizontal_dark.svg');
-  if (!fs.existsSync(fp)) return '';
-  let svg = fs.readFileSync(fp, 'utf8');
-  svg = svg.replace(/<path[^>]*id="path1-3"[^>]*\/>/g, '');
-  svg = svg
+function logoDataUri(inkHex = '#FFFFFF', cutoutHex = '#070B14') {
+  const svg = RAW_LOGO_SVG
     .replace(/style="fill:#000000;/g, `style="fill:${cutoutHex};`)
     .replace(/style="fill:#ffffff;/g, `style="fill:${inkHex};`)
     .replace(/fill="#ffffff"/g, `fill="${inkHex}"`);
   return 'data:image/svg+xml;base64,' + Buffer.from(svg, 'utf8').toString('base64');
 }
 
-function detectChromeExecutable() {
+function detectChrome() {
   for (const p of ['/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser']) {
     if (fs.existsSync(p)) return p;
   }
   return undefined;
 }
 
-function detectEffectCraftCli() {
-  const candidates = [
-    process.env.EFFECTCRAFT_CLI,
-    '/home/antigravity/.local/artcraft/effectcraft/effectcraft-0.24.1-linux-x86_64/bin/effectcraft-cli',
-    path.join(process.env.HOME || '', '.local/artcraft/effectcraft/effectcraft-0.24.1-linux-x86_64/bin/effectcraft-cli'),
-    '/usr/local/bin/effectcraft-cli',
-    '/usr/bin/effectcraft-cli',
-  ].filter(Boolean);
-  for (const c of candidates) {
-    if (fs.existsSync(c)) return c;
-  }
-  return 'effectcraft-cli';
-}
+const MODE_ALIAS = {
+  physics_bottleneck: 'flow_bottleneck_zurich',
+  domino_chain_reaction: 'flow_wire_ledger_geneva',
+  alarm_storm_signal: 'flow_monolith_milan',
+  laser_cash_shredder: 'flow_optics_milan',
+  retry_storm_wave: 'flow_bottleneck_zurich',
+};
 
-function compileEntertainmentScript(spec) {
-  const m0 = (spec.metrics && spec.metrics[0]) || { value: '$0.00', label: 'ERRORS', sub: 'Verified in production' };
-  const m1 = (spec.metrics && spec.metrics[1]) || { value: '0', label: 'OUTAGES', sub: 'Fixed in days' };
-  const m2 = (spec.metrics && spec.metrics[2]) || m1;
+const AUDIO_MODE_MAP = {
+  flow_bottleneck_zurich: 'physics_bottleneck',
+  flow_wire_ledger_geneva: 'domino_chain_reaction',
+  flow_monolith_milan: 'alarm_storm_signal',
+  flow_optics_milan: 'laser_cash_shredder',
+};
 
-  const ent = spec.entertainment || {};
-  const timeStr = ent.time || '9:14 AM';
-
-  const aNodes = ((spec.viral_after_nodes && spec.viral_after_nodes.length)
-    ? spec.viral_after_nodes
-    : (spec.after_nodes || ['Lock Every Action', 'Stamp 1 Unique ID', 'Verify Before Retry'])).slice(0, 3);
-
-  const hookHeadline = stripHtml(spec.viral_headline || spec.headline || 'One tiny bug cost $64,000.');
-  const hookLines = (Array.isArray(spec.viral_hook_lines) && spec.viral_hook_lines.length === 3)
-    ? spec.viral_hook_lines.map(stripHtml)
-    : [hookHeadline.split(' ').slice(0, 3).join(' '), hookHeadline.split(' ').slice(3, 6).join(' '), m0.value];
-
-  const notifs = (ent.notifs && ent.notifs.length >= 3)
-    ? ent.notifs
-    : [
-        { app: 'SYSTEM ALERT', time: timeStr, title: stripHtml(spec.before_title || 'System Stalled'), body: stripHtml((spec.viral_before_nodes || spec.before_nodes || ['Bottleneck hit'])[0]), tone: 'warn' },
-        { app: 'CRITICAL', time: timeStr, title: stripHtml(spec.before_badge || 'Revenue At Risk'), body: stripHtml((spec.viral_before_points || spec.before_points || ['Production incident triggered'])[0]).slice(0, 68), tone: 'danger' },
-        { app: 'SLACK · #OPS', time: 'now', title: 'Founder is typing...', body: '"WHO CAN FIX THIS RIGHT NOW?!"', tone: 'panic' },
-      ];
-
-  const chat = (ent.chat && ent.chat.length >= 3)
-    ? ent.chat
-    : [
-        { who: 'Founder', side: 'left', role: 'cfo', msg: `Why is ${stripHtml(spec.before_badge || 'this breaking')} happening right now?!` },
-        { who: 'Dev On-Call', side: 'right', role: 'dev', msg: stripHtml((spec.viral_before_points || spec.before_points || ['The legacy script choked under load.'])[0]).slice(0, 88) },
-        { who: 'Olven Tech', side: 'left', role: 'olven', msg: `Fixed it in days. ${aNodes[0]} + ${aNodes[1]}. Result: ${m0.value}.` },
-      ];
-
-  const cfoReact = ent.cfo_react || `${m0.value} ${m0.label.toLowerCase()} & ${m1.value} ${m1.label.toLowerCase()}. Best call we made all year.`;
-
-  let heroMetric = m0;
-  for (const m of [m0, m1, m2]) {
-    if (String(m.value).includes('$') || String(m.value).includes('%') || String(m.value).includes('x')) {
-      heroMetric = m;
-      break;
-    }
-  }
-  const rest = [m0, m1, m2].filter((x) => x !== heroMetric);
-  const cleanTag = (s) => String(s || '').replace(/\s+/g, ' ').trim();
-
+function resolveReelConfig(spec) {
+  const rc = spec.physics_reel || {};
+  const rawMode = rc.mode || spec.reel_mode || 'flow_bottleneck_zurich';
+  const mode = AUDIO_MODE_MAP[rawMode] ? rawMode : (MODE_ALIAS[rawMode] || 'flow_bottleneck_zurich');
+  const m0 = (spec.metrics && spec.metrics[0]) || { value: '9.4x', label: 'FASTER' };
+  const m1 = (spec.metrics && spec.metrics[1]) || { value: '26 MINS', label: 'DELAY' };
+  const defaultStuck = {
+    flow_bottleneck_zurich: '4.2 HRS STALLED',
+    flow_wire_ledger_geneva: '2.0 SEC LAG · RETRY FIRED',
+    flow_monolith_milan: '400 ORDERS FROZEN',
+    flow_optics_milan: 'TOKENS BURNING',
+  }[mode] || '4.2 HRS STALLED';
   return {
-    timeStr,
-    hookHeadline,
-    hookLines,
-    notifs,
-    chat,
-    cfoReact,
-    beforeStat: cleanTag(spec.viral_before_stat || spec.before_badge || 'BROKEN LEGACY FLOW'),
-    fixSteps: [
-      { num: '01', title: cleanTag(aNodes[0]) },
-      { num: '02', title: cleanTag(aNodes[1]) },
-      { num: '03', title: cleanTag(aNodes[2]) },
-    ],
-    heroVal: cleanTag(heroMetric.value),
-    heroFontPx: cleanTag(heroMetric.value).length >= 7 ? 142 : (cleanTag(heroMetric.value).length >= 5 ? 172 : 204),
-    heroLabel: cleanTag(heroMetric.label).toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
-    heroSub: cleanTag(heroMetric.sub),
-    subA: rest[0] || m1,
-    subB: rest[1] || m2,
+    mode,
+    setupLine1: rc.setupLine1 || '32 workers added',
+    setupLine2: rc.setupLine2 || 'to move faster.',
+    doorLabel:  rc.doorLabel  || '1 TINY LOCK',
+    stuckStat:  rc.stuckStat  || defaultStuck,
+    twistPunch: rc.twistPunch || '9x Slower.',
+    fixLine1:   rc.fixLine1   || '$0 New Servers.',
+    fixLine2:   rc.fixLine2   || '8 Express Lanes.',
+    payoffBig:  rc.payoffBig  || `${m0.value}`.toUpperCase() + ' FASTER.',
+    payoffSub:  rc.payoffSub  || `${m1.value}`.toUpperCase() + ' · ZERO HARDWARE.',
+    wireVal:    rc.wireVal    || '$32K',
+    doubleStat: rc.doubleStat || '$64,000 SETTLED (2X)',
+    safeStat:   rc.safeStat   || '$14M/MO · $0.00 DUPLICATES',
+    faultSym:   rc.faultSym   || ',',
+    faultStat:  rc.faultStat  || '400 ORDERS FROZEN',
+    cta:        rc.cta        || 'contact@olventech.com',
   };
 }
 
-function fontsCss(interB64, monoB64) {
-  return `
-    @font-face { font-family: 'Inter'; src: url('data:font/woff2;base64,${interB64}') format('woff2'); font-weight: 100 900; }
-    @font-face { font-family: 'IBM Plex Mono'; src: url('data:font/woff2;base64,${monoB64}') format('woff2'); font-weight: 400 700; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; -webkit-font-smoothing: antialiased; }
-  `;
-}
+function buildCinemaHtml(cfg) {
+  const fJakarta = b64File(path.join(ASSETS_DIR, 'PlusJakartaSans.woff2'));
+  const fMono = b64File(path.join(ASSETS_DIR, 'IBMPlexMono.woff2'));
+  const fPlayB = b64File(path.join(ASSETS_DIR, 'PlayfairDisplay-Bold.woff2'));
+  const fPlayBI = b64File(path.join(ASSETS_DIR, 'PlayfairDisplay-BoldItalic.woff2'));
+  const fCormBI = b64File(path.join(ASSETS_DIR, 'CormorantGaramond-BoldItalic.woff2'));
+  const logoUri = logoDataUri('#FFFFFF', '#070B14');
 
-function buildDepthHtml(idx, dir, interB64, monoB64) {
-  const stroke = dir.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.07)';
-  const prog = [0, 1, 2, 3, 4].map((i) => {
-    const active = i <= idx;
-    const bg = active ? dir.accent : (dir.isDark ? 'rgba(255,255,255,0.16)' : 'rgba(15,23,42,0.12)');
-    const op = i === idx ? '1' : (active ? '0.52' : '1');
-    return `<div style="flex:1;height:6px;border-radius:999px;background:${bg};opacity:${op};"></div>`;
-  }).join('');
-
-  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 1080px; height: 1920px; background: transparent; overflow: hidden; position: relative; }
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+    @font-face { font-family: 'Plus Jakarta Sans'; src: url(data:font/woff2;base64,${fJakarta}) format('woff2'); font-weight: 500 800; }
+    @font-face { font-family: 'IBM Plex Mono'; src: url(data:font/woff2;base64,${fMono}) format('woff2'); font-weight: 500 700; }
+    @font-face { font-family: 'Playfair Display'; src: url(data:font/woff2;base64,${fPlayB}) format('woff2'); font-weight: 700; font-style: normal; }
+    @font-face { font-family: 'Playfair Display'; src: url(data:font/woff2;base64,${fPlayBI}) format('woff2'); font-weight: 700; font-style: italic; }
+    @font-face { font-family: 'Cormorant Garamond'; src: url(data:font/woff2;base64,${fCormBI}) format('woff2'); font-weight: 700; font-style: italic; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: ${WIDTH}px; height: ${HEIGHT}px; overflow: hidden; background: #070B14; }
+    canvas { display: block; width: ${WIDTH}px; height: ${HEIGHT}px; }
   </style></head><body>
-    <div style="position:absolute;top:110px;left:90px;right:90px;display:flex;gap:14px;">${prog}</div>
-    <div style="position:absolute;inset:64px;border:1px solid ${stroke};border-radius:36px;"></div>
-    <div style="position:absolute;bottom:92px;left:92px;font-family:'IBM Plex Mono',monospace;font-size:17px;letter-spacing:0.2em;color:${stroke};">OLVEN TECH · ${dir.label}</div>
-  </body></html>`;
-}
+  <canvas id="stage" width="${WIDTH}" height="${HEIGHT}"></canvas>
+  <script>
+  const W = ${WIDTH}, H = ${HEIGHT}, FPS = ${FPS};
+  const CFG = ${JSON.stringify(cfg)};
+  const canvas = document.getElementById('stage');
+  const ctx = canvas.getContext('2d');
+  const logoImg = new Image();
+  logoImg.src = ${JSON.stringify(logoUri)};
 
-function buildNotificationCardHtml(n, idx, interB64, monoB64) {
-  const isDanger = n.tone === 'danger' || n.tone === 'panic';
-  const bg = n.tone === 'panic'
-    ? 'linear-gradient(135deg, rgba(225, 29, 72, 0.96) 0%, rgba(159, 18, 57, 0.96) 100%)'
-    : isDanger
-    ? 'rgba(46, 16, 26, 0.96)'
-    : 'rgba(26, 32, 46, 0.96)';
-  const border = n.tone === 'panic'
-    ? 'rgba(255, 255, 255, 0.34)'
-    : isDanger
-    ? 'rgba(244, 63, 94, 0.65)'
-    : 'rgba(255, 255, 255, 0.18)';
-  const tagColor = n.tone === 'panic' ? '#FFF1F2' : (isDanger ? '#FDA4AF' : '#93C5FD');
+  function mkRng(seed) { let s = seed; return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const easeOutCubic = (t) => 1 - Math.pow(1 - clamp(t, 0, 1), 3);
+  const easeInOutQuart = (t) => { const x = clamp(t, 0, 1); return x < 0.5 ? 8*x*x*x*x : 1 - Math.pow(-2*x+2, 4)/2; };
 
-  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 720px; height: 204px; background: transparent; display: flex; align-items: center; justify-content: center; padding: 10px; }
-    .card {
-      width: 100%; border-radius: 28px; padding: 24px 28px;
-      background: ${bg}; border: 1.5px solid ${border};
-      box-shadow: 0 22px 46px -12px rgba(0,0,0,0.62); color: #FFFFFF;
+  function drawSphere(x, y, r, topC, midC, botC, label = '', labelCol = '#FFFFFF', alpha = 1, sx = 1, sy = 1) {
+    if (alpha <= 0.01) return;
+    ctx.save(); ctx.globalAlpha = clamp(alpha, 0, 1); ctx.translate(x, y); ctx.scale(sx, sy);
+    ctx.fillStyle = 'rgba(11, 15, 25, 0.24)';
+    ctx.beginPath(); ctx.ellipse(4, r * 0.28, r * 0.94, r * 0.86, 0, 0, Math.PI * 2); ctx.fill();
+    const g = ctx.createRadialGradient(-r * 0.34, -r * 0.36, r * 0.08, 0, 0, r * 1.05);
+    g.addColorStop(0, topC); g.addColorStop(0.32, midC); g.addColorStop(0.86, botC); g.addColorStop(1, '#080B12');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.34)'; ctx.lineWidth = 1.6; ctx.stroke();
+    if (label) {
+      ctx.fillStyle = labelCol; ctx.font = '800 ' + Math.round(r * 0.42) + 'px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, 0, 2);
     }
-    .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; color: ${tagColor}; }
-    .t { font-size: 27px; font-weight: 820; letter-spacing: -0.03em; line-height: 1.15; color: #FFFFFF; }
-    .b { margin-top: 6px; font-size: 20px; font-weight: 500; line-height: 1.28; color: rgba(255,255,255,0.88); }
-  </style></head><body>
-    <div class="card">
-      <div class="hdr"><span>● ${esc(n.app)}</span><span>${esc(n.time)}</span></div>
-      <div class="t">${esc(n.title)}</div>
-      <div class="b">${esc(n.body)}</div>
-    </div>
-  </body></html>`;
-}
-
-function buildChatBubbleHtml(msgObj, dir, interB64, monoB64) {
-  const isRight = msgObj.side === 'right';
-  const isOlven = msgObj.role === 'olven';
-  const isCfo = msgObj.role === 'cfo';
-
-  const bg = isOlven
-    ? (dir.isDark ? 'linear-gradient(135deg, rgba(16,185,129,0.28) 0%, rgba(5,150,105,0.20) 100%)' : '#E6F7F0')
-    : isCfo
-    ? (dir.isDark ? 'rgba(244,63,94,0.22)' : '#FFF1F2')
-    : (dir.isDark ? 'rgba(255,255,255,0.12)' : '#F1F5F9');
-  const border = isOlven
-    ? 'rgba(16,185,129,0.55)'
-    : isCfo
-    ? 'rgba(244,63,94,0.48)'
-    : (dir.isDark ? 'rgba(255,255,255,0.20)' : 'rgba(15,23,42,0.12)');
-  const whoColor = isOlven ? dir.proofColor : (isCfo ? dir.alert : dir.inkMuted);
-  const txtColor = dir.ink;
-
-  const badge = isOlven
-    ? `<div style="align-self:center;margin-bottom:14px;padding:7px 20px;border-radius:999px;background:${dir.proofSoft};border:1px solid ${dir.proofColor}66;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:800;letter-spacing:0.1em;color:${dir.proofColor};">⚡ OLVEN TECH ENTERED THE CHAT</div>`
-    : '';
-
-  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 840px; height: ${isOlven ? '320' : '250'}px; background: transparent; display: flex; flex-direction: column; justify-content: center; padding: 12px 16px; }
-    .wrap { display: flex; flex-direction: column; max-width: 90%; align-self: ${isRight ? 'flex-end' : 'flex-start'}; align-items: ${isRight ? 'flex-end' : 'flex-start'}; }
-    .who { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: ${whoColor}; margin-bottom: 8px; }
-    .b {
-      padding: 24px 30px; border-radius: 28px;
-      ${isRight ? 'border-bottom-right-radius: 8px;' : 'border-bottom-left-radius: 8px;'}
-      background: ${bg}; border: 1.5px solid ${border};
-      font-size: 29px; font-weight: 700; line-height: 1.32; color: ${txtColor};
-      box-shadow: 0 18px 42px -14px rgba(0,0,0,${dir.isDark ? '0.52' : '0.12'});
-    }
-  </style></head><body>
-    ${badge}
-    <div class="wrap">
-      <div class="who">${esc(msgObj.who)}</div>
-      <div class="b">${esc(msgObj.msg)}</div>
-    </div>
-  </body></html>`;
-}
-
-function buildSwitchCardHtml(step, dir, interB64, monoB64) {
-  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 860px; height: 184px; background: transparent; display: flex; align-items: center; justify-content: center; padding: 12px; }
-    .row {
-      width: 100%; padding: 28px 34px; border-radius: 28px;
-      background: ${dir.surfaceBg}; border: 1.5px solid ${dir.proofColor}55;
-      box-shadow: 0 22px 48px -16px rgba(0,0,0,${dir.isDark ? '0.55' : '0.12'});
-      display: flex; align-items: center; justify-content: space-between; gap: 22px;
-    }
-    .left { display: flex; align-items: center; gap: 22px; }
-    .num { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 800; color: ${dir.proofColor}; background: ${dir.proofSoft}; padding: 10px 16px; border-radius: 14px; }
-    .txt { font-size: 33px; font-weight: 800; letter-spacing: -0.03em; color: ${dir.ink}; }
-    .toggle {
-      width: 88px; height: 50px; border-radius: 999px; background: #10B981;
-      padding: 5px; display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.18), 0 0 20px rgba(16,185,129,0.45);
-    }
-    .knob { width: 40px; height: 40px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.28); }
-  </style></head><body>
-    <div class="row">
-      <div class="left"><span class="num">${step.num}</span><span class="txt">${esc(step.title)}</span></div>
-      <div class="toggle"><div class="knob"></div></div>
-    </div>
-  </body></html>`;
-}
-
-function buildBaseScenesHtml(script, dir, interB64, monoB64) {
-  const logoUri = dir.isDark
-    ? loadTransparentLogoDataUri('#F8FAFC', '#141924')
-    : loadTransparentLogoDataUri('#141413', '#FFFDF9');
-
-  const n0 = script.notifs[0];
-
-  // BASE 0: Top Viral Hook + 3D Titanium iPhone Lockscreen with Notification #1 ALREADY LIVE at Frame 0!
-  const base0 = `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 960px; height: 1580px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 20px 30px; }
-    .top-hook { width: 100%; text-align: center; margin-bottom: 34px; }
-    .ey { display: inline-flex; align-items: center; gap: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 800; letter-spacing: 0.14em; color: ${dir.accent}; margin-bottom: 14px; }
-    .h { font-size: 62px; font-weight: 900; line-height: 1.04; letter-spacing: -0.045em; color: ${dir.ink}; }
-    .ha { color: ${dir.accent}; }
-    .iphone {
-      width: 790px; height: 1120px; border-radius: 82px; padding: 20px;
-      background: linear-gradient(145deg, #4B5262 0%, #171A21 50%, #303645 100%);
-      box-shadow: 0 44px 92px -20px rgba(0,0,0,${dir.isDark ? '0.78' : '0.32'}), inset 0 2px 3px rgba(255,255,255,0.45);
-    }
-    .screen {
-      width: 100%; height: 100%; border-radius: 66px;
-      background: radial-gradient(ellipse 90% 60% at 50% 10%, #1B243B 0%, #0B0F1A 60%, #05070D 100%);
-      padding: 30px 30px; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.14);
-      display: flex; flex-direction: column; align-items: center;
-    }
-    .island { width: 180px; height: 34px; border-radius: 999px; background: #000; border: 1px solid rgba(255,255,255,0.12); margin-bottom: 24px; }
-    .clock { font-size: 96px; font-weight: 800; letter-spacing: -0.04em; line-height: 0.96; color: #FFFFFF; }
-    .date { font-size: 22px; font-weight: 600; color: rgba(255,255,255,0.72); margin-top: 8px; margin-bottom: 34px; }
-    .n1 {
-      width: 100%; border-radius: 28px; padding: 24px 28px;
-      background: rgba(26, 32, 46, 0.94); border: 1.5px solid rgba(255,255,255,0.18);
-      box-shadow: 0 20px 44px -12px rgba(0,0,0,0.55);
-    }
-    .nh { display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; color: #93C5FD; margin-bottom: 8px; }
-    .nt { font-size: 27px; font-weight: 820; letter-spacing: -0.03em; color: #FFFFFF; }
-    .nb { margin-top: 6px; font-size: 20px; color: rgba(255,255,255,0.85); }
-  </style></head><body>
-    <div class="top-hook">
-      <div class="ey">● REAL CLIENT STORY</div>
-      <div class="h">${esc(script.hookLines[0])} ${esc(script.hookLines[1])} <span class="ha">${esc(script.hookLines[2])}</span></div>
-    </div>
-    <div class="iphone"><div class="screen">
-      <div class="island"></div>
-      <div class="clock">${esc(script.timeStr.replace(/\s*(AM|PM)/i, ''))}</div>
-      <div class="date">Tuesday · Live Production Alert</div>
-      <div class="n1">
-        <div class="nh"><span>● ${esc(n0.app)}</span><span>${esc(n0.time)}</span></div>
-        <div class="nt">${esc(n0.title)}</div>
-        <div class="nb">${esc(n0.body)}</div>
-      </div>
-    </div></div>
-  </body></html>`;
-
-  // BASE 1: Live Workplace Group-Chat Window Frame (#emergency-chat)
-  const base1 = `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 960px; height: 1380px; background: transparent; padding: 30px; display: flex; }
-    .win {
-      flex: 1; border-radius: 38px; overflow: hidden;
-      background: ${dir.surfaceBg}; border: 1.5px solid ${dir.surfaceBorder};
-      box-shadow: 0 38px 86px -22px rgba(0,0,0,${dir.isDark ? '0.68' : '0.14'});
-      display: flex; flex-direction: column;
-    }
-    .bar {
-      padding: 26px 34px; border-bottom: 1px solid ${dir.surfaceBorder};
-      display: flex; align-items: center; justify-content: space-between;
-      background: ${dir.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.03)'};
-    }
-    .dots { display: flex; gap: 11px; }
-    .d { width: 15px; height: 15px; border-radius: 50%; }
-    .chan { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 800; color: ${dir.ink}; }
-    .sev { padding: 8px 18px; border-radius: 999px; background: ${dir.alertSoft}; color: ${dir.alert}; font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 800; letter-spacing: 0.08em; }
-  </style></head><body>
-    <div class="win">
-      <div class="bar">
-        <div class="dots"><span class="d" style="background:#FF5F57;"></span><span class="d" style="background:#FEBC2E;"></span><span class="d" style="background:#28C840;"></span></div>
-        <div class="chan">#emergency-chat · ${esc(script.timeStr)}</div>
-        <div class="sev">LIVE DRAMA</div>
-      </div>
-    </div>
-  </body></html>`;
-
-  // BASE 2: Interactive Fix Switches Header Backdrop
-  const base2 = `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 960px; height: 1380px; background: transparent; padding: 50px 44px; display: flex; flex-direction: column; }
-    .ey { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 800; color: ${dir.inkMuted}; letter-spacing: 0.14em; }
-    .badge { padding: 10px 20px; border-radius: 999px; background: ${dir.proofSoft}; color: ${dir.proofColor}; font-size: 17px; }
-    .title { font-size: 68px; font-weight: 900; line-height: 1.04; letter-spacing: -0.045em; color: ${dir.ink}; }
-    .sub { margin-top: 16px; font-size: 28px; font-weight: 550; color: ${dir.inkMuted}; }
-  </style></head><body>
-    <div class="ey"><span class="badge">✓ THE OLVEN FIX</span><span>03 / 05</span></div>
-    <div class="title">Fixed in days.<br/>3 simple switches.</div>
-    <div class="sub">Zero 6-month agency rewrites. Shipped live inside their stack.</div>
-  </body></html>`;
-
-  // BASE 3: Giant Dopamine Payoff Panel (Struck-through Disaster -> Huge Emerald Result!)
-  const base3 = `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 960px; height: 920px; background: transparent; padding: 36px; display: flex; align-items: center; }
-    .panel {
-      width: 100%; border-radius: 40px; padding: 56px 54px;
-      background: ${dir.surfaceBg}; border: 1.5px solid ${dir.surfaceBorder};
-      box-shadow: 0 38px 86px -22px rgba(0,0,0,${dir.isDark ? '0.70' : '0.12'});
-    }
-    .ey { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 800; color: ${dir.inkMuted}; letter-spacing: 0.14em; }
-    .badge { padding: 10px 20px; border-radius: 999px; background: ${dir.proofSoft}; color: ${dir.proofColor}; }
-    .strike {
-      display: inline-block; padding: 12px 22px; border-radius: 16px; margin-bottom: 16px;
-      background: ${dir.alertSoft}; color: ${dir.alert};
-      font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 800;
-      text-decoration: line-through; text-decoration-thickness: 3px;
-    }
-    .hn { font-size: ${script.heroFontPx}px; font-weight: 900; line-height: 0.92; letter-spacing: -0.06em; color: ${dir.proofColor}; font-variant-numeric: tabular-nums; }
-    .hl { margin-top: 22px; font-size: 48px; font-weight: 850; letter-spacing: -0.04em; color: ${dir.ink}; }
-    .hs { margin-top: 10px; font-size: 27px; color: ${dir.inkMuted}; }
-  </style></head><body>
-    <div class="panel">
-      <div class="ey"><span class="badge">✓ PROBLEM SOLVED</span><span>04 / 05</span></div>
-      <div class="strike">BEFORE: ${esc(script.beforeStat)}</div>
-      <div class="hn">${esc(script.heroVal)}</div>
-      <div class="hl">${esc(script.heroLabel)}.</div>
-      <div class="hs">${esc(script.heroSub)}</div>
-    </div>
-  </body></html>`;
-
-  // BASE 4: Punchy, Shareable Brand Drop
-  const base4 = `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 960px; height: 1120px; background: transparent; padding: 40px 44px; display: flex; flex-direction: column; justify-content: center; }
-    .ey { display: flex; justify-content: space-between; margin-bottom: 30px; font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 800; color: ${dir.inkMuted}; letter-spacing: 0.14em; }
-    .cl { font-size: 78px; font-weight: 900; line-height: 1.04; letter-spacing: -0.048em; color: ${dir.ink}; }
-    .ca { color: ${dir.accent}; }
-    .sub { margin-top: 24px; font-size: 30px; font-weight: 600; color: ${dir.inkMuted}; line-height: 1.35; }
-    .brand {
-      margin-top: 48px; padding: 34px 40px; border-radius: 30px;
-      background: ${dir.surfaceBg}; border: 1.5px solid ${dir.surfaceBorder};
-      box-shadow: 0 28px 68px -20px rgba(0,0,0,${dir.isDark ? '0.62' : '0.11'});
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .logo { height: 48px; width: auto; display: block; }
-    .city { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 800; letter-spacing: 0.14em; color: ${dir.inkMuted}; }
-  </style></head><body>
-    <div class="ey"><span>OLVEN TECH · NEW YORK</span><span>05 / 05</span></div>
-    <div class="cl">Don't be the next</div>
-    <div class="cl">9 AM Slack meltdown.</div>
-    <div class="cl ca">We fix it in days.</div>
-    <div class="sub">Follow for wild real tech stories that save real money.</div>
-    <div class="brand">
-      ${logoUri ? `<img class="logo" src="${logoUri}" alt="Olven Tech" />` : `<div style="font-size:38px;font-weight:800;">Olven Tech</div>`}
-      <span class="city">OLVENTECH.COM</span>
-    </div>
-  </body></html>`;
-
-  return [base0, base1, base2, base3, base4];
-}
-
-function buildCfoReplyHtml(script, dir, interB64, monoB64) {
-  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 880px; height: 260px; background: transparent; display: flex; align-items: center; justify-content: center; padding: 14px; }
-    .card {
-      width: 100%; padding: 26px 32px; border-radius: 28px;
-      background: ${dir.isDark ? 'rgba(16, 185, 129, 0.18)' : '#ECFDF5'};
-      border: 1.5px solid ${dir.proofColor}66;
-      box-shadow: 0 22px 48px -14px rgba(0,0,0,${dir.isDark ? '0.55' : '0.12'});
-    }
-    .who { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; color: ${dir.proofColor}; margin-bottom: 8px; }
-    .msg { font-size: 27px; font-weight: 740; line-height: 1.32; color: ${dir.ink}; }
-  </style></head><body>
-    <div class="card">
-      <div class="who">💬 CLIENT REPLY · VERIFIED RESULT</div>
-      <div class="msg">"${esc(script.cfoReact)}"</div>
-    </div>
-  </body></html>`;
-}
-
-function buildCtaPillHtml(dir, interB64, monoB64) {
-  const bg = dir.isDark ? '#FFFFFF' : '#141413';
-  const ink = dir.isDark ? '#0A0B0E' : '#FAF8F5';
-  return `<!doctype html><html><head><meta charset="utf-8"><style>${fontsCss(interB64, monoB64)}
-    html, body { width: 900px; height: 160px; background: transparent; display: flex; align-items: center; justify-content: center; padding: 12px; }
-    .pill {
-      padding: 24px 44px; border-radius: 999px; background: ${bg}; color: ${ink};
-      font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 800; letter-spacing: 0.04em;
-      box-shadow: 0 20px 44px -12px rgba(0,0,0,0.45);
-    }
-  </style></head><body><div class="pill">Save &amp; Share  ·  contact@olventech.com</div></body></html>`;
-}
-
-async function renderAllAssets(script, dir, workDir) {
-  const interB64 = fontBase64('Inter.woff2');
-  const monoB64 = fontBase64('IBMPlexMono.woff2');
-  const baseHtmls = buildBaseScenesHtml(script, dir, interB64, monoB64);
-
-  const execPath = detectChromeExecutable();
-  const browser = await chromium.launch({
-    headless: true,
-    ...(execPath ? { executablePath: execPath } : {}),
-    args: ['--no-sandbox', '--disable-dev-shm-usage'],
-  });
-
-  const out = { depths: [], bases: [], overlays: {} };
-  async function snap(html, w, h, dpr, filename) {
-    const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: dpr });
-    const page = await ctx.newPage();
-    await page.setContent(html, { waitUntil: 'load' });
-    await page.evaluate(() => document.fonts.ready);
-    const fp = path.join(workDir, filename);
-    await page.screenshot({ path: fp, type: 'png', omitBackground: true });
-    await ctx.close();
-    return fp;
+    ctx.restore();
   }
+
+  function drawExecText(lines, yCenter, size, color, alpha, yOff = 0, darkBg = false) {
+    if (alpha <= 0.01) return;
+    ctx.save(); ctx.globalAlpha = clamp(alpha, 0, 1);
+    let sz = size;
+    const maxW = W - 110;
+    while (sz > 38) {
+      let widest = 0;
+      for (const ln of lines) {
+        const isIt = typeof ln !== 'string' && ln.italic;
+        ctx.font = isIt
+          ? ('italic 700 ' + Math.round(sz * 1.06) + 'px "Playfair Display", Georgia, serif')
+          : ('800 ' + sz + 'px "Plus Jakarta Sans", sans-serif');
+        widest = Math.max(widest, ctx.measureText(typeof ln === 'string' ? ln : ln.text).width);
+      }
+      if (widest <= maxW) break;
+      sz -= 4;
+    }
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    if (darkBg) { ctx.shadowColor = 'rgba(0,0,0,0.68)'; ctx.shadowBlur = 24; }
+    const lh = sz * 1.12;
+    const y0 = yCenter - ((lines.length - 1) * lh) / 2 + yOff;
+    lines.forEach((ln, idx) => {
+      const isIt = typeof ln !== 'string' && ln.italic;
+      ctx.font = isIt
+        ? ('italic 700 ' + Math.round(sz * 1.06) + 'px "Playfair Display", Georgia, serif')
+        : ('800 ' + sz + 'px "Plus Jakarta Sans", sans-serif');
+      ctx.fillStyle = typeof ln === 'string' ? color : ln.color;
+      ctx.fillText(typeof ln === 'string' ? ln : ln.text, W * 0.5, y0 + idx * lh);
+    });
+    ctx.restore();
+  }
+
+  function drawAct4Payoff(t, accentHex = '#F5C451', bgCenter = '#11221C', bgEdge = '#05080B') {
+    if (t < 12.35) return;
+    const fbg = easeInOutQuart((t - 12.35) / 0.52);
+    ctx.save(); ctx.globalAlpha = fbg;
+    const bg = ctx.createRadialGradient(W * 0.5, H * 0.44, 50, W * 0.5, H * 0.5, H * 0.72);
+    bg.addColorStop(0, bgCenter); bg.addColorStop(0.55, bgEdge); bg.addColorStop(1, '#030406');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    // Fine European champagne hairline frame
+    ctx.strokeStyle = 'rgba(229, 198, 126, 0.20)'; ctx.lineWidth = 1.5;
+    ctx.strokeRect(48, 48, W - 96, H - 96);
+    ctx.restore();
+
+    const p1 = easeOutCubic((t - 12.60) / 0.48);
+    const p2 = easeOutCubic((t - 13.00) / 0.48);
+    const p3 = easeOutCubic((t - 13.45) / 0.48);
+
+    drawExecText([{ text: CFG.payoffBig, color: accentHex, italic: true }], 840, 114, accentHex, p1, (1 - p1) * 32, true);
+    drawExecText([{ text: CFG.payoffSub, color: '#FAF6EE' }], 985, 62, '#FAF6EE', p2, (1 - p2) * 24, true);
+
+    ctx.save(); ctx.globalAlpha = p3;
+    if (logoImg.complete && logoImg.naturalWidth > 0) {
+      const lh = 44, lw = lh * (logoImg.naturalWidth / logoImg.naturalHeight);
+      ctx.drawImage(logoImg, (W - lw) / 2, 1255, lw, lh);
+    }
+    ctx.fillStyle = '#94A3B8'; ctx.font = '500 32px "Plus Jakarta Sans", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(CFG.cta, W * 0.5, 1345);
+    ctx.restore();
+  }
+
+  // =========================================================================
+  // WORLD 1: ZURICH ARCHITECTURAL BOTTLENECK (Flow Style 1 — Upgraded Hardware Spheres)
+  // =========================================================================
+  const W1 = (() => {
+    const rng = mkRng(2104);
+    const wallY = 1040, wallH = 68, gapW = 86, cx = W * 0.5;
+    const spheres = [];
+    for (let i = 0; i < 32; i++) {
+      spheres.push({
+        id: i, lane: i % 8, isJam: i === 0,
+        x: cx + (rng() - 0.5) * 760, y: 1220 + (i / 32) * 580,
+        vx: 0, vy: -90 - rng() * 60, r: 36,
+      });
+    }
+    // Pre-simulate 480 frames cleanly so scrubbing/rendering is deterministic!
+    const history = [];
+    const cur = spheres.map((s) => ({ ...s }));
+    for (let f = 0; f < ${TOTAL_FRAMES}; f++) {
+      const t = f / FPS;
+      const isExpress = t >= 7.55;
+      for (const b of cur) {
+        if (!isExpress) {
+          if (b.isJam && t >= 1.2) {
+            b.x = lerp(b.x, cx, 0.16);
+            b.y = lerp(b.y, wallY + wallH * 0.5, 0.16);
+          } else {
+            const dx = cx - b.x, dy = (wallY + wallH + 34) - b.y;
+            const d = Math.hypot(dx, dy) + 1;
+            b.vx = b.vx * 0.86 + (dx / d) * 14;
+            b.vy = b.vy * 0.86 + (dy / d) * 14;
+            b.x += b.vx * 0.55; b.y += b.vy * 0.55;
+            if (b.y < wallY + wallH + b.r + 4) { b.y = wallY + wallH + b.r + 4; b.vy = Math.abs(b.vy) * 0.35; }
+            b.x = clamp(b.x, 78, W - 78); b.y = clamp(b.y, wallY + wallH + b.r, H - 110);
+          }
+        } else {
+          const laneX = 110 + (b.lane / 7) * (W - 220);
+          b.x = lerp(b.x, laneX, 0.14);
+          b.y -= 28 + (b.lane % 3) * 4;
+          if (b.y < 520) b.y = H - 80 + (b.id % 4) * 35;
+        }
+      }
+      if (!isExpress) {
+        for (let i = 1; i < cur.length; i++) for (let j = i + 1; j < cur.length; j++) {
+          const a = cur[i], b = cur[j];
+          const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1;
+          const minD = a.r + b.r + 3;
+          if (d < minD) {
+            const push = (minD - d) * 0.45;
+            a.x -= (dx / d) * push; a.y -= (dy / d) * push;
+            b.x += (dx / d) * push; b.y += (dy / d) * push;
+          }
+        }
+      }
+      history.push(cur.map((s) => ({ x: s.x, y: s.y, isJam: s.isJam, lane: s.lane, r: s.r })));
+    }
+
+    return function render(frameIdx, t) {
+      const darkT = easeInOutQuart((t - 7.25) / 0.65);
+      const r = Math.round(lerp(244, 8, darkT)), g = Math.round(lerp(241, 16, darkT)), b = Math.round(lerp(234, 20, darkT));
+      ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.strokeStyle = darkT > 0.5 ? 'rgba(52,211,153,0.06)' : 'rgba(15,23,42,0.05)';
+      ctx.lineWidth = 1;
+      for (let x = 54; x < W; x += 54) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (let y = 54; y < H; y += 54) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+      if (t < 12.6) {
+        const alphaAll = t > 12.1 ? 1 - (t - 12.1) / 0.5 : 1;
+        ctx.save(); ctx.globalAlpha = alphaAll;
+
+        // Express lane guides in Act 3
+        if (darkT > 0.1) {
+          ctx.save(); ctx.globalAlpha = darkT * 0.45 * alphaAll;
+          for (let l = 0; l < 8; l++) {
+            const lx = 110 + (l / 7) * (W - 220);
+            ctx.strokeStyle = '#34D399'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(lx, 540); ctx.lineTo(lx, H - 80); ctx.stroke();
+          }
+          ctx.restore();
+        }
+
+        // Architectural Obsidian Wall parting smoothly at t=7.55s
+        const wallOpen = easeInOutQuart((t - 7.45) / 0.65);
+        const halfGap = lerp(gapW / 2, W * 0.55, wallOpen);
+        if (halfGap < W * 0.52) {
+          const wg = ctx.createLinearGradient(0, wallY, 0, wallY + wallH);
+          wg.addColorStop(0, '#1B202C'); wg.addColorStop(1, '#07090E');
+          ctx.fillStyle = wg;
+          ctx.fillRect(0, wallY, cx - halfGap, wallH);
+          ctx.fillRect(cx + halfGap, wallY, W - (cx + halfGap), wallH);
+          ctx.fillStyle = '#D97706';
+          ctx.fillRect(cx - halfGap - 8, wallY - 3, 8, wallH + 6);
+          ctx.fillRect(cx + halfGap, wallY - 3, 8, wallH + 6);
+        }
+
+        const snap = history[clamp(frameIdx, 0, history.length - 1)];
+        for (const s of snap) {
+          if (darkT > 0.5) {
+            drawSphere(s.x, s.y, s.r * 0.85, '#ECFDF5', '#34D399', '#065F46');
+          } else if (s.isJam) {
+            drawSphere(s.x, s.y, s.r * 1.12, '#FFE4E6', '#E11D48', '#881337', '', '#FFF', 1, 0.84, 1.16);
+          } else {
+            drawSphere(s.x, s.y, s.r, '#E2E8F0', '#3B82F6', '#1E3A8A');
+          }
+        }
+        ctx.restore();
+      }
+
+      if (t < 3.1) {
+        const fi = easeOutCubic(t / 0.45), fo = t > 2.7 ? 1 - (t - 2.7) / 0.4 : 1;
+        drawExecText([{ text: CFG.setupLine1, color: '#0D1017' }, { text: CFG.setupLine2, color: '#C81922', italic: true }], 340, 86, '#0D1017', fi * fo, (1 - fi) * 26, false);
+      }
+      if (t >= 3.2 && t < 7.25) {
+        const fi = easeOutCubic((t - 3.2) / 0.35), fo = t > 6.85 ? 1 - (t - 6.85) / 0.4 : 1;
+        const isTwist = t >= 5.3;
+        drawExecText([{ text: isTwist ? CFG.twistPunch : CFG.stuckStat, color: '#C81922', italic: isTwist }], 350, isTwist ? 114 : 88, '#C81922', fi * fo, (1 - fi) * 22, false);
+      }
+      if (t >= 7.65 && t < 12.35) {
+        const fi = easeOutCubic((t - 7.65) / 0.4), fo = t > 11.95 ? 1 - (t - 11.95) / 0.4 : 1;
+        drawExecText([{ text: CFG.fixLine1, color: '#FAF6EE' }, { text: CFG.fixLine2, color: '#34D399', italic: true }], 340, 86, '#FAF6EE', fi * fo, (1 - fi) * 24, true);
+      }
+      drawAct4Payoff(t, '#34D399', '#0B241E', '#05080B');
+    };
+  })();
+
+  // =========================================================================
+  // WORLD 2: WALL STREET × GENEVA WIRE LEDGER FLOW (2s Lag Double-Wire -> Gold SHA-256 Lock)
+  // =========================================================================
+  const W2 = (() => {
+    return function render(frameIdx, t) {
+      const darkT = easeInOutQuart((t - 7.25) / 0.70);
+      const r = Math.round(lerp(244, 9, darkT)), g = Math.round(lerp(241, 13, darkT)), b = Math.round(lerp(234, 20, darkT));
+      ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')'; ctx.fillRect(0, 0, W, H);
+
+      ctx.strokeStyle = darkT > 0.5 ? 'rgba(245,196,81,0.05)' : 'rgba(15,23,42,0.05)'; ctx.lineWidth = 1;
+      for (let x = 60; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (let y = 60; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+      const cx = W * 0.5, gateY = 1040, chanW = 240, slabH = 74, gap = 156;
+      if (t < 12.6) {
+        const trA = t > 12.1 ? 1 - (t - 12.1) / 0.5 : 1;
+        ctx.save(); ctx.globalAlpha = trA;
+        ctx.fillStyle = darkT > 0.5 ? 'rgba(255,255,255,0.035)' : 'rgba(15,23,42,0.045)';
+        ctx.fillRect(cx - chanW / 2, 540, chanW, 1220);
+        ctx.strokeStyle = darkT > 0.5 ? 'rgba(245,196,81,0.22)' : 'rgba(15,23,42,0.14)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(cx - chanW / 2, 540); ctx.lineTo(cx - chanW / 2, 1760); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx + chanW / 2, 540); ctx.lineTo(cx + chanW / 2, 1760); ctx.stroke();
+
+        const isLag = (t >= 3.1 && t < 5.3), isLocked = (t >= 7.6);
+        const gSlab = ctx.createLinearGradient(0, gateY, 0, gateY + slabH);
+        gSlab.addColorStop(0, '#1E2533'); gSlab.addColorStop(1, '#090C12');
+        ctx.fillStyle = gSlab;
+        ctx.fillRect(0, gateY, cx - gap / 2, slabH); ctx.fillRect(cx + gap / 2, gateY, W - (cx + gap / 2), slabH);
+
+        const trimCol = isLocked ? '#F5C451' : (isLag ? '#C81922' : '#059669');
+        ctx.fillStyle = trimCol;
+        ctx.fillRect(cx - gap / 2 - 10, gateY - 4, 10, slabH + 8); ctx.fillRect(cx + gap / 2, gateY - 4, 10, slabH + 8);
+
+        ctx.fillStyle = '#CBD5E1'; ctx.font = '700 19px "IBM Plex Mono", monospace';
+        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        ctx.fillText(isLocked ? 'LEDGER KEY GATE' : 'BANK API GATE', cx - gap / 2 - 28, gateY + slabH / 2);
+        ctx.textAlign = 'left'; ctx.fillStyle = trimCol;
+        ctx.fillText(isLocked ? 'SHA-256 LOCKED' : (isLag ? '2.0s LAG' : 'NORMAL 120ms'), cx + gap / 2 + 28, gateY + slabH / 2);
+
+        if (t < 3.05) {
+          drawSphere(cx, lerp(560, 1740, easeOutCubic(t / 2.8)), 56, '#ECFDF5', '#10B981', '#065F46', CFG.wireVal);
+        }
+        if (t >= 3.05 && t < 7.45) {
+          const f2 = t > 7.1 ? 1 - (t - 7.1) / 0.35 : 1;
+          let y1 = 620, x1 = cx;
+          if (t < 3.7) y1 = lerp(600, gateY + 36, easeOutCubic((t - 3.05) / 0.65));
+          else if (t < 5.15) y1 = gateY + 36 + Math.sin((t - 3.7) * 14) * 4;
+          else { const d = easeOutCubic((t - 5.15) / 0.65); y1 = lerp(gateY + 36, 1480, d); x1 = lerp(cx, cx - 84, d); }
+          drawSphere(x1, y1, 58, '#FFF1F2', '#C81922', '#881337', CFG.wireVal, '#FFFFFF', f2);
+          if (t >= 4.35) {
+            const p2 = easeOutCubic((t - 4.35) / 1.45);
+            const y2 = lerp(580, 1480, p2);
+            const x2 = t > 5.2 ? lerp(cx, cx + 84, easeOutCubic((t - 5.2) / 0.55)) : cx;
+            drawSphere(x2, y2, 58, '#FFF1F2', '#C81922', '#881337', CFG.wireVal, '#FFFFFF', f2);
+          }
+          if (t >= 5.55) {
+            const si = easeOutCubic((t - 5.55) / 0.35);
+            ctx.save(); ctx.globalAlpha = si * f2;
+            ctx.fillStyle = '#0F172A'; ctx.beginPath(); ctx.roundRect(cx - 275, 1605, 550, 86, 12); ctx.fill();
+            ctx.fillStyle = '#FF453A'; ctx.font = '700 34px "IBM Plex Mono", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(CFG.doubleStat, cx, 1649); ctx.restore();
+          }
+        }
+        if (t >= 7.5 && t < 12.5) {
+          const lockIn = easeOutCubic((t - 7.5) / 0.45);
+          ctx.save(); ctx.strokeStyle = '#F5C451'; ctx.shadowColor = '#F5C451'; ctx.shadowBlur = 22; ctx.lineWidth = 5;
+          ctx.beginPath(); ctx.moveTo(cx - (gap / 2) * lockIn, gateY + slabH / 2); ctx.lineTo(cx + (gap / 2) * lockIn, gateY + slabH / 2); ctx.stroke(); ctx.restore();
+          [7.7, 9.2, 10.7].forEach((wt) => {
+            const p = (t - wt) / 1.85;
+            if (p >= 0 && p <= 1) drawSphere(cx, lerp(580, 1740, p), 52, '#FEF9C3', '#F5C451', '#92400E', CFG.wireVal, '#0B0F17');
+          });
+          [8.55, 10.05].forEach((dt0) => {
+            const dp = (t - dt0) / 1.25;
+            if (dp >= 0 && dp <= 1) {
+              if (dp < 0.45) drawSphere(cx + 22, lerp(580, gateY - 46, dp / 0.45), 44, '#FFE4E6', '#E11D48', '#881337', 'DUP', '#FFFFFF', 0.95);
+              else {
+                const b = easeOutCubic((dp - 0.45) / 0.55);
+                drawSphere(lerp(cx + 22, cx + 340, b), lerp(gateY - 46, gateY - 120, b), 44, '#FFE4E6', '#E11D48', '#881337', 'DUP', '#FFFFFF', 1 - b);
+              }
+            }
+          });
+          ctx.save(); ctx.fillStyle = 'rgba(245,196,81,0.12)'; ctx.strokeStyle = 'rgba(245,196,81,0.45)'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.roundRect(cx - 295, 1605, 590, 86, 12); ctx.fill(); ctx.stroke();
+          ctx.fillStyle = '#F5C451'; ctx.font = '700 32px "IBM Plex Mono", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(CFG.safeStat, cx, 1649); ctx.restore();
+        }
+        ctx.restore();
+      }
+
+      if (t < 3.0) {
+        const fi = easeOutCubic(t / 0.45), fo = t > 2.6 ? 1 - (t - 2.6) / 0.4 : 1;
+        drawExecText([{ text: CFG.setupLine1, color: '#0F172A' }, { text: CFG.setupLine2, color: '#059669', italic: true }], 330, 84, '#0F172A', fi * fo, (1 - fi) * 24, false);
+      }
+      if (t >= 3.1 && t < 7.25) {
+        const fi = easeOutCubic((t - 3.1) / 0.35), fo = t > 6.85 ? 1 - (t - 6.85) / 0.4 : 1;
+        const isD = t >= 5.5;
+        drawExecText(isD ? [{ text: CFG.twistPunch, color: '#C81922', italic: true }] : [{ text: CFG.stuckStat, color: '#0F172A' }], 335, isD ? 104 : 84, '#0F172A', fi * fo, (1 - fi) * 22, false);
+      }
+      if (t >= 7.6 && t < 12.35) {
+        const fi = easeOutCubic((t - 7.6) / 0.4), fo = t > 11.95 ? 1 - (t - 11.95) / 0.4 : 1;
+        drawExecText([{ text: CFG.fixLine1, color: '#FAF6EE' }, { text: CFG.fixLine2, color: '#F5C451', italic: true }], 330, 84, '#FAF6EE', fi * fo, (1 - fi) * 24, true);
+      }
+      drawAct4Payoff(t, '#F5C451', '#13211C', '#070B0E');
+    };
+  })();
+
+  // =========================================================================
+  // WORLD 3: AEROSPACE MONOLITH BYPASS (400 Titanium Orders Halted by 1 Comma -> Bypass Rail)
+  // =========================================================================
+  const W3 = (() => {
+    return function render(frameIdx, t) {
+      const isFix = t >= 7.55;
+      const bg = ctx.createRadialGradient(W * 0.5, H * 0.54, 40, W * 0.5, H * 0.54, H * 0.78);
+      bg.addColorStop(0, isFix ? '#0D261D' : '#141820'); bg.addColorStop(0.55, '#070A0F'); bg.addColorStop(1, '#040507');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+      if (t < 12.6) {
+        const trA = t > 12.1 ? 1 - (t - 12.1) / 0.5 : 1;
+        ctx.save(); ctx.globalAlpha = trA;
+        const cols = 12, rows = 14, padX = 96, y0 = 600, gW = W - padX * 2, gH = 1040;
+        const cw = gW / cols, ch = gH / rows;
+        const fIdx = 15; // Early fault!
+        const scanIdx = isFix ? Math.floor((t - 7.55) * 48) : Math.min(fIdx, Math.floor(t * 7.5));
+
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const idx = r * cols + c;
+          const bx = padX + c * cw + 5, by = y0 + r * ch + 5, bw = cw - 10, bh = ch - 10;
+          if (idx === fIdx && t >= 2.0) {
+            const isolated = isFix;
+            ctx.fillStyle = isolated ? '#D97706' : '#FF3B30';
+            ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 20;
+            ctx.beginPath(); ctx.roundRect(bx - 1, by - 1, bw + 2, bh + 2, 6); ctx.fill(); ctx.shadowBlur = 0;
+            ctx.fillStyle = '#FFFFFF'; ctx.font = '800 22px "IBM Plex Mono", monospace';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(CFG.faultSym, bx + bw / 2, by + bh / 2 - 1);
+          } else if (idx < scanIdx) {
+            const g = ctx.createLinearGradient(bx, by, bx, by + bh);
+            if (isFix) { g.addColorStop(0, '#6EE7B7'); g.addColorStop(1, '#059669'); }
+            else { g.addColorStop(0, '#E2E8F0'); g.addColorStop(1, '#94A3B8'); }
+            ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 6); ctx.fill();
+          } else {
+            ctx.fillStyle = 'rgba(148,163,184,0.08)'; ctx.strokeStyle = 'rgba(148,163,184,0.16)'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
+          }
+        }
+        ctx.restore();
+      }
+
+      if (t < 3.1) {
+        const fi = easeOutCubic(t / 0.45), fo = t > 2.7 ? 1 - (t - 2.7) / 0.4 : 1;
+        drawExecText([{ text: CFG.setupLine1, color: '#F8FAFC' }, { text: CFG.setupLine2, color: '#FF3B30', italic: true }], 340, 86, '#F8FAFC', fi * fo, (1 - fi) * 24, true);
+      }
+      if (t >= 3.2 && t < 7.25) {
+        const fi = easeOutCubic((t - 3.2) / 0.35), fo = t > 6.85 ? 1 - (t - 6.85) / 0.4 : 1;
+        const isT = t >= 5.3;
+        drawExecText([{ text: isT ? CFG.twistPunch : CFG.faultStat, color: isT ? '#F5C451' : '#FF3B30', italic: isT }], 345, isT ? 108 : 84, '#FF3B30', fi * fo, (1 - fi) * 22, true);
+      }
+      if (t >= 7.6 && t < 12.35) {
+        const fi = easeOutCubic((t - 7.6) / 0.4), fo = t > 11.95 ? 1 - (t - 11.95) / 0.4 : 1;
+        drawExecText([{ text: CFG.fixLine1, color: '#FAF6EE' }, { text: CFG.fixLine2, color: '#34D399', italic: true }], 340, 84, '#FAF6EE', fi * fo, (1 - fi) * 24, true);
+      }
+      drawAct4Payoff(t, '#F5C451', '#0C261D', '#05070A');
+    };
+  })();
+
+  // =========================================================================
+  // WORLD 4: MILANESE OXBLOOD OPTICAL PRE-FILTER (Blank Pages Burning Cash -> Clean Deflector)
+  // =========================================================================
+  const W4 = (() => {
+    const rng = mkRng(2242);
+    const pages = Array.from({ length: 16 }, (_, i) => ({ idx: i, isKey: i % 4 === 2, y0: 1960 + i * 270 }));
+    const embers = Array.from({ length: 36 }, (_, i) => ({ ox: (rng() - 0.5) * 440, spd: 120 + rng() * 240, ph: rng() * 6, r: 3 + rng() * 4.5, gold: i % 2 === 0 }));
+    return function render(frameIdx, t) {
+      const isFix = t >= 7.55;
+      const bg = ctx.createRadialGradient(W * 0.5, 1080, 40, W * 0.5, 1080, 820);
+      if (isFix) { bg.addColorStop(0, '#0F2A20'); bg.addColorStop(0.6, '#071411'); bg.addColorStop(1, '#040808'); }
+      else { bg.addColorStop(0, '#460E18'); bg.addColorStop(0.55, '#24070C'); bg.addColorStop(1, '#100305'); }
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+      const scanY = 1080;
+      if (t < 12.6) {
+        const trA = t > 12.1 ? 1 - (t - 12.1) / 0.5 : 1;
+        ctx.save(); ctx.globalAlpha = trA;
+        for (const p of pages) {
+          let py = p.y0 - t * 380 - (isFix ? (t - 7.55) * 260 : 0);
+          py = ((py + 400) % 2400) - 400;
+          let px = W * 0.5, rot = 0, a = 1;
+          if (isFix && !p.isKey && py < 1300) {
+            const fl = easeOutCubic((1300 - py) / 360);
+            px -= fl * 520; rot = -fl * 0.65; a = 1 - fl * 0.85;
+          }
+          const burning = (!isFix && !p.isKey && py < scanY + 55 && py > scanY - 240);
+          ctx.save(); ctx.globalAlpha = clamp(a * trA, 0, 1); ctx.translate(px, py); ctx.rotate(rot);
+          ctx.fillStyle = p.isKey ? '#FEF3C7' : (burning ? '#FDBA74' : '#FAF6EE');
+          ctx.shadowColor = burning ? '#F97316' : 'rgba(0,0,0,0.45)'; ctx.shadowBlur = burning ? 34 : 20;
+          ctx.beginPath(); ctx.roundRect(-140, -180, 280, 360, 10); ctx.fill();
+          if (p.isKey) {
+            ctx.fillStyle = '#92400E';
+            for (let r = 0; r < 5; r++) ctx.fillRect(-94, -96 + r * 42, r === 4 ? 115 : 188, 12);
+          } else {
+            ctx.fillStyle = 'rgba(38,7,13,0.22)'; ctx.font = '700 22px "IBM Plex Mono", monospace';
+            ctx.textAlign = 'center'; ctx.fillText('BLANK PAGE', 0, 0);
+          }
+          ctx.restore();
+        }
+        const bCol = isFix ? '#34D399' : '#BAE6FD';
+        ctx.save(); ctx.strokeStyle = bCol; ctx.shadowColor = bCol; ctx.shadowBlur = 24; ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.moveTo(96, scanY); ctx.lineTo(W - 96, scanY); ctx.stroke(); ctx.restore();
+        if (!isFix && t > 2.2) {
+          for (const e of embers) {
+            const ey = scanY + 120 - ((t * e.spd + e.ph * 80) % 500);
+            ctx.fillStyle = e.gold ? '#F5C451' : '#FB923C';
+            ctx.beginPath(); ctx.arc(W * 0.5 + e.ox + Math.sin(t * 4 + e.ph) * 24, ey, e.r, 0, Math.PI * 2); ctx.fill();
+          }
+        }
+        // Silky dark top cinema matte so European headlines pop with 100% clarity
+        const matte = ctx.createLinearGradient(0, 0, 0, 620);
+        const mc = isFix ? '7,20,17' : '36,7,12';
+        matte.addColorStop(0, 'rgba(' + mc + ',0.99)'); matte.addColorStop(0.68, 'rgba(' + mc + ',0.94)'); matte.addColorStop(1, 'rgba(' + mc + ',0)');
+        ctx.fillStyle = matte; ctx.fillRect(0, 0, W, 620);
+        ctx.restore();
+      }
+
+      if (t < 3.1) {
+        const fi = easeOutCubic(t / 0.45), fo = t > 2.7 ? 1 - (t - 2.7) / 0.4 : 1;
+        drawExecText([{ text: CFG.setupLine1, color: '#FAF2E6' }, { text: CFG.setupLine2, color: '#F2B866', italic: true }], 340, 86, '#FAF2E6', fi * fo, (1 - fi) * 24, true);
+      }
+      if (t >= 3.2 && t < 7.25) {
+        const fi = easeOutCubic((t - 3.2) / 0.35), fo = t > 6.85 ? 1 - (t - 6.85) / 0.4 : 1;
+        const isT = t >= 5.3;
+        const cents = Math.min(42, Math.round(6 + easeOutCubic((t - 3.2) / 2.2) * 36));
+        drawExecText([{ text: isT ? CFG.twistPunch : ('$0.' + String(cents).padStart(2, '0') + ' / PDF'), color: '#F2B866', italic: isT }], 345, isT ? 110 : 104, '#F2B866', fi * fo, (1 - fi) * 22, true);
+      }
+      if (t >= 7.6 && t < 12.35) {
+        const fi = easeOutCubic((t - 7.6) / 0.4), fo = t > 11.95 ? 1 - (t - 11.95) / 0.4 : 1;
+        drawExecText([{ text: CFG.fixLine1, color: '#FAF6EE' }, { text: CFG.fixLine2, color: '#34D399', italic: true }], 340, 84, '#FAF6EE', fi * fo, (1 - fi) * 24, true);
+      }
+      drawAct4Payoff(t, '#F2B866', '#14261E', '#060A09');
+    };
+  })();
+
+  const WORLDS = {
+    flow_bottleneck_zurich: W1,
+    flow_wire_ledger_geneva: W2,
+    flow_monolith_milan: W3,
+    flow_optics_milan: W4,
+  };
+
+  window.renderFrame = function(frameIdx) {
+    (WORLDS[CFG.mode] || W1)(frameIdx, frameIdx / FPS);
+  };
+
+  document.fonts.ready.then(() => {
+    const waitLogo = () => {
+      if (logoImg.complete) { window.renderFrame(0); window.__CINEMA_READY__ = true; }
+      else setTimeout(waitLogo, 20);
+    };
+    waitLogo();
+  });
+  </script></body></html>`;
+}
+
+async function main() {
+  const specPath = process.argv[2];
+  const outDir = process.argv[3];
+  if (!specPath || !outDir) {
+    console.error('Usage: node render_video.js <spec.json> <out_dir>');
+    process.exit(1);
+  }
+  fs.mkdirSync(outDir, { recursive: true });
+  const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
+  const cfg = resolveReelConfig(spec);
+
+  const audioMode = AUDIO_MODE_MAP[cfg.mode] || 'physics_bottleneck';
+  const audioPath = path.join(outDir, '_score_50.m4a');
+  execFileSync('python3', [path.join(__dirname, 'mix_reel_sfx.py'), String(DURATION), audioPath, audioMode], { stdio: 'inherit' });
+
+  const browser = await chromium.launch({
+    executablePath: detectChrome(),
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+  });
+  const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
+  await page.setContent(buildCinemaHtml(cfg), { waitUntil: 'load' });
+  await page.waitForFunction(() => window.__CINEMA_READY__ === true);
+
+  const outMp4 = path.join(outDir, 'walkthrough-video.mp4');
+  const ff = spawn('ffmpeg', [
+    '-y', '-f', 'image2pipe', '-vcodec', 'mjpeg', '-r', String(FPS), '-i', '-',
+    '-i', audioPath,
+    '-map', '0:v:0', '-map', '1:a:0',
+    '-c:v', 'libx264', '-preset', 'medium', '-crf', '18',
+    '-profile:v', 'high', '-level', '4.1', '-pix_fmt', 'yuv420p',
+    '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709',
+    '-c:a', 'copy', '-movflags', '+faststart', '-shortest',
+    outMp4,
+  ], { stdio: ['pipe', 'ignore', 'pipe'] });
+
+  let ffErr = '';
+  ff.stderr.on('data', (d) => { ffErr += d.toString(); });
 
   try {
-    for (let i = 0; i < 5; i++) {
-      out.depths.push(await snap(buildDepthHtml(i, dir, interB64, monoB64), 1080, 1920, 1, `depth_${i}.png`));
+    for (let f = 0; f < TOTAL_FRAMES; f++) {
+      await page.evaluate((idx) => window.renderFrame(idx), f);
+      const buf = await page.screenshot({ type: 'jpeg', quality: 94 });
+      if (!ff.stdin.write(buf)) {
+        await new Promise((res) => ff.stdin.once('drain', res));
+      }
     }
-    const baseDims = [[960, 1580], [960, 1380], [960, 1380], [960, 920], [960, 1120]];
-    for (let i = 0; i < 5; i++) {
-      out.bases.push(await snap(baseHtmls[i], baseDims[i][0], baseDims[i][1], 2, `base_${i}.png`));
-    }
-    // Staggered interactive entertainment overlays!
-    out.overlays.notif2 = await snap(buildNotificationCardHtml(script.notifs[1], 1, interB64, monoB64), 720, 204, 2, 'notif2.png');
-    out.overlays.notif3 = await snap(buildNotificationCardHtml(script.notifs[2], 2, interB64, monoB64), 720, 204, 2, 'notif3.png');
-    out.overlays.chat1 = await snap(buildChatBubbleHtml(script.chat[0], dir, interB64, monoB64), 840, 250, 2, 'chat1.png');
-    out.overlays.chat2 = await snap(buildChatBubbleHtml(script.chat[1], dir, interB64, monoB64), 840, 250, 2, 'chat2.png');
-    out.overlays.chat3 = await snap(buildChatBubbleHtml(script.chat[2], dir, interB64, monoB64), 840, 320, 2, 'chat3.png');
-    out.overlays.fix1 = await snap(buildSwitchCardHtml(script.fixSteps[0], dir, interB64, monoB64), 860, 184, 2, 'fix1.png');
-    out.overlays.fix2 = await snap(buildSwitchCardHtml(script.fixSteps[1], dir, interB64, monoB64), 860, 184, 2, 'fix2.png');
-    out.overlays.fix3 = await snap(buildSwitchCardHtml(script.fixSteps[2], dir, interB64, monoB64), 860, 184, 2, 'fix3.png');
-    out.overlays.cfoReact = await snap(buildCfoReplyHtml(script, dir, interB64, monoB64), 880, 260, 2, 'cfo_react.png');
-    out.overlays.ctaPill = await snap(buildCtaPillHtml(dir, interB64, monoB64), 900, 160, 2, 'cta_pill.png');
+    ff.stdin.end();
+    await new Promise((res, rej) => ff.on('close', (code) => code === 0 ? res() : rej(new Error(ffErr))));
   } finally {
     await browser.close();
+    fs.rmSync(audioPath, { force: true });
   }
-  return out;
+
+  const mb = (fs.statSync(outMp4).size / 1048576).toFixed(2);
+  console.log(`[Olven 5.0 Executive Flow OK] ${outMp4} [world=${cfg.mode}, 16s, 480f @ 30fps, ${mb} MB]`);
 }
 
-function addAnimatedProp(cmds, layer, propPath, keyframes, inInf = 86, outInf = 28) {
-  for (const [time, value] of keyframes) {
-    cmds.push({ command: 'prop.addKey', params: { layer, path: propPath, time, timeBase: 'comp', value } });
-  }
-  cmds.push({
-    command: 'keys.select',
-    params: { keys: keyframes.map(([time]) => ({ layer, prop: propPath, time, timeBase: 'comp' })), add: false },
-  });
-  cmds.push({ command: 'keys.easyEase', params: { which: 'both' } });
-  cmds.push({ command: 'keys.velocity', params: { inInfluence: inInf, outInfluence: outInf } });
-}
-
-function addPopInOverlay(cmds, name, filePath, tIn, tHoldEnd, tOutEnd, x, y, z, scalePct = 50) {
-  cmds.push({ command: 'file.import', params: { paths: [filePath], addToComp: true } });
-  cmds.push({ command: 'layer.rename', params: { layer: '#1', name } });
-  cmds.push({ command: 'layer.setSwitch', params: { layers: [name], switch: 'threeD', value: true } });
-  cmds.push({ command: 'layer.timing', params: { layers: [name], in: tIn - 0.04, out: tOutEnd + 0.06 } });
-
-  const isLast = tOutEnd >= 16.0;
-  const posKeys = isLast
-    ? [[tIn, [x, y + 46, z + 30]], [tIn + 0.42, [x, y, z]], [16.0, [x, y - 6, z - 12]]]
-    : [[tIn, [x, y + 46, z + 30]], [tIn + 0.42, [x, y, z]], [tHoldEnd, [x, y - 5, z - 10]], [tOutEnd, [x, y - 34, z - 24]]];
-  const scaleKeys = isLast
-    ? [[tIn, [scalePct * 0.94, scalePct * 0.94, scalePct * 0.94]], [tIn + 0.40, [scalePct, scalePct, scalePct]], [16.0, [scalePct * 1.02, scalePct * 1.02, scalePct * 1.02]]]
-    : [[tIn, [scalePct * 0.94, scalePct * 0.94, scalePct * 0.94]], [tIn + 0.40, [scalePct, scalePct, scalePct]], [tOutEnd, [scalePct * 1.01, scalePct * 1.01, scalePct * 1.01]]];
-  const opKeys = isLast
-    ? [[tIn, 0], [tIn + 0.30, 100], [16.0, 100]]
-    : [[tIn, 0], [tIn + 0.30, 100], [tHoldEnd, 100], [tOutEnd, 0]];
-
-  addAnimatedProp(cmds, name, 'transform/position', posKeys, 88, 24);
-  addAnimatedProp(cmds, name, 'transform/scale', scaleKeys, 84, 30);
-  addAnimatedProp(cmds, name, 'transform/opacity', opKeys, 70, 45);
-}
-
-function pickDirector(spec, directorOverride) {
-  if (directorOverride && DIRECTORS[directorOverride]) return DIRECTORS[directorOverride];
-  if (process.env.OLVEN_SEQ_INDEX !== undefined && process.env.OLVEN_SEQ_INDEX !== '') {
-    const idx = Math.abs(parseInt(process.env.OLVEN_SEQ_INDEX, 10) || 0);
-    return DIRECTORS[DIRECTOR_ORDER[idx % DIRECTOR_ORDER.length]];
-  }
-  const str = String(spec.headline || 'olven') + String(spec.doc_id || '');
-  let h = 0;
-  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
-  return DIRECTORS[DIRECTOR_ORDER[h % DIRECTOR_ORDER.length]];
-}
-
-async function renderWalkthroughVideo(specPath, outDir, directorOverride = null) {
-  const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
-  const dir = pickDirector(spec, directorOverride);
-
-  fs.mkdirSync(outDir, { recursive: true });
-  const workDir = path.join(outDir, '_ec_work');
-  fs.mkdirSync(workDir, { recursive: true });
-
-  const trackPath = path.join(MUSIC_DIR, dir.track);
-  if (!fs.existsSync(trackPath)) throw new Error(`Missing music track: ${trackPath}`);
-
-  const t0 = Date.now();
-  const script = compileEntertainmentScript(spec);
-  const assets = await renderAllAssets(script, dir, workDir);
-
-  const acts = [
-    { idx: 0, start: 0.00, settle: 0.00, holdEnd: 3.18, exitEnd: 3.65, y: 970 },
-    { idx: 1, start: 3.35, settle: 3.92, holdEnd: 7.05, exitEnd: 7.50, y: 975 },
-    { idx: 2, start: 7.20, settle: 7.75, holdEnd: 10.30, exitEnd: 10.75, y: 980 },
-    { idx: 3, start: 10.45, settle: 11.00, holdEnd: 13.30, exitEnd: 13.75, y: 815 },
-    { idx: 4, start: 13.45, settle: 14.05, holdEnd: 16.00, exitEnd: 16.00, y: 870 },
-  ];
-
-  const compBg = dir.isDark ? '#07090D' : '#F6F3EC';
-  const cmds = [
-    {
-      command: 'comp.new',
-      params: {
-        name: 'Main', width: WIDTH, height: HEIGHT, frameRate: FPS, duration: DURATION,
-        background: compBg, shutterAngle: 120, shutterPhase: 0, motionBlurSamples: 3, renderer: 'classic3D', open: true,
-      },
-    },
-  ];
-
-  // Smoothly cross-dissolved Atmospheric Domes
-  for (const a of acts) {
-    const bgName = `Dome_${a.idx}`;
-    const [startColor, endColor] = dir.domes[a.idx];
-    cmds.push({ command: 'layer.newSolid', params: { name: bgName, color: compBg, width: WIDTH, height: HEIGHT } });
-    cmds.push({ command: 'layer.timing', params: { layers: [bgName], in: a.idx === 0 ? -0.5 : a.start - 0.05, out: a.idx === 4 ? 16.5 : a.exitEnd + 0.05 } });
-    cmds.push({ command: 'effect.apply', params: { effect: 'ec.generate.gradientramp', layers: [bgName] } });
-    cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/shape', value: 1 } });
-    cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/start', value: [0.5, 0.25] } });
-    cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/end', value: [0.5, 1.15] } });
-    cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/startColor', value: startColor } });
-    cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/endColor', value: endColor } });
-    cmds.push({ command: 'prop.set', params: { layer: bgName, path: 'effects/#1/scatter', value: 28.0 } });
-    if (a.idx > 0) {
-      addAnimatedProp(cmds, bgName, 'transform/opacity', [[a.start, 0], [a.start + 0.45, 100]], 65, 65);
-    }
-  }
-
-  // Calm continuous architectural camera float
-  cmds.push({ command: 'layer.newCamera', params: { name: 'HeroCam', preset: '35mm', position: [540, 960, -1088], poi: [540, 960, 0] } });
-  cmds.push({ command: 'layer.timing', params: { layers: ['HeroCam'], in: -0.5, out: 16.5 } });
-  addAnimatedProp(cmds, 'HeroCam', 'transform/position', [
-    [0.0, [540, 962, -1088]], [5.5, [546, 958, -1068]], [11.0, [535, 962, -1048]], [16.0, [540, 960, -1032]],
-  ], 65, 65);
-
-  // Depth + Base Stage Layers
-  for (const a of acts) {
-    const isFirst = a.idx === 0;
-    const isLast = a.idx === 4;
-    const inT = isFirst ? -0.5 : a.start - 0.04;
-    const outT = isLast ? 16.5 : a.exitEnd + 0.06;
-
-    const dName = `Depth_${a.idx}`;
-    cmds.push({ command: 'file.import', params: { paths: [assets.depths[a.idx]], addToComp: true } });
-    cmds.push({ command: 'layer.rename', params: { layer: '#1', name: dName } });
-    cmds.push({ command: 'layer.setSwitch', params: { layers: [dName], switch: 'threeD', value: true } });
-    cmds.push({ command: 'layer.timing', params: { layers: [dName], in: inT, out: outT } });
-    cmds.push({ command: 'prop.set', params: { layer: dName, path: 'transform/scale', value: [130, 130, 130] } });
-    cmds.push({ command: 'prop.set', params: { layer: dName, path: 'transform/position', value: [540, 960, 320] } });
-    const dOp = isFirst
-      ? [[0.0, 100], [a.holdEnd, 100], [a.exitEnd, 0]]
-      : isLast
-      ? [[a.start, 0], [a.start + 0.42, 100], [16.0, 100]]
-      : [[a.start, 0], [a.start + 0.42, 100], [a.holdEnd, 100], [a.exitEnd, 0]];
-    addAnimatedProp(cmds, dName, 'transform/opacity', dOp, 65, 65);
-
-    const bName = `Base_${a.idx}`;
-    cmds.push({ command: 'file.import', params: { paths: [assets.bases[a.idx]], addToComp: true } });
-    cmds.push({ command: 'layer.rename', params: { layer: '#1', name: bName } });
-    cmds.push({ command: 'layer.setSwitch', params: { layers: [bName], switch: 'threeD', value: true } });
-    cmds.push({ command: 'layer.timing', params: { layers: [bName], in: inT, out: outT } });
-
-    const bPos = isFirst
-      ? [[0.0, [540, a.y, 0]], [a.holdEnd, [540, a.y - 6, -16]], [a.exitEnd, [540, a.y - 38, -40]]]
-      : isLast
-      ? [[a.start, [540, a.y + 56, 48]], [a.settle, [540, a.y, 0]], [16.0, [540, a.y - 6, -18]]]
-      : [[a.start, [540, a.y + 56, 48]], [a.settle, [540, a.y, 0]], [a.holdEnd, [540, a.y - 6, -16]], [a.exitEnd, [540, a.y - 38, -40]]];
-    const bScale = isFirst
-      ? [[0.0, [50, 50, 50]], [a.exitEnd, [51.6, 51.6, 51.6]]]
-      : isLast
-      ? [[a.start, [48.8, 48.8, 48.8]], [a.settle, [50, 50, 50]], [16.0, [51.8, 51.8, 51.8]]]
-      : [[a.start, [48.8, 48.8, 48.8]], [a.settle, [50, 50, 50]], [a.exitEnd, [51.4, 51.4, 51.4]]];
-    const bOp = isFirst
-      ? [[0.0, 100], [a.holdEnd, 100], [a.exitEnd, 0]]
-      : isLast
-      ? [[a.start, 0], [a.start + 0.42, 100], [16.0, 100]]
-      : [[a.start, 0], [a.start + 0.42, 100], [a.holdEnd, 100], [a.exitEnd, 0]];
-
-    addAnimatedProp(cmds, bName, 'transform/position', bPos, 86, 26);
-    addAnimatedProp(cmds, bName, 'transform/scale', bScale, 72, 40);
-    addAnimatedProp(cmds, bName, 'transform/opacity', bOp, 68, 45);
-  }
-
-  // 10 MULTI-BEAT POP-IN ENTERTAINMENT OVERLAYS (Synced to the exact millisecond with mix_reel_sfx.py!)
-  // Act 1: Notification #2 & #3 pop onto the iPhone lockscreen cleanly beneath Notification #1
-  addPopInOverlay(cmds, 'Notif_2', assets.overlays.notif2, 0.95, 3.18, 3.65, 540, 1105, -35, 50);
-  addPopInOverlay(cmds, 'Notif_3', assets.overlays.notif3, 2.05, 3.18, 3.65, 540, 1315, -50, 50);
-
-  // Act 2: Live #emergency-chat messages pop in 1-by-1
-  addPopInOverlay(cmds, 'Chat_1', assets.overlays.chat1, 3.80, 7.05, 7.50, 540, 660, -35, 50);
-  addPopInOverlay(cmds, 'Chat_2', assets.overlays.chat2, 4.95, 7.05, 7.50, 540, 935, -45, 50);
-  addPopInOverlay(cmds, 'Chat_3', assets.overlays.chat3, 6.08, 7.05, 7.50, 540, 1265, -60, 50);
-
-  // Act 3: 3 Interactive Glowing Fix Switches flip ON 1-by-1
-  addPopInOverlay(cmds, 'Fix_1', assets.overlays.fix1, 7.65, 10.30, 10.75, 540, 860, -35, 50);
-  addPopInOverlay(cmds, 'Fix_2', assets.overlays.fix2, 8.55, 10.30, 10.75, 540, 1075, -45, 50);
-  addPopInOverlay(cmds, 'Fix_3', assets.overlays.fix3, 9.45, 10.30, 10.75, 540, 1290, -55, 50);
-
-  // Act 4: Happy CFO Reply pops in under the giant Payoff
-  addPopInOverlay(cmds, 'Cfo_React', assets.overlays.cfoReact, 11.75, 13.30, 13.75, 540, 1390, -60, 50);
-
-  // Act 5: Save & Share CTA Pill
-  addPopInOverlay(cmds, 'Cta_Pill', assets.overlays.ctaPill, 13.85, 16.00, 16.00, 540, 1480, -60, 50);
-
-  // Subtle Cinema Finish Adjustment Layer
-  cmds.push({ command: 'layer.newAdjustment', params: { name: 'CinemaGrade' } });
-  cmds.push({ command: 'effect.apply', params: { effect: 'ec.stylize.ccvignette', layers: ['CinemaGrade'] } });
-  cmds.push({ command: 'prop.set', params: { layer: 'CinemaGrade', path: 'effects/#1/amount', value: dir.isDark ? 10.0 : 5.0 } });
-
-  const cmdsPath = path.join(workDir, 'build_comp.json');
-  const projPath = path.join(workDir, 'olven_reel.ecproj');
-  const rawMp4 = path.join(workDir, 'video_silent.mp4');
-  const mixedAudio = path.join(workDir, 'mixed_audio.m4a');
-  const outMp4 = path.join(outDir, 'walkthrough-video.mp4');
-  fs.writeFileSync(cmdsPath, JSON.stringify(cmds, null, 2));
-
-  // Synthesize millisecond-synced UI SFX + upbeat 116-BPM pulse over studio music bed!
-  const mixerPy = path.join(__dirname, 'mix_reel_sfx.py');
-  let finalAudioPath = trackPath;
-  if (fs.existsSync(mixerPy)) {
-    execFileSync('python3', [mixerPy, trackPath, mixedAudio], { stdio: 'inherit' });
-    finalAudioPath = mixedAudio;
-  }
-
-  const ecCli = detectEffectCraftCli();
-  execFileSync(ecCli, ['--empty', 'run', '--commands', cmdsPath, '--save-as', projPath], { stdio: 'pipe' });
-  execFileSync(ecCli, [
-    '--project', projPath, 'render', '--comp', 'Main', '--out', rawMp4,
-    '--format', 'h264', '--fps', String(FPS), '--bitrate', '9000', '--quality', 'best', '--audio', 'off',
-  ], { stdio: 'inherit' });
-
-  // Mux Rec.709 H.264 + Synced Entertainment Audio
-  execFileSync('ffmpeg', [
-    '-y', '-v', 'error',
-    '-i', rawMp4, '-i', finalAudioPath,
-    '-map', '0:v:0', '-map', '1:a:0',
-    '-c:v', 'copy',
-    '-bsf:v', 'h264_metadata=colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1',
-    '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
-    '-movflags', '+faststart', '-t', String(DURATION),
-    outMp4,
-  ], { stdio: 'inherit' });
-
-  // Hard CDN Safety Guard: strictly <= 19.4 MB (jsDelivr 20 MB limit)
-  const MAX_BYTES = Math.floor(19.4 * 1024 * 1024);
-  if (fs.statSync(outMp4).size > MAX_BYTES) {
-    const cappedMp4 = path.join(workDir, 'video_capped.mp4');
-    execFileSync('ffmpeg', [
-      '-y', '-v', 'error', '-i', outMp4,
-      '-c:v', 'libx264', '-preset', 'slow', '-profile:v', 'high', '-level', '4.1',
-      '-pix_fmt', 'yuv420p', '-b:v', '8600k', '-maxrate', '9200k', '-bufsize', '18000k',
-      '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709',
-      '-c:a', 'copy', '-movflags', '+faststart', cappedMp4,
-    ], { stdio: 'inherit' });
-    fs.renameSync(cappedMp4, outMp4);
-  }
-
-  fs.rmSync(workDir, { recursive: true, force: true });
-  const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
-  const mb = (fs.statSync(outMp4).size / (1024 * 1024)).toFixed(2);
-  console.log(`[OK] Rendered Entertainment Viral 3D Video [${dir.name} | 13 synced UI beats + SFX, Rec.709 in ${elapsed}s, ${mb} MB] -> ${outMp4}`);
-}
-
-if (require.main === module) {
-  const [specPath, outDir, directorOverride] = process.argv.slice(2);
-  if (!specPath || !outDir) {
-    console.error('Usage: node render_video.js <spec.json> <outDir> [directorOverride]');
-    process.exit(1);
-  }
-  renderWalkthroughVideo(specPath, outDir, directorOverride).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
-}
-
-module.exports = { renderWalkthroughVideo, DIRECTORS, DIRECTOR_ORDER };
+main().catch((err) => { console.error(err); process.exit(1); });

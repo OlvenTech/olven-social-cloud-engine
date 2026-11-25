@@ -1,4 +1,4 @@
-name: Olven Tech — 1-Hour-Before-Peak Live Cloud Generator & Anti-Slop Gate
+name: Olven Tech 2.1 — 1-Hour-Before-Peak Cloud Generator & Anti-Newspaper Gate
 
 # NOTE: Triggered deterministically at T-45 min (PKT) by Make.com Scenario 8619522 via workflow_dispatch
 # (eliminates GitHub Actions free-tier schedule cron delays/drops).
@@ -50,15 +50,15 @@ jobs:
           path: |
             ~/.cache/pip
             node_modules
-          key: olven-ci-deps-${{ runner.os }}-${{ hashFiles('package.json') }}-v2
+          key: olven-ci-deps-${{ runner.os }}-${{ hashFiles('package.json') }}-v3
 
-      - name: Install Pillow, Node deps & FFmpeg (uses preinstalled Chrome)
+      - name: Install Python deps (Pillow, NumPy, Requests), Node deps & FFmpeg
         run: |
           if ! command -v ffmpeg >/dev/null 2>&1; then
             DEBIAN_FRONTEND=noninteractive sudo apt-get update -qq
             DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -qq --no-install-recommends ffmpeg
           fi
-          pip install --quiet pillow requests
+          pip install --quiet pillow requests numpy
           if [ ! -d node_modules/playwright ]; then
             npm install --no-audit --no-fund
           fi
@@ -66,40 +66,7 @@ jobs:
             npx playwright install --with-deps chromium
           fi
 
-      - name: Cache ArtCraft Creative Suite (EffectCraft v0.24.1 + PhotoCraft v0.23.1 + LightCraft v0.21.1)
-        uses: actions/cache@v4
-        with:
-          path: ~/.local/artcraft
-          key: artcraft-suite-ec0241-pc0231-lc0211-${{ runner.os }}-x86_64-v1
-
-      - name: Install ArtCraft EffectCraft, PhotoCraft & LightCraft CLI binaries (if not cached)
-        run: |
-          EC_BIN="$HOME/.local/artcraft/effectcraft/effectcraft-0.24.1-linux-x86_64/bin/effectcraft-cli"
-          PC_BIN="$HOME/.local/artcraft/photocraft/photocraft-0.23.1-linux-x86_64/bin/photocraft-cli"
-          LC_BIN="$HOME/.local/artcraft/lightcraft/lightcraft-0.21.1-linux-x86_64/bin/lightcraft-cli"
-          if [ ! -x "$EC_BIN" ]; then
-            mkdir -p "$HOME/.local/artcraft/effectcraft"
-            curl -fsSL "https://github.com/storytold/effectcraft/releases/download/v0.24.1/effectcraft-0.24.1-linux-x86_64.tar.gz" \
-              | tar -xz -C "$HOME/.local/artcraft/effectcraft"
-          fi
-          if [ ! -x "$PC_BIN" ]; then
-            mkdir -p "$HOME/.local/artcraft/photocraft"
-            curl -fsSL "https://github.com/storytold/photocraft/releases/download/v0.23.1/photocraft-0.23.1-linux-x86_64.tar.gz" \
-              | tar -xz -C "$HOME/.local/artcraft/photocraft"
-          fi
-          if [ ! -x "$LC_BIN" ]; then
-            mkdir -p "$HOME/.local/artcraft/lightcraft"
-            curl -fsSL "https://github.com/storytold/lightcraft/releases/download/v0.21.1/lightcraft-0.21.1-linux-x86_64.tar.gz" \
-              | tar -xz -C "$HOME/.local/artcraft/lightcraft"
-          fi
-          echo "EFFECTCRAFT_CLI=$EC_BIN" >> "$GITHUB_ENV"
-          echo "PHOTOCRAFT_CLI=$PC_BIN" >> "$GITHUB_ENV"
-          echo "LIGHTCRAFT_CLI=$LC_BIN" >> "$GITHUB_ENV"
-          "$EC_BIN" --version || true
-          "$PC_BIN" --version || true
-          "$LC_BIN" --version || true
-
-      - name: Execute Live R&D, Multi-Tool ArtCraft Suite Render & 3-Layer Anti-Slop Quality Blocker
+      - name: Execute Olven 2.1 R&D, 8-Flavour Editorial & 5-World Physics-Cinema Render + Quality Gate
         run: |
           python3 run_cloud_wave.py "${{ github.event.inputs.day_num }}" "${{ github.event.inputs.slot }}" "${{ github.event.inputs.media_type }}"
 

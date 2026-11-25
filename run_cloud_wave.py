@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Olven Tech — GitHub Actions 1-Hour-Before-Peak (T-1h) Cloud Runner.
-Executes live B2B Engineering R&D, renders 2x Retina bespoke visuals across 6 archetypes via Playwright,
-optionally renders a 9:16 (1080x1920) 30fps studio motion Reel on alternating video waves,
-enforces the 3-Layer Anti-AI & Visual Uniqueness Blocker with self-healing remediation,
+Olven Tech 2.1 — GitHub Actions 1-Hour-Before-Peak (T-1h) Cloud Runner.
+Executes live B2B Engineering R&D, renders 8-Flavour 2x Retina editorial posters via Playwright,
+optionally renders a 9:16 (1080x1920) 30fps Continuous-Flow Physics-Cinema Reel across 5 animated worlds,
+enforces the Anti-Newspaper, Zero-AI & Visual Uniqueness Quality Blocker with self-healing remediation,
 and writes the verified package to ./live_out/ for Make.com Scenario 8619522 to stage into
 'Olven_12AM_Make_Queue'.
 """
@@ -131,7 +131,7 @@ def main():
         raise RuntimeError(f"3-Layer Quality Gate blocked {day_label} after {max_attempts} self-healing attempts.")
 
     if media_type == "video":
-        print(f"[5/6] Rendering 9:16 (1080x1920) 30fps ArtCraft EffectCraft 3D Cinema Reel [seq={seq_index}, archetype={spec.get('visual_archetype')}]...")
+        print(f"[5/6] Rendering 9:16 (1080x1920) 30fps Physics-Cinema Reel [seq={seq_index}, world={spec.get('reel_mode', 'physics_bottleneck')}]...")
         os.environ["OLVEN_SEQ_INDEX"] = str(seq_index)
         run_cmd(["node", str(BASE_DIR / "render_video.js"), str(spec_path), str(wave_dir)])
     else:

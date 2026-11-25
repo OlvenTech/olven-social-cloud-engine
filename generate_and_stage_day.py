@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 """
-Olven Tech — Multi-Archetype Pre-Peak Post Generator, Self-Healing Quality Blocker & Cloud Stager.
-Renders 2x Retina bespoke engineering visuals across 6 distinct visual archetypes via Playwright,
-writes 5 platform captions, enforces lint_human_quality.py (3-Layer Anti-AI, Anti-Generic & Visual Uniqueness Gate)
-with automatic archetype rotation & copy remediation before staging to Google Drive and Olven_12AM_Make_Queue.
+Olven Tech 2.1 — 8-Flavour Editorial Poster & 5-World Physics-Cinema Generator,
+Self-Healing Anti-Newspaper Quality Blocker & Cloud Stager.
 """
 import copy
 import csv
 import json
-import os
 import re
 import subprocess
 import sys
@@ -28,254 +25,222 @@ CSV_PATH = BASE_DIR / "Olven_12AM_Make_Queue.csv"
 
 CASE_NOTES = {
     7: {
-        "visual_archetype": "editorial_light_blueprint",
-        "doc_id": "CASE NOTE #07 · STRIPE TO NETSUITE PAYOUT RECONCILIATION",
-        "eyebrow": "PAYMENT LEDGER ARCHITECTURE · B2B SAAS",
-        "headline": "Eliminating a 6-Hour Month-End Stripe to NetSuite Payout Drift",
-        "subhead": "Why webhook-per-charge zaps drift on partial refunds and multi-currency FX fees, and how an immutable payout-batch worker fixed close week.",
-        "before_title": "Before: Per-Charge Webhook Zaps",
-        "before_badge": "4.2% MONTHLY DRIFT",
-        "before_nodes": ["Stripe charge.succeeded", "Zapier Multi-Step", "NetSuite CashSale", "Manual FX Journal"],
-        "before_points": [
-            "Triggered on <span class=\"inline-code\">charge.succeeded</span> before Stripe settled actual CAD/EUR FX conversion rates.",
-            "Partial refunds and dispute reversals arrived days later without linking to the original NetSuite deposit batch.",
-            "Finance spent 6 hours every month-end matching CSV balance transactions line by line."
-        ],
-        "after_title": "After: Payout-Batch Ledger Worker",
-        "after_badge": "0.00 CENTS DRIFT",
-        "after_nodes": ["Stripe payout.paid", "Balance Txn Cursor", "Postgres Ledger", "NetSuite Deposit Batch"],
-        "after_points": [
-            "Ingests <span class=\"inline-code\">payout.paid</span> and pages through <span class=\"inline-code\">balance_transactions</span> using deterministic cursor checkpoints.",
-            "Separates gross charge, Stripe processing fee, FX spread, and refund adjustments into balanced journal lines.",
-            "Posts a single reconciled NetSuite bank deposit matching the exact wire amount to the cent."
-        ],
+        "visual_archetype": "parisian_ivory_monograph",
+        "editorial_mode": "parisian_ivory_monograph",
+        "reel_mode": "flow_wire_ledger_geneva",
+        "doc_id": "CASE NOTE #07 · STRIPE TO NETSUITE 6.5H PAYOUT DRIFT",
+        "headline": "Eliminating 6.5-Hour Month-End Stripe to NetSuite Drift",
+        "poster_headline": "6.5 Hours Matching\nStripe CSVs.",
+        "poster_accent_word": "6.5 Hours",
+        "art_meta": {"clayMetric": "$0.00"},
+        "before_title": "Per-Charge Webhook Zaps",
+        "before_badge": "6.5 HRS MANUAL CLOSE",
+        "after_nodes": ["Stripe payout.paid", "Balance Txn Cursor", "Postgres Ledger", "Balanced NetSuite Deposit"],
         "metrics": [
             {"label": "MONTH-END CLOSE", "value": "12 mins", "sub": "Down from 6.5 hours"},
             {"label": "LEDGER VARIANCE", "value": "$0.00", "sub": "Across 18,400 txns/mo"},
-            {"label": "API CALL VOLUME", "value": "-84%", "sub": "Batch deposit vs per-charge"},
-            {"label": "AUDIT TRACE", "value": "100%", "sub": "Every fee linked to payout_id"}
+            {"label": "API VOLUME", "value": "-84%", "sub": "Batch deposit vs per-charge"},
         ],
+        "physics_reel": {
+            "mode": "flow_wire_ledger_geneva",
+            "setupLine1": "Triggering NetSuite on",
+            "setupLine2": "every raw Stripe charge.",
+            "symbol": "FX",
+            "goldHero": "$9K",
+            "twistPunch": "6.5 HRS IN CSV HELL.",
+            "fixLine1": "ANCHOR PAYOUT.PAID.",
+            "fixLine2": "POSTGRES LEDGER.",
+            "payoffBig": "$0.00 DRIFT.",
+            "payoffSub": "12-MIN CLOSE.",
+            "cta": "contact@olventech.com",
+        },
         "captions": {
-            "linkedin": """Triggering ERP accounting entries on Stripe charge.succeeded instead of payout.paid guarantees a month-end reconciliation gap.
+            "linkedin": """Pushing every individual Stripe card charge straight into NetSuite guarantees your finance team will spend 6.5 hours every month-end crying into CSVs.
 
-When you push individual card charges into NetSuite the second a customer checks out, you do not know the final settled FX rate on cross-border cards, the grouped Stripe processing fee, or whether a partial refund will land before the bank transfer clears.
+Per-charge zaps completely miss settled FX fees, grouped Stripe deductions, and mid-week refunds.
 
-We audited a B2B SaaS finance pipeline processing 18,400 transactions a month. Their team had 3 webhook workflows creating individual NetSuite CashSales. Every month-end, the bank deposit in checking disagreed with NetSuite by $3,000 to $9,000 because of unrecorded FX spreads, dispute holds, and timing cutoffs across UTC midnight. Finance spent 6.5 hours every close exporting CSVs to find the gap.
+We rebuilt their 18,400 txn/mo ledger around `payout.paid` in Postgres.
+Variance hit $0.00. ERP API calls dropped 84%. Close shrank to 12 minutes.
 
-How we rebuilt the reconciliation worker at Olven Tech:
-
-1. Anchor on payout.paid: Instead of guessing bank batches from raw charges, our worker waits for Stripe to close a payout batch and pages through balance_transactions tied to that exact payout_id.
-2. Explicit fee and FX decomposition: Every charge, refund, dispute fee, and currency conversion is written to a local Postgres ledger table with a unique constraint on balance_transaction_id.
-3. Single balanced NetSuite deposit: Once the batch sum in Postgres equals the Stripe payout header to the cent, the worker creates one NetSuite Bank Deposit with net cash, fee expense, and refund contra lines already balanced.
-
-The result over the last 4 monthly closes: $0.00 variance between the bank feed and NetSuite, 84% fewer ERP API calls, and month-end payout reconciliation dropped from 6.5 hours to a 12-minute review.
-
-If your finance team is still reconciling Stripe or Adyen payouts with spreadsheets at month-end, send a note to contact@olventech.com and we will map out the ledger architecture.""",
-            "x": """Triggering NetSuite entries on Stripe charge.succeeded misses settled FX spreads and grouped payout fees.
-
-We moved an 18.4k txn/mo pipeline to a Postgres payout.paid worker:
-- $0.00 bank variance
-- Close time cut from 6.5h to 12m
-
+Fix messy payout accounting: contact@olventech.com""",
+            "instagram": """Triggering NetSuite on raw Stripe charges left finance matching 18,400 CSV rows for 6.5 hours every month.
+A payout.paid Postgres ledger cut close to 12 mins and $0.00 variance.
 contact@olventech.com""",
-            "instagram": """Triggering ERP entries on individual card charges leaves finance teams stuck in spreadsheets at month-end.
-
-When workflows fire on charge.succeeded, they miss settled FX rates, grouped processing fees, and mid-week partial refunds. By the time the wire hits the bank account, the NetSuite deposit total never matches the bank feed.
-
-We replaced a client's per-charge webhook setup (18,400 transactions/month) with a payout-batch ledger worker in Postgres:
-1. Triggers on payout.paid and fetches every balance_transaction tied to that exact payout_id.
-2. Separates gross revenue, processing fees, FX adjustments, and refunds into deterministic ledger rows.
-3. Pushes one balanced NetSuite deposit that matches the bank transfer to the exact cent.
-
-Month-end reconciliation dropped from 6.5 hours to 12 minutes with $0.00 variance across four consecutive closes.
-
-Need your billing and ERP ledger to match without manual CSV work? Email contact@olventech.com.""",
-            "facebook": """Reconciling 18,400 monthly Stripe transactions by hand happens when your automation triggers on individual card charges instead of settled bank payouts.
-
-We recently fixed a Stripe-to-NetSuite pipeline where finance was spending 6.5 hours every month-end hunting down $3k-$9k in payout discrepancies caused by unrecorded FX conversion spreads, Stripe fee deductions, and partial refunds.
-
-We replaced the per-charge webhooks with a Postgres-backed payout worker that keys off payout.paid, decomposes every balance_transaction (gross, fee, FX, refund), verifies the batch sum to the cent, and posts a single balanced NetSuite deposit.
-
-Result: $0.00 ledger variance and month-end reconciliation down from 6.5 hours to 12 minutes.
-
-If your finance ops team is fighting ERP reconciliation drift, reach out at contact@olventech.com.""",
-            "threads": """Finance teams shouldn't spend close week matching Stripe CSVs to NetSuite by hand.
-
-Triggering on charge.succeeded means your ERP never sees settled FX spreads or grouped payout fees.
-
-We rebuilt an 18.4k txn/mo pipeline to anchor on payout.paid + balance_transactions in Postgres before posting a single balanced NetSuite deposit.
-
-Result: $0.00 bank variance, 84% fewer ERP API calls, and close reconciliation cut from 6.5 hours to 12 minutes. (contact@olventech.com)"""
-        }
+            "facebook": """If your NetSuite bank feed disagrees with Stripe by thousands every month-end, blame per-charge webhook zaps.
+Our Postgres payout.paid ledger cut 18,400 txns/mo to 12 mins and $0.00 drift.
+contact@olventech.com""",
+            "threads": """Finance teams shouldn't spend 6.5 hours every month-end hunting Stripe FX fees in CSVs.
+Anchor on payout.paid in Postgres -> $0.00 NetSuite drift, 12-min close.
+contact@olventech.com""",
+            "x": """Per-charge Stripe zaps cost 6.5h/mo in NetSuite CSV pain.
+Postgres payout.paid ledger -> $0.00 drift, 12-min close.
+contact@olventech.com""",
+        },
     },
     8: {
-        "visual_archetype": "cdc_hash_diff_funnel",
-        "doc_id": "CASE NOTE #08 · WAREHOUSE WMS TO SHOPIFY PLUS INVENTORY SYNC",
-        "eyebrow": "INVENTORY CONSISTENCY · HIGH-VOLUME COMMERCE",
-        "headline": "Stopping Flash-Sale Oversells Caused by 15-Minute ERP Polling Crons",
-        "subhead": "Replacing full-catalog CSV polling between 3PL warehouse feeds and Shopify Plus with delta-only event streams and safety stock reservations.",
-        "before_title": "Before: 15-Min Full Catalog Polling",
-        "before_badge": "38 OVERSELLS / SALE",
-        "before_nodes": ["3PL SFTP CSV", "15m Cron Job", "Shopify GraphQL Bulk", "HTTP 429 Throttles"],
-        "before_points": [
-            "Every 15 minutes, a script pushed all 14,200 SKUs to Shopify even when only 19 items changed stock.",
-            "GraphQL cost limits throttled updates during flash drops, delaying low-stock zero-outs by 22 minutes.",
-            "Support had to manually cancel and refund 35 to 50 oversold orders after every product launch."
-        ],
-        "after_title": "After: Hash-Diff Delta Worker",
-        "after_badge": "ZERO OVERSELLS",
-        "after_nodes": ["WMS Event Hook", "Postgres SKU State", "Delta Diff Filter", "Shopify InventorySet"],
-        "after_points": [
-            "Computes per-SKU quantity hashes in Postgres and only calls Shopify when <span class=\"inline-code\">on_hand_delta != 0</span>.",
-            "Prioritizes SKUs with <span class=\"inline-code\">available &lt;= 5</span> into a fast-lane queue that updates in under 1.8 seconds.",
-            "Applies automatic buffer holds on multi-warehouse split allocations."
-        ],
+        "visual_archetype": "swiss_zurich_flow",
+        "editorial_mode": "swiss_zurich_flow",
+        "reel_mode": "flow_bottleneck_zurich",
+        "doc_id": "CASE NOTE #08 · STOPPING FLASH-SALE SHOPIFY OVERSELLS",
+        "headline": "Stopping Flash-Sale Oversells Caused by 15-Minute Crons",
+        "poster_headline": "15-Min Cron Sold\n38 Fake Units.",
+        "poster_accent_word": "38 Fake Units.",
+        "art_meta": {},
+        "before_title": "15-Min Full Catalog CSV Polling",
+        "before_badge": "38 OVERSELLS PER DROP",
+        "after_nodes": ["Postgres SKU State", "Delta Diff Filter", "Low-Stock Fast Lane", "1.8s Shopify Sync"],
         "metrics": [
-            {"label": "STOCK SYNC LATENCY", "value": "1.8 sec", "sub": "Down from 22 minutes"},
-            {"label": "API CALLS SAVED", "value": "98.6%", "sub": "Delta-only SKU writes"},
-            {"label": "LAUNCH OVERSELLS", "value": "0 orders", "sub": "Across last 6 drops"},
-            {"label": "CATALOG SIZE", "value": "14,200 SKUs", "sub": "Across 3 3PL warehouses"}
+            {"label": "SYNC LATENCY", "value": "1.8 sec", "sub": "Down from 22 minutes"},
+            {"label": "API SAVED", "value": "98.6%", "sub": "Delta-only SKU writes"},
+            {"label": "OVERSELLS", "value": "0 orders", "sub": "Across last 6 drops"},
         ],
+        "physics_reel": {
+            "mode": "flow_bottleneck_zurich",
+            "setupLine1": "14,200 SKUs re-uploaded",
+            "setupLine2": "every 15 mins on flash day.",
+            "doorLabel": "429 THROTTLE",
+            "crashMax": 38,
+            "crashUnit": "OVERSELLS",
+            "stuckStat": "22 MINS LATE",
+            "twistPunch": "38 ANGRY REFUNDS.",
+            "fixLine1": "DELTA-ONLY DIFF.",
+            "fixLine2": "1.8 SEC FAST LANE.",
+            "beforeVal": "22 MINS",
+            "afterTimer": "1.8 SEC",
+            "payoffBig": "0 OVERSELLS.",
+            "payoffSub": "98.6% LESS API.",
+            "cta": "contact@olventech.com",
+        },
         "captions": {
-            "linkedin": """High-volume Shopify Plus stores still oversell during flash drops when their 3PL integration runs on a 15-minute full-catalog cron.
+            "linkedin": """Nothing says "happy launch day" like emailing 38 excited customers to confess you sold them sneakers that do not exist.
 
-Most warehouse integrations update inventory by re-uploading the entire 14,000-SKU catalog every 15 minutes regardless of which items actually moved.
+Their 15-minute cron re-uploaded all 14,200 SKUs to Shopify, burning GraphQL limits on slow items while hot SKUs oversold for 22 minutes.
 
-When a flash sale hits, two things happen at once: 400 orders fire in 90 seconds on 12 hot SKUs, while the background sync job is stuck at SKU #4,100 burning Shopify GraphQL throttle credits updating products that haven't sold all week. By the time the sync reaches the hot SKU to zero it out, 38 customers have already bought stock that does not exist.
+We built a Postgres delta-diff worker with a fast lane for SKUs under 5 units.
+98.6% fewer API calls. 1.8s zero-outs. 0 oversells across 6 drops.
 
-Here is how we re-engineered a 3-warehouse 3PL-to-Shopify Plus inventory pipeline across 14,200 SKUs:
-
-1. State-diff filtering in Postgres: Every warehouse snapshot and WMS receipt event is compared against our local SKU state table. If a SKU's allocatable quantity did not change, zero external API calls are made. That single step eliminated 98.6% of their Shopify API traffic.
-2. Low-stock priority lane: Any SKU dropping below 5 available units bypasses standard batching and executes an immediate InventorySetQuantities mutation in under 1.8 seconds.
-3. Split-warehouse safety buffers: When stock is split across 3 regional 3PLs, the worker holds a configurable 2-unit reserve until physical scan confirmation clears.
-
-Across their last 6 high-volume drops: 0 oversold orders, 0 apology refund emails, and inventory sync latency went from 22 minutes to 1.8 seconds.
-
-If your operations team is fighting stock drift between your ERP/3PL and storefront, email contact@olventech.com.""",
-            "x": """Re-uploading 14,200 SKUs every 15m wastes Shopify GraphQL quota on unchanged stock while hot items oversell.
-
-Our Postgres delta-diff worker:
-- Cuts 98.6% of API writes
-- Fast-lanes <=5 unit SKUs in 1.8s
-- 0 oversells
-
+Stop launch-day oversells: contact@olventech.com""",
+            "instagram": """Re-uploading 14,200 unchanged SKUs every 15 mins throttled Shopify and oversold 38 orders per drop.
+Postgres delta-diff cut API writes 98.6% and zeroed hot SKUs in 1.8s.
 contact@olventech.com""",
-            "instagram": """Re-uploading 14,200 SKUs on a 15-minute cron is why storefronts oversell during product drops.
-
-During a flash sale, Shopify's GraphQL API rate limit gets clogged updating unchanged items while hot SKUs oversell for 20+ minutes.
-
-We rebuilt the sync engine around a Postgres state-diff worker:
-1. Only pushes SKUs where available stock actually changed (cutting 98.6% of wasted API calls).
-2. Routes any SKU under 5 units into a priority queue that updates the storefront in 1.8 seconds.
-3. Enforces per-warehouse safety buffers to prevent split-shipment race conditions.
-
-Result: Zero oversold orders across the last 6 product drops.
-
-Need reliable inventory architecture between your WMS, ERP, and storefront? Reach us at contact@olventech.com.""",
-            "facebook": """High-volume brands with a 3PL and Shopify Plus still oversell during launches when their inventory sync re-uploads all 14,000 SKUs every 15 minutes instead of syncing only what changed.
-
-We audited a commerce operation where GraphQL rate limits were delaying low-stock updates by 22 minutes during peak traffic, forcing support to cancel and refund 35-50 orders per drop.
-
-By putting a Postgres delta-diff worker between their 3PL feeds and Shopify, we cut 98.6% of redundant API calls and added a priority lane that syncs low-stock SKUs in 1.8 seconds. They have run 6 launches since deployment with zero oversells.
-
-Questions on WMS/ERP sync architecture? Email contact@olventech.com.""",
-            "threads": """Re-uploading 14,200 SKUs every 15 minutes is why storefronts oversell during flash sales. You burn your API rate limit updating dead stock while hot SKUs sit out of sync for 20 minutes.
-
-We put a Postgres delta-diff filter + low-stock priority queue between a client's 3PL and Shopify Plus:
-- 98.6% fewer API writes
-- 1.8s sync on items with <=5 units
-- 0 oversells across 6 drops (contact@olventech.com)"""
-        }
+            "facebook": """During flash sales, full-catalog ERP crons waste Shopify quota on unchanged products while bestsellers oversell.
+Our Postgres delta-diff fast lane synced in 1.8s with 0 oversells across 6 drops.
+contact@olventech.com""",
+            "threads": """Why upload 14,200 unchanged SKUs during a flash sale while your #1 product oversells 38 times?
+Postgres delta-diff -> 98.6% fewer Shopify API writes, 1.8s zero-outs, 0 oversells.
+contact@olventech.com""",
+            "x": """15m ERP cron oversold 38 Shopify orders every flash drop.
+Postgres delta-diff -> -98.6% API calls, 1.8s sync, 0 oversells.
+contact@olventech.com""",
+        },
     },
     9: {
-        "visual_archetype": "editorial_light_blueprint",
-        "doc_id": "CASE NOTE #09 · MULTI-VENDOR PDF INVOICE INGESTION PIPELINE",
-        "eyebrow": "DOCUMENT INGESTION · ACCOUNTS PAYABLE OPS",
-        "headline": "Replacing Fragile Email-to-ERP OCR Rules With Deterministic Line-Item Validation",
-        "subhead": "How we stopped bad vendor PDF extractions from polluting QuickBooks and NetSuite AP ledgers using mathematical cross-checks before ERP commit.",
-        "before_title": "Before: Blind OCR-to-ERP Auto-Post",
-        "before_badge": "11.4% BAD BILLS",
-        "before_nodes": ["ap@ Inbox", "Blind OCR Parser", "Unchecked JSON", "ERP Bill Created"],
-        "before_points": [
-            "Blindly pushed extracted invoice totals into the ERP even when line items did not sum to the subtotal.",
-            "Forwarded email threads attached the same PDF twice, creating duplicate vendor bills.",
-            "AP clerks spent 9 hours a week voiding wrong bills and fixing misread SKU quantities."
-        ],
-        "after_title": "After: 4-Gate AP Verification Worker",
-        "after_badge": "0 DUPLICATE BILLS",
-        "after_nodes": ["SHA-256 File Gate", "PO 3-Way Match", "Math Invariant Check", "Verified ERP Bill"],
-        "after_points": [
-            "Deduplicates attachments by <span class=\"inline-code\">sha256(pdf_bytes)</span> and composite <span class=\"inline-code\">(vendor_id, invoice_no)</span>.",
-            "Enforces strict math invariants: <span class=\"inline-code\">sum(qty * unit_price) + tax + freight == total</span> before ERP write.",
-            "Flags only true price/quantity variances against approved Purchase Orders to Slack with a 1-click diff."
-        ],
+        "visual_archetype": "milanese_oxblood_atelier",
+        "editorial_mode": "milanese_oxblood_atelier",
+        "reel_mode": "flow_optics_milan",
+        "doc_id": "CASE NOTE #09 · STOPPING BAD PDF OCR FROM POLLUTING AP",
+        "headline": "Stopping Bad PDF OCR From Turning $1,090 Into $10,900",
+        "poster_headline": "OCR Misread 1 Dot.\nBilled $10,900.",
+        "poster_accent_word": "$10,900.",
+        "art_meta": {},
+        "before_title": "Unchecked Email-to-ERP OCR",
+        "before_badge": "9.5 HRS/WK AP CLEANUP",
+        "after_nodes": ["SHA-256 Dupe Gate", "Line-Item Math Check", "94.2% Straight-Through", "0 Bad Bills"],
         "metrics": [
-            {"label": "DUPLICATE BILLS", "value": "0", "sub": "Blocked by SHA-256 + key gate"},
-            {"label": "STRAIGHT-THROUGH", "value": "94.2%", "sub": "Verified math + PO match"},
-            {"label": "AP REVIEW TIME", "value": "45 mins/wk", "sub": "Down from 9.5 hours/wk"},
-            {"label": "LEDGER ERRORS", "value": "0.0%", "sub": "Zero unbalanced ERP bills"}
+            {"label": "DUPLICATE BILLS", "value": "0", "sub": "Blocked by SHA-256 gate"},
+            {"label": "AUTO-POSTED", "value": "94.2%", "sub": "Verified math + PO match"},
+            {"label": "AP REVIEW", "value": "45 mins", "sub": "Down from 9.5 hours/wk"},
         ],
+        "physics_reel": {
+            "mode": "flow_optics_milan",
+            "setupLine1": "PDF OCR misread one dot",
+            "setupLine2": "and typed $10,900 into ERP.",
+            "twistPunch": "9.5 HRS/WK FIXING.",
+            "fixLine1": "SHA-256 + MATH GATE.",
+            "fixLine2": "ZERO BAD BILLS.",
+            "payoffBig": "94.2% AUTO.",
+            "payoffSub": "0 DUPLICATE BILLS.",
+            "cta": "contact@olventech.com",
+        },
         "captions": {
-            "linkedin": """Wiring an Accounts Payable OCR parser straight into NetSuite or QuickBooks without an arithmetic gate pollutes your ledger.
+            "linkedin": """Vendor PDF OCR confidently misread a smudged decimal and tried to book a $1,090 invoice as $10,900 inside QuickBooks.
 
-When a vendor changes their PDF layout or a table spans two pages, standard document parsers misread a unit price or drop a freight line. If your workflow blindly creates a draft bill in NetSuite or QuickBooks from that payload, your AP team spends more time voiding and fixing broken ledger entries than if they had keyed the invoice by hand.
+AP teams burned 9.5 hours every week double-checking every single line item by hand.
 
-We rebuilt an AP ingestion pipeline processing 3,200 vendor invoices a month where 11.4% of auto-created bills had line-item math errors or duplicate entries from forwarded email chains.
+We put a deterministic SHA-256 duplicate gate and strict line-sum math check in front of ERP commits.
+94.2% of bills post automatically. Duplicate bills hit 0. Weekly review dropped to 45 minutes.
 
-Our 4-gate verification pipeline at Olven Tech:
-
-1. Binary & composite deduplication: Every incoming PDF is hashed via SHA-256 and checked against a unique index on (vendor_id, normalized_invoice_number) in Postgres before any extraction runs.
-2. Strict arithmetic invariant checks: A bill cannot touch the ERP unless sum(round(qty * unit_price, 2)) == subtotal and subtotal + tax + shipping == invoice_total to the exact penny.
-3. Three-way Purchase Order matching: Extracted lines are matched against open PO receipts in Postgres, checking unit price tolerances within 0.5%.
-4. Exception-only human review: The 94.2% of invoices that pass all three mathematical gates post cleanly to the ERP. The 5.8% with real PO price variances post a clean diff card to Slack for a 10-second approval.
-
-AP manual cleanup dropped from 9.5 hours a week to 45 minutes, with zero unbalanced or duplicate bills in the ERP.
-
-Want to automate document ingestion without polluting your accounting ledger? Email contact@olventech.com.""",
-            "x": """Never let an OCR parser write directly to NetSuite without a math gate.
-
-Our 4-gate Postgres verifier on a 3,200 bill/mo AP pipeline:
-- SHA-256 + invoice_no dedup
-- Enforces sum(qty*price)+tax == total
-- 94.2% straight-through
-
+Automate safe AP ingestion: contact@olventech.com""",
+            "instagram": """Invoice OCR misread one smudge and tried to post $1,090 as $10,900 inside QuickBooks.
+A SHA-256 + math verification gate hit 94.2% auto-posting and 0 bad bills.
 contact@olventech.com""",
-            "instagram": """Wiring an invoice OCR parser straight into NetSuite or QuickBooks without a math gate creates hours of manual AP cleanup.
+            "facebook": """Blindly piping PDF OCR straight into QuickBooks or NetSuite turns tiny scan smudges into 10x accounting errors.
+Our math verification gate cut AP cleanup from 9.5h to 45 mins/wk with 0 dupes.
+contact@olventech.com""",
+            "threads": """Blind PDF OCR loves turning $1,090 invoices into $10,900 ERP surprises.
+SHA-256 + strict line-item math checks -> 94.2% straight-through, 0 duplicate bills.
+contact@olventech.com""",
+            "x": """PDF OCR misread 1 dot and turned $1,090 into $10,900 in ERP.
+SHA-256 + math gate -> 94.2% auto, 0 dupes, 45m/wk review.
+contact@olventech.com""",
+        },
+    },
+    15: {
+        "visual_archetype": "wall_street_wire_slip",
+        "editorial_mode": "wall_street_wire_slip",
+        "reel_mode": "flow_wire_ledger_geneva",
+        "doc_id": "CASE NOTE #15 · KILLING 84% OF WASTED ERP API CALLS",
+        "headline": "Why 18,400 Per-Charge ERP Writes Break Bank Reconciliation",
+        "poster_headline": "18,400 ERP Calls.\nStill Off by $9K.",
+        "poster_accent_word": "$9K.",
+        "art_meta": {"twinLabel": "-84%"},
+        "before_title": "18,400 Per-Charge CashSales",
+        "before_badge": "$9K MONTHLY VARIANCE",
+        "after_nodes": ["Batch Deposit Ledger", "-84% ERP Calls", "100% Payout Trace", "$0.00 Variance"],
+        "metrics": [
+            {"label": "ERP API CALLS", "value": "-84%", "sub": "Batch vs 18,400 singles"},
+            {"label": "LEDGER VARIANCE", "value": "$0.00", "sub": "4 straight closes"},
+            {"label": "AUDIT TRACE", "value": "100%", "sub": "Linked to payout_id"},
+        ],
+        "physics_reel": {
+            "mode": "flow_wire_ledger_geneva",
+            "setupLine1": "18,400 card charges fired",
+            "setupLine2": "blindly into NetSuite.",
+            "symbol": "$",
+            "goldHero": "$9K",
+            "twistPunch": "BANK FEED NEVER MATCHED.",
+            "fixLine1": "ONE BALANCED BATCH.",
+            "fixLine2": "84% FEWER CALLS.",
+            "payoffBig": "$0.00 GAP.",
+            "payoffSub": "100% AUDIT TRACE.",
+            "cta": "contact@olventech.com",
+        },
+        "captions": {
+            "linkedin": """Flooding NetSuite with 18,400 single-charge CashSales every month still left their bank feed off by up to $9,000.
 
-When an invoice spans two pages or includes freight discounts, parsers occasionally drop a line item. If that payload writes straight to the ERP, AP clerks spend hours voiding broken bills.
+Card fees, disputes, and UTC midnight cutoffs never line up with raw checkout webhooks.
 
-How we engineered a 3,200 invoice/month AP pipeline with zero ledger pollution:
-1. SHA-256 file hashing + composite (vendor_id, invoice_number) deduplication blocks forwarded duplicates immediately.
-2. Hard arithmetic gate: every line item (qty * unit_price) plus tax and freight must equal the invoice header total to the cent.
-3. Automated 3-way match against open Purchase Orders.
+We swapped per-charge noise for one verified Postgres batch deposit per settled Stripe payout.
+ERP API traffic fell 84%. Bank variance hit $0.00 across 4 straight closes.
 
-94.2% of invoices post straight through with zero human touch, while the 5.8% with real PO variances surface a clean diff for review.
-
-Email contact@olventech.com to harden your document pipelines.""",
-            "facebook": """Automating Accounts Payable by wiring an email inbox directly to an OCR tool and into QuickBooks or NetSuite lets a single misread table row pollute your ledger.
-
-We rebuilt an AP pipeline handling 3,200 vendor PDFs a month. Before our rebuild, AP staff spent 9.5 hours every week voiding duplicate bills and fixing line-item math errors.
-
-We placed a deterministic 4-gate worker in front of the ERP: SHA-256 attachment deduplication, strict penny-exact math invariant checks (sum of lines + tax + freight == total), and automated 3-way PO matching.
-
-Now 94.2% of bills post straight through with zero errors, and weekly review takes 45 minutes instead of 9.5 hours.
-
-Reach us at contact@olventech.com.""",
-            "threads": """Wiring an invoice OCR tool straight into your ERP without a math gate is a recipe for a messy ledger.
-
-We put a deterministic 4-gate verifier in front of a 3,200 bill/mo AP pipeline:
-1. SHA-256 + (vendor_id, invoice_no) dedup
-2. Hard check: sum(qty * price) + tax + freight == total
-3. 3-way PO match
-
-94.2% straight-through, 0 duplicate or unbalanced bills. (contact@olventech.com)"""
-        }
-    }
+Clean up noisy ERP syncs: contact@olventech.com""",
+            "instagram": """Firing 18,400 single Stripe charges into NetSuite hammered their ERP API and still missed by $9,000.
+One settled payout batch per wire cut calls 84% and hit $0.00 variance.
+contact@olventech.com""",
+            "facebook": """Hammering NetSuite with 18,400 individual card webhooks wastes API limits and still fails bank reconciliation.
+Batching settled Stripe payouts in Postgres cut ERP calls 84% with $0.00 variance.
+contact@olventech.com""",
+            "threads": """18,400 individual Stripe webhooks slammed NetSuite every month and STILL left a $9K bank gap.
+Settled payout batches in Postgres -> -84% API calls, $0.00 variance.
+contact@olventech.com""",
+            "x": """18,400 per-charge Stripe webhooks still left NetSuite off $9K.
+Settled Postgres payout batches -> -84% ERP calls, $0.00 gap.
+contact@olventech.com""",
+        },
+    },
 }
 
 CASE_NOTES.update(ADDITIONAL_CASE_NOTES)
-CASE_NOTES[15] = copy.deepcopy(CASE_NOTES[7])
-CASE_NOTES[15]["visual_archetype"] = "cdc_hash_diff_funnel"
 
 
 def run_cmd(cmd):
@@ -329,8 +294,11 @@ def build_spec_for_day(day_num, seq_index=None, slot="Evening"):
     else:
         spec = copy.deepcopy(CASE_NOTES[keys[(lookup_idx - 7) % len(keys)]])
     spec["doc_id"] = re.sub(r"CASE NOTE #\d+", f"DAY {day_num:02d} ({slot.upper()})", spec["doc_id"])
-    chosen_arch = ARCHETYPE_ROTATION[(lookup_idx - 10) % len(ARCHETYPE_ROTATION)]
-    # Proactively avoid any archetype used in the last 2 waves in ./history/ so Attempt 1 passes cleanly
+
+    default_arch = spec.get("visual_archetype")
+    chosen_arch = default_arch if default_arch in ARCHETYPE_ROTATION else ARCHETYPE_ROTATION[(lookup_idx - 7) % len(ARCHETYPE_ROTATION)]
+
+    # Proactively avoid any flavour used in the last 2 waves in ./history/ so Attempt 1 passes cleanly
     hist_dir = BASE_DIR / "history"
     if hist_dir.exists():
         recent_archs = set()
@@ -353,16 +321,20 @@ def build_spec_for_day(day_num, seq_index=None, slot="Evening"):
                 if cand not in recent_archs:
                     chosen_arch = cand
                     break
+
+    if chosen_arch != default_arch:
+        # Clear custom accent hex so the newly rotated flavour uses its high-contrast default accent
+        spec.pop("poster_accent_hex", None)
     spec["visual_archetype"] = chosen_arch
+    spec["editorial_mode"] = chosen_arch
     return spec, signals
 
 
 def auto_remediate_captions(day_dir: Path, spec_path: Path, spec: dict, lint_output: str, attempt: int):
     """
-    Self-healing remediation engine:
-    - If VISUAL DUPLICATE BLOCK or ARCHETYPE REPEAT BLOCK is triggered, rotates visual_archetype and re-renders.
-    - If REPETITIVE HOOK OPENING BLOCK is triggered, rewrites the opening clause with the lead metric.
-    - Strips any AI punctuation, banned buzzwords, hashtag overflow, or X 280-char overflow.
+    Olven Tech 2.1 self-healing remediation engine:
+    - Rotates visual_archetype/editorial_mode across the 8 global poster flavours if Visual Uniqueness blocks.
+    - Strips any AI punctuation, banned buzzwords, hashtag overflow, or Anti-Newspaper char/line overflow.
     """
     rerender_needed = False
 
@@ -370,8 +342,10 @@ def auto_remediate_captions(day_dir: Path, spec_path: Path, spec: dict, lint_out
         cur_arch = spec.get("visual_archetype", ARCHETYPE_ROTATION[0])
         cur_idx = ARCHETYPE_ROTATION.index(cur_arch) if cur_arch in ARCHETYPE_ROTATION else 0
         next_arch = ARCHETYPE_ROTATION[(cur_idx + attempt) % len(ARCHETYPE_ROTATION)]
-        print(f"  [Self-Heal] Rotating visual_archetype from '{cur_arch}' -> '{next_arch}' to guarantee grid contrast...")
+        print(f"  [Self-Heal] Rotating editorial flavour from '{cur_arch}' -> '{next_arch}' for maximum grid contrast...")
         spec["visual_archetype"] = next_arch
+        spec["editorial_mode"] = next_arch
+        spec.pop("poster_accent_hex", None)
         with open(spec_path, "w", encoding="utf-8") as f:
             json.dump(spec, f, indent=2)
         rerender_needed = True
@@ -387,18 +361,26 @@ def auto_remediate_captions(day_dir: Path, spec_path: Path, spec: dict, lint_out
         r"\bunlock(?:ing|ed)?\b": "enable",
         r"\belevat(?:e|ing|ed)\b": "improve",
         r"\brevolutioniz(?:e|ing|ed)\b": "rebuild",
-        r"\bgame-changer\b": "critical upgrade",
-        r"\bparadigm\s+shift\b": "architectural change",
-        r"\bsynergy\b": "integration",
-        r"\bholistic\b": "end-to-end",
+        r"\bgame-changer\b": "upgrade",
+        r"\bparadigm\s+shift\b": "change",
+        r"\bsynergy\b": "sync",
+        r"\bholistic\b": "full",
         r"\bseamless(?:ly)?\b": "clean",
-        r"\brobust\b": "fault-tolerant",
+        r"\brobust\b": "solid",
         r"\bin\s+today's\s+fast-paced\b": "in high-volume",
         r"\bin\s+the\s+ever-evolving\b": "in modern",
         r"\blet\s+that\s+sink\s+in\b": "",
         r"\bhere's\s+the\s+truth\b": "in production",
         r"\bmoreover\b": "also",
-        r"\bfurthermore\b": "additionally",
+        r"\bfurthermore\b": "plus",
+    }
+
+    char_caps = {
+        "linkedin-caption.txt": 550,
+        "instagram-caption.txt": 275,
+        "facebook-caption.txt": 275,
+        "threads-caption.txt": 255,
+        "x-caption.txt": 235,
     }
 
     for cap_file in day_dir.glob("*-caption.txt"):
@@ -409,7 +391,7 @@ def auto_remediate_captions(day_dir: Path, spec_path: Path, spec: dict, lint_out
 
         if "REPETITIVE HOOK OPENING BLOCK" in lint_output and cap_file.name == "linkedin-caption.txt":
             m0 = spec["metrics"][0]
-            txt = f"[{m0['label']}: {m0['value']}] " + txt
+            txt = f"{m0['value']} {m0['label'].lower()}: " + txt
 
         tags = list(re.finditer(r"(?:^|\s)(#[A-Za-z0-9_]+)", txt))
         if len(tags) > 2:
@@ -417,12 +399,13 @@ def auto_remediate_captions(day_dir: Path, spec_path: Path, spec: dict, lint_out
                 txt = txt[:m.start(1)] + txt[m.end(1):]
 
         if "olventech.com" not in txt.lower():
-            txt = txt.rstrip() + "\n\nReach us at contact@olventech.com"
+            txt = txt.rstrip() + "\ncontact@olventech.com"
 
-        if cap_file.name == "x-caption.txt" and len(txt.strip()) > 275:
-            suffix = "\n\ncontact@olventech.com"
+        cap_limit = char_caps.get(cap_file.name, 275)
+        if len(txt.strip()) > cap_limit:
+            suffix = "\ncontact@olventech.com"
             body = txt.strip().replace("contact@olventech.com", "").strip()
-            txt = body[: 275 - len(suffix) - 3].rstrip() + "..." + suffix
+            txt = body[: cap_limit - len(suffix) - 3].rstrip() + "..." + suffix
 
         cap_file.write_text(txt.strip() + "\n", encoding="utf-8")
 
@@ -471,7 +454,7 @@ def generate_and_stage(day_num=None, slot=None, status="QUEUED"):
     with open(spec_path, "w", encoding="utf-8") as f:
         json.dump(spec, f, indent=2)
 
-    print(f"[1/5] Rendering 2x Retina bespoke visuals [archetype={spec.get('visual_archetype')}] for {day_label}...")
+    print(f"[1/5] Rendering 8-Flavour 2x Retina Editorial Poster [flavour={spec.get('visual_archetype')}] for {day_label}...")
     run_cmd(["node", str(BASE_DIR / "render_case_study.js"), str(spec_path), str(local_day_dir)])
 
     import datetime
@@ -479,14 +462,14 @@ def generate_and_stage(day_num=None, slot=None, status="QUEUED"):
     now_pkt = datetime.datetime.now(ZoneInfo("Asia/Karachi"))
     is_video_day = (now_pkt.weekday() in (1, 3, 5)) or (seq_index % 2 == 1)
     if is_video_day:
-        print(f"[1b/5] Video Slot active: Rendering 1080x1350 30fps architectural walkthrough MP4 for {day_label}...")
+        print(f"[1b/5] Video Slot active: Rendering 1080x1920 30fps Physics-Cinema Reel [world={spec.get('reel_mode')}]...")
         run_cmd(["node", str(BASE_DIR / "render_video.js"), str(spec_path), str(local_day_dir)])
 
-    print(f"[2/5] Writing human-voice captions for {day_label}...")
+    print(f"[2/5] Writing punchy Duolingo/Ramp captions for {day_label}...")
     for plat, text in spec["captions"].items():
         (local_day_dir / f"{plat}-caption.txt").write_text(text.strip() + "\n", encoding="utf-8")
 
-    print(f"[3/5] Running 3-Layer Anti-AI, Visual Uniqueness & Algorithm Reach Blocker on {local_day_dir}...")
+    print(f"[3/5] Running Olven 2.1 Anti-Newspaper, Zero-AI & Visual Uniqueness Gate on {local_day_dir}...")
     max_attempts = 6
     for attempt in range(1, max_attempts + 1):
         res = subprocess.run(
@@ -577,7 +560,7 @@ def generate_and_stage(day_num=None, slot=None, status="QUEUED"):
         writer.writerows(rows)
 
     run_cmd(["gdrive", "mutate", "update", QUEUE_SHEET_ID, str(CSV_PATH)])
-    print(f"SUCCESS: {day_label} [archetype={spec.get('visual_archetype')}] verified, uploaded to Drive ({day_folder_id}), and staged as {status}!")
+    print(f"SUCCESS: {day_label} [flavour={spec.get('visual_archetype')}] verified, uploaded to Drive ({day_folder_id}), and staged as {status}!")
 
 
 if __name__ == "__main__":
