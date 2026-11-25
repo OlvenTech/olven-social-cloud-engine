@@ -1,8 +1,7 @@
-Most AI products don't fail because AI is dumb. They fail because the token bill kills their margins.
+Finance locked themselves in a room for 3 days/quarter hunting $19K/mo missing between Stripe & QuickBooks.
 
-1 client paid $0.42/PDF & waited 46s.
-We added page filtering + SHA-256 Redis caching + parallel schema checks:
-- AI bill: -68%
-- Speed: 46s -> 11.8s
+Basic Zapier syncs broke on EUR/GBP upgrades.
+
+Built a Postgres ledger syncing line-level invoices -> $0.00 variance, 3 days saved.
 
 contact@olventech.com

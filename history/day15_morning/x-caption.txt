@@ -1,0 +1,7 @@
+Finance locked themselves in a room for 3 days/quarter hunting $19K/mo missing between Stripe & QuickBooks.
+
+Basic Zapier syncs broke on EUR/GBP upgrades.
+
+Built a Postgres ledger syncing line-level invoices -> $0.00 variance, 3 days saved.
+
+contact@olventech.com
