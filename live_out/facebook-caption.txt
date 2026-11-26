@@ -1,3 +1,3 @@
-Quarterly SOC-2 screenshot scrambles steal 110 hours from your best engineers and stall product shipping.
-Immutable hash-chained S3 logs cut audit prep 90% with a 15s export.
+When PagerDuty cries wolf 84 times a month at 3 AM, nobody wakes up for the real checkout crash.
+SLO burn-rate alerts cut night pages 92% and spotted real failures in 3.1 minutes.
 contact@olventech.com

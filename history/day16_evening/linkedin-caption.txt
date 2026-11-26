@@ -1,0 +1,8 @@
+Wake an engineer at 3:14 AM 84 times for harmless CPU spikes and guess what happens when checkout actually explodes?
+
+They snooze PagerDuty in their sleep. A real outage sat untouched for 28 minutes.
+
+We ripped out raw CPU alerts and wired customer-impact SLO burn-rate pages.
+Night alarms fell 92% (6 real alerts/mo). Real crashes now get caught in 3.1 minutes.
+
+Let your engineers sleep again: contact@olventech.com

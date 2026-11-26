@@ -1,8 +1,8 @@
-Paying senior engineers $180/hour to take 400 screenshots of AWS settings every quarter is peak compliance comedy.
+Wake an engineer at 3:14 AM 84 times for harmless CPU spikes and guess what happens when checkout actually explodes?
 
-110 hours vanished every SOC-2 cycle while product roadmaps froze.
+They snooze PagerDuty in their sleep. A real outage sat untouched for 28 minutes.
 
-We built append-only, hash-chained audit logs locked in S3 for 7 years.
-Audit prep dropped 90%. Exporting a full auditor bundle now takes 15 seconds and 1 click.
+We ripped out raw CPU alerts and wired customer-impact SLO burn-rate pages.
+Night alarms fell 92% (6 real alerts/mo). Real crashes now get caught in 3.1 minutes.
 
-Automate painless SOC-2 proof: contact@olventech.com
+Let your engineers sleep again: contact@olventech.com
