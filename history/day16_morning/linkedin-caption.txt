@@ -1,0 +1,8 @@
+Paying senior engineers $180/hour to take 400 screenshots of AWS settings every quarter is peak compliance comedy.
+
+110 hours vanished every SOC-2 cycle while product roadmaps froze.
+
+We built append-only, hash-chained audit logs locked in S3 for 7 years.
+Audit prep dropped 90%. Exporting a full auditor bundle now takes 15 seconds and 1 click.
+
+Automate painless SOC-2 proof: contact@olventech.com

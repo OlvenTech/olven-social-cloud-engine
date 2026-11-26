@@ -1,9 +1,0 @@
-Every day at 2 PM, one store's checkout froze. They almost doubled their server bill.
-
-The real bug? Their search bar scanned 11M Postgres rows per keystroke (94% CPU).
-
-Moved search to a live CDC index:
-- 2.4s -> 48ms (50x faster)
-- Sales conversio...
-
-contact@olventech.com

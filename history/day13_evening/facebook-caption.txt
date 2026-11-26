@@ -1,5 +1,0 @@
-A fast-growing store was about to double its monthly server bill because checkout froze every afternoon at 2 PM.
-
-Turns out their search bar was scanning 11 million Postgres products on every keystroke, pushing database CPU to 94%. Olven Tech moved search to a live CDC-synced index, cutting wait time from 2.4 seconds to 48 milliseconds and lifting buyer sales by 14%.
-
-How many seconds do you wait before leaving a slow website? Tell us below! (Need a speed audit? Email contact@olventech.com.)

@@ -1,8 +1,8 @@
-# Olven Tech 2.1 — Daily R&D, 8-Flavour Editorial & Physics-Cinema Dossier (`Day 15 (Evening)`)
+# Olven Tech 2.1 — Daily R&D, 8-Flavour Editorial & Physics-Cinema Dossier (`Day 16 (Morning)`)
 
-- **R&D Execution Timestamp (PKT):** `2026-11-25 22:32:31 PKT`
-- **Selected Case Study:** `DAY 15 (EVENING) · 15-SEC HICCUP CAUSED A 42-MIN SELF-DDOS` — *How One 15-Second Hiccup Caused a 42-Minute Self-DDoS*
-- **Editorial Poster Flavour:** `nordic_stockholm_slate` *(8-World Global Art Direction; verified distinct via 8x8 spatial RGB distance >= 22.0)*
+- **R&D Execution Timestamp (PKT):** `2026-11-26 12:00:54 PKT`
+- **Selected Case Study:** `DAY 16 (MORNING) · 110 AUDIT HOURS REPLACED BY 1 CLICK` — *Replacing 110 Hours of Audit Screenshots With 1 Click*
+- **Editorial Poster Flavour:** `mayfair_racing_green` *(8-World Global Art Direction; verified distinct via 8x8 spatial RGB distance >= 22.0)*
 - **Cinema Reel World:** `flow_bottleneck_zurich` *(480-frame 30fps continuous-flow animation + musical sound design)*
 - **Target Buyer Persona:** CTOs, VPs of Engineering, Heads of RevOps / Finance Ops, High-Volume Commerce Founders
 - **Conversion CTA:** `contact@olventech.com` (`https://olventech.com`)
@@ -12,12 +12,12 @@
 ## 1. Live Engineering & Market Signals Scanned Today
 
 ### Hacker News Front-Page Signals
-- **Matrix Multiplication is Θ(n^2.25) [pdf]** (889 pts, 500 comments) — https://github.com/openai/math/blob/main/preprints/The-matrix-multiplication-exponent-is-nine-fourths-November-24-2026/paper.pdf
-- **Button Sounds – collection of professionally-recorded button clicks and presses** (708 pts, 115 comments) — https://buttons.joshwcomeau.com/
-- **The Spray Bottle** (584 pts, 141 comments) — https://mechanical-pencil.com/products/spray-bottle
-- **Ternary Bonsai 2.5 27B** (513 pts, 167 comments) — https://prismml.com/news/bonsai-2-5-27b
-- **Models Can Communicate via Inference Servers Despite Being Sandboxed** (389 pts, 164 comments) — https://www.lesswrong.com/posts/7wzWuLP3HhyBLmKfo/models-can-communicate-via-inference-servers-despite-being
-- **Bypassing iOS Safari's 60 FPS Limit to Build Web Applications That Feel Native** (374 pts, 130 comments) — https://rida.dev/blog/bypassing-ios-safari-60-fps-limit
+- **1Password Security Incident** (1331 pts, 561 comments) — https://1password.com/blog/update-on-nov-2026-security-incident
+- **Holy shit holy shit holy shit holy shit: The magnitude of what’s now happening** (1298 pts, 1146 comments) — https://scottaaronson.blog/?p=10379
+- **Google releases Cogentic papers on integer factorization, discrete logs and more** (482 pts, 345 comments) — https://github.com/google-research/google-research/tree/master/cogentic_research_papers
+- **A few questions for the guy who went snorkeling in a Home Depot retention pond** (465 pts, 113 comments) — https://www.vox.com/down-to-earth/511999/home-depot-retention-pond-snorkel-joseph-ricketts
+- **Much shorter version of GRH Lean verification from Anthropic** (407 pts, 205 comments) — https://github.com/lsernau/grh-lean
+- **GPT-6.2 Astra is the first model to beat Googlers' code golf records** (345 pts, 92 comments) — https://bjin.github.io/go-codegolf-benchmark/#leaderboard
 
 ### Live Infrastructure, Queue & ERP Operations Signals
 - Evaluated current production webhook, ERP, and database reliability signals.
@@ -33,11 +33,11 @@
 
 ## 2. Olven Tech 2.1 Creative & Conversion Strategy
 
-1. **Concrete Financial / Operational Pain (`42-MIN SELF-DDOS CRASH`):**
-   - Buyers stop scrolling for sharp visual metaphors that expose the exact failure mode hurting their stack (*Fixed-Interval Retry Loops*).
-2. **Global Visual Flavour Contrast (`nordic_stockholm_slate`):**
+1. **Concrete Financial / Operational Pain (`110 ENG HOURS / QUARTER`):**
+   - Buyers stop scrolling for sharp visual metaphors that expose the exact failure mode hurting their stack (*Quarterly Screenshot Fire Drills*).
+2. **Global Visual Flavour Contrast (`mayfair_racing_green`):**
    - Full-bleed Pentagram/Ramp editorial poster with ONLY 1 bold 4-6 word headline and subtle Olven logo (zero UI boxes, zero charts, zero text walls).
 3. **Anti-Newspaper Punchy Voice:**
    - Funny, bold Duolingo/Ramp cadence strictly enforcing <= 85 words on LinkedIn and 2-3 punchy lines on IG/X/Threads/FB.
-4. **Quantified Business Outcome (`RECOVERY: 14 sec`, `FULL OUTAGES: 0`):**
+4. **Quantified Business Outcome (`TIME SAVED: -90%`, `EXPORT SPEED: 15 sec`):**
    - Closes directly with verifiable engineering proof and low-friction invite to `contact@olventech.com`.

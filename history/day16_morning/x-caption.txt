@@ -1,0 +1,3 @@
+110 hrs of manual SOC-2 screenshots every quarter.
+Hash-chained S3 vault -> 15-sec 1-click export, -90% time.
+contact@olventech.com

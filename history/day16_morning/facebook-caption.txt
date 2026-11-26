@@ -1,0 +1,3 @@
+Quarterly SOC-2 screenshot scrambles steal 110 hours from your best engineers and stall product shipping.
+Immutable hash-chained S3 logs cut audit prep 90% with a 15s export.
+contact@olventech.com
