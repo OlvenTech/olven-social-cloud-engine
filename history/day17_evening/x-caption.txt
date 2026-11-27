@@ -1,0 +1,3 @@
+Per-charge Stripe zaps cost 6.5h/mo in NetSuite CSV pain.
+Postgres payout.paid ledger -> $0.00 drift, 12-min close.
+contact@olventech.com

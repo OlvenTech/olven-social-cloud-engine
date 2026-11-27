@@ -1,8 +1,8 @@
-One misplaced comma on line 12 froze 400 completely valid retail orders inside a midnight SFTP script.
+Pushing every individual Stripe card charge straight into NetSuite guarantees your finance team will spend 6.5 hours every month-end crying into CSVs.
 
-Big-box retailers do not accept "oops" for late ship notices. They simply deducted $95,000 a year in chargebacks.
+Per-charge zaps completely miss settled FX fees, grouped Stripe deductions, and mid-week refunds.
 
-We split EDI batches into isolated per-order events with 90-second notices and 1-click Slack fixes.
-1 bad order never stalls 400 again. Fines dropped to $0.
+We rebuilt their 18,400 txn/mo ledger around `payout.paid` in Postgres.
+Variance hit $0.00. ERP API calls dropped 84%. Close shrank to 12 minutes.
 
-Kill fragile midnight EDI scripts: contact@olventech.com
+Fix messy payout accounting: contact@olventech.com

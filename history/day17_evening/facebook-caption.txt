@@ -1,0 +1,3 @@
+If your NetSuite bank feed disagrees with Stripe by thousands every month-end, blame per-charge webhook zaps.
+Our Postgres payout.paid ledger cut 18,400 txns/mo to 12 mins and $0.00 drift.
+contact@olventech.com

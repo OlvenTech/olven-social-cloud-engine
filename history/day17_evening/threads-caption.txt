@@ -1,0 +1,3 @@
+Finance teams shouldn't spend 6.5 hours every month-end hunting Stripe FX fees in CSVs.
+Anchor on payout.paid in Postgres -> $0.00 NetSuite drift, 12-min close.
+contact@olventech.com
