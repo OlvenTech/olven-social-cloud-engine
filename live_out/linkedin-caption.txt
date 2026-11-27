@@ -1,8 +1,8 @@
-Wake an engineer at 3:14 AM 84 times for harmless CPU spikes and guess what happens when checkout actually explodes?
+One misplaced comma on line 12 froze 400 completely valid retail orders inside a midnight SFTP script.
 
-They snooze PagerDuty in their sleep. A real outage sat untouched for 28 minutes.
+Big-box retailers do not accept "oops" for late ship notices. They simply deducted $95,000 a year in chargebacks.
 
-We ripped out raw CPU alerts and wired customer-impact SLO burn-rate pages.
-Night alarms fell 92% (6 real alerts/mo). Real crashes now get caught in 3.1 minutes.
+We split EDI batches into isolated per-order events with 90-second notices and 1-click Slack fixes.
+1 bad order never stalls 400 again. Fines dropped to $0.
 
-Let your engineers sleep again: contact@olventech.com
+Kill fragile midnight EDI scripts: contact@olventech.com

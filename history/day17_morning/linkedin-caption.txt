@@ -1,0 +1,8 @@
+One misplaced comma on line 12 froze 400 completely valid retail orders inside a midnight SFTP script.
+
+Big-box retailers do not accept "oops" for late ship notices. They simply deducted $95,000 a year in chargebacks.
+
+We split EDI batches into isolated per-order events with 90-second notices and 1-click Slack fixes.
+1 bad order never stalls 400 again. Fines dropped to $0.
+
+Kill fragile midnight EDI scripts: contact@olventech.com

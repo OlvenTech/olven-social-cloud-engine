@@ -1,0 +1,3 @@
+One typo on line 12 froze 400 valid orders overnight and cost $95,000/yr in retail fines.
+Isolated EDI events + 90s notices dropped fines to $0.
+contact@olventech.com

@@ -1,3 +1,3 @@
-84 fake 3 AM CPU pages trained everyone to mute PagerDuty during a real 28-min crash.
-SLO burn-rate alerts -> -92% alarms, 3.1-minute catch speed.
+Imagine paying $95,000/year in retail fines because 1 stray comma froze a midnight SFTP batch.
+Per-order EDI events -> 90s notices, $0 fines.
 contact@olventech.com
