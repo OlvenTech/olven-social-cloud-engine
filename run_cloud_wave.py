@@ -100,7 +100,7 @@ def main():
         f"[1/6] Running Live T-1h B2B Engineering R&D for {day_label} "
         f"(seq_index={seq_index}, media_type={media_type})..."
     )
-    spec, signals = build_spec_for_day(day_num, seq_index=seq_index, slot=slot)
+    spec, signals = build_spec_for_day(day_num, seq_index=seq_index, slot=slot, media_type=media_type)
     write_research_dossier(f"{day_num} ({slot})", spec, signals, wave_dir)
 
     spec_path = wave_dir / "spec.json"
@@ -131,7 +131,7 @@ def main():
         raise RuntimeError(f"3-Layer Quality Gate blocked {day_label} after {max_attempts} self-healing attempts.")
 
     if media_type == "video":
-        print(f"[5/6] Rendering 9:16 (1080x1920) 30fps Physics-Cinema Reel [seq={seq_index}, world={spec.get('reel_mode', 'physics_bottleneck')}]...")
+        print(f"[5/6] Rendering 9:16 (1080x1920) 30fps Physics-Cinema Reel [seq={seq_index}, world={spec.get('reel_mode', 'flow_bottleneck_zurich')}]...")
         os.environ["OLVEN_SEQ_INDEX"] = str(seq_index)
         run_cmd(["node", str(BASE_DIR / "render_video.js"), str(spec_path), str(wave_dir)])
     else:
@@ -140,7 +140,7 @@ def main():
     write_research_dossier(f"{day_num} ({slot})", spec, signals, wave_dir)
     spec_path.unlink(missing_ok=True)
 
-    print(f"[6/6] Staging verified {day_label} ({media_type}) package into ./live_out/ and advancing cursor...")
+    print(f"[6/6] Staging verified {day_label} ({media_type}) package into ./live_out/, updating forever memory, and advancing cursor...")
     stage_files = [
         "linkedin.png", "facebook.png", "instagram.png", "x.png",
         "linkedin-caption.txt", "facebook-caption.txt", "instagram-caption.txt",
@@ -165,6 +165,17 @@ def main():
     video_url = f"{wave_cdn_base}/walkthrough-video.mp4" if media_type == "video" else ""
     instagram_img_url = f"{wave_raw_base}/instagram.png?v={v_tag}"
     instagram_media_url = video_url if media_type == "video" else instagram_img_url
+    linkedin_final = (wave_dir / "linkedin-caption.txt").read_text(encoding="utf-8").strip()
+
+    from live_content_generator import record_topic_memory
+    record_topic_memory(
+        day_label=day_label,
+        seq_index=seq_index,
+        media_type=media_type,
+        spec=spec,
+        linkedin_text=linkedin_final,
+        generation_mode=spec.get("generation_mode", "CURATED_FALLBACK"),
+    )
 
     manifest = {
         "day_label": day_label,
@@ -172,8 +183,11 @@ def main():
         "slot": slot,
         "seq_index": seq_index,
         "media_type": media_type,
+        "generation_mode": spec.get("generation_mode", "CURATED_FALLBACK"),
+        "source_signal": spec.get("source_signal", hn_top),
         "generated_at_utc": now_utc,
         "visual_archetype": spec.get("visual_archetype"),
+        "reel_mode": spec.get("reel_mode"),
         "hn_top_signal": hn_top,
         "linkedin_img_url": f"{wave_raw_base}/linkedin.png?v={v_tag}",
         "facebook_img_url": f"{wave_raw_base}/facebook.png?v={v_tag}",
@@ -182,7 +196,7 @@ def main():
         "video_url": video_url,
         "x_img_url": f"{wave_raw_base}/x.png?v={v_tag}",
         "threads_img_url": instagram_img_url,
-        "linkedin_caption": (wave_dir / "linkedin-caption.txt").read_text(encoding="utf-8").strip(),
+        "linkedin_caption": linkedin_final,
         "facebook_caption": (wave_dir / "facebook-caption.txt").read_text(encoding="utf-8").strip(),
         "instagram_caption": (wave_dir / "instagram-caption.txt").read_text(encoding="utf-8").strip(),
         "x_caption": (wave_dir / "x-caption.txt").read_text(encoding="utf-8").strip(),
@@ -206,8 +220,8 @@ def main():
 
     save_next_cursor(day_num, slot, seq_index, media_type)
     print(
-        f"SUCCESS: {day_label} [media_type={media_type}, archetype={spec.get('visual_archetype')}] "
-        f"rendered, verified, and staged to ./live_out/manifest.json"
+        f"SUCCESS: {day_label} [mode={spec.get('generation_mode')}, media_type={media_type}, "
+        f"archetype={spec.get('visual_archetype')}] rendered, verified, and staged to ./live_out/manifest.json"
     )
 
 

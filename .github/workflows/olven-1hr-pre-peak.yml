@@ -66,16 +66,23 @@ jobs:
             npx playwright install --with-deps chromium
           fi
 
-      - name: Execute Olven 2.1 R&D, 8-Flavour Editorial & 5-World Physics-Cinema Render + Quality Gate
+      - name: Execute Olven 6.0 Live R&D, Autonomous Copy, 8-World Editorial & 5-World Cinema Render + Quality Gate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER }}
+          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
         run: |
           python3 run_cloud_wave.py "${{ github.event.inputs.day_num }}" "${{ github.event.inputs.slot }}" "${{ github.event.inputs.media_type }}"
 
-      - name: Commit verified wave to live_out/ and advance cursor
+      - name: Commit verified wave to live_out/, update forever topic memory, and advance cursor
         id: commit_wave
         run: |
           git config user.name "olven-cloud-engine"
           git config user.email "contact@olventech.com"
-          git add state/wave_cursor.json live_out/ history/
+          git add state/ live_out/ history/
           if git diff --staged --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No wave changes staged — skipping push."

@@ -2384,18 +2384,27 @@ def write_research_dossier(day_num, spec, signals, out_dir):
         for item in signals.get("devto_architecture", [])[:5]
     ) or "- Cross-checked developer architecture discussions."
 
+    lob_lines = "\n".join(
+        f"- **{item['title']}** ({item.get('score', 0)} pts) — {item['url']}"
+        for item in signals.get("lobsters_active", [])[:5]
+    ) or "- Cross-checked active engineering community discussions."
+
     archetype = spec.get("visual_archetype", "swiss_zurich_flow")
     reel_mode = spec.get("reel_mode", "flow_bottleneck_zurich")
+    gen_mode = spec.get("generation_mode", "LIVE_AUTONOMOUS")
+    source_sig = spec.get("source_signal", "Live T-60m multi-source engineering briefing")
     metrics = spec.get("metrics", [{"label": "IMPACT", "value": "VERIFIED"}, {"label": "SPEED", "value": "FAST"}])
     m0 = metrics[0]
     m1 = metrics[1] if len(metrics) > 1 else metrics[0]
 
-    content = f"""# Olven Tech 2.1 — Daily R&D, 8-Flavour Editorial & Physics-Cinema Dossier (`Day {day_num}`)
+    content = f"""# Olven Tech 6.0 — Live T-60m Autonomous R&D, European Atelier & Cinema Dossier (`Day {day_num}`)
 
 - **R&D Execution Timestamp (PKT):** `{signals.get('timestamp_pkt')}`
+- **Generation Engine Mode:** `{gen_mode}` *(Forever-Memory Deduplicated via `state/topic_memory.json`)*
+- **Live Trigger Signal:** *{source_sig}*
 - **Selected Case Study:** `{spec['doc_id']}` — *{spec['headline']}*
-- **Editorial Poster Flavour:** `{archetype}` *(8-World Global Art Direction; verified distinct via 8x8 spatial RGB distance >= 22.0)*
-- **Cinema Reel World:** `{reel_mode}` *(480-frame 30fps continuous-flow animation + musical sound design)*
+- **Editorial Poster Flavour:** `{archetype}` *(8-World European Atelier; strict Dark <-> Light alternation & RGB distance >= 22.0)*
+- **Cinema Reel World:** `{reel_mode}` *(480-frame 30fps Flow Style 1 animation with sharp Frame-0 editorial cover)*
 - **Target Buyer Persona:** CTOs, VPs of Engineering, Heads of RevOps / Finance Ops, High-Volume Commerce Founders
 - **Conversion CTA:** `contact@olventech.com` (`https://olventech.com`)
 
@@ -2406,20 +2415,23 @@ def write_research_dossier(day_num, spec, signals, out_dir):
 ### Hacker News Front-Page Signals
 {hn_lines}
 
-### Live Infrastructure, Queue & ERP Operations Signals
+### Recent High-Signal Tech & Infrastructure Signals
 {ops_lines}
 
-### Architecture Community Discussions
+### Architecture Community Discussions (Dev.to)
 {dev_lines}
+
+### Active Engineering Threads (Lobsters)
+{lob_lines}
 
 ---
 
-## 2. Olven Tech 2.1 Creative & Conversion Strategy
+## 2. Olven Tech 6.0 Creative & Conversion Strategy
 
 1. **Concrete Financial / Operational Pain (`{spec.get('before_badge', 'PRODUCTION FAILURE')}`):**
    - Buyers stop scrolling for sharp visual metaphors that expose the exact failure mode hurting their stack (*{spec.get('before_title', spec['headline'])}*).
 2. **Global Visual Flavour Contrast (`{archetype}`):**
-   - Full-bleed Pentagram/Ramp editorial poster with ONLY 1 bold 4-6 word headline and subtle Olven logo (zero UI boxes, zero charts, zero text walls).
+   - Full-bleed European Atelier editorial poster with ONLY 1 bold 4-6 word headline and subtle Olven logo (zero UI boxes, zero charts, zero text walls).
 3. **Anti-Newspaper Punchy Voice:**
    - Funny, bold Duolingo/Ramp cadence strictly enforcing <= 85 words on LinkedIn and 2-3 punchy lines on IG/X/Threads/FB.
 4. **Quantified Business Outcome (`{m0['label']}: {m0['value']}`, `{m1['label']}: {m1['value']}`):**

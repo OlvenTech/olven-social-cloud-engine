@@ -299,19 +299,37 @@ def _is_dark_arch(arch: str) -> bool:
     return arch in DARK_ARCHETYPES
 
 
-def build_spec_for_day(day_num, seq_index=None, slot="Evening"):
-    signals = gather_live_rd_signals()
+def build_spec_for_day(day_num, seq_index=None, slot="Evening", media_type="image"):
+    from live_content_generator import (
+        gather_fresh_industry_signals,
+        generate_live_spec_with_llm,
+        pick_unposted_curated_fallback,
+    )
+
+    signals = gather_fresh_industry_signals()
     fp_count = len(signals.get("hn_frontpage", []))
     ops_count = len(signals.get("hn_infra_ops", []))
     dev_count = len(signals.get("devto_architecture", []))
-    print(f"[R&D] Pulled live signals: {fp_count} HN front-page, {ops_count} HN infra/ops, {dev_count} Dev.to architecture articles.")
+    lob_count = len(signals.get("lobsters_active", []))
+    print(
+        f"[R&D 6.0] Pulled live signals: {fp_count} HN front-page, {ops_count} HN fresh infra/AI, "
+        f"{dev_count} Dev.to architecture, {lob_count} Lobsters engineering articles."
+    )
 
     lookup_idx = seq_index if seq_index is not None else day_num
-    keys = sorted(CASE_NOTES.keys())
-    if lookup_idx in CASE_NOTES:
-        spec = copy.deepcopy(CASE_NOTES[lookup_idx])
-    else:
-        spec = copy.deepcopy(CASE_NOTES[keys[(lookup_idx - 7) % len(keys)]])
+    spec, gen_mode = generate_live_spec_with_llm(
+        day_num=day_num,
+        slot=slot,
+        seq_index=lookup_idx,
+        signals=signals,
+        media_type=media_type,
+    )
+    if spec is not None:
+        print(f"[R&D 6.0] LIVE autonomous post generated via {gen_mode}: {spec.get('headline')}")
+        return spec, signals
+
+    print(f"[R&D 6.0] Live LLM unavailable ({gen_mode}) — selecting next unposted story from 45-study archive...")
+    spec = pick_unposted_curated_fallback(CASE_NOTES, lookup_idx, media_type=media_type)
     spec["doc_id"] = re.sub(r"CASE NOTE #\d+", f"DAY {day_num:02d} ({slot.upper()})", spec["doc_id"])
 
     default_arch = spec.get("visual_archetype")

@@ -270,6 +270,35 @@ def lint_caption(file_path: Path, folder: Path) -> list[str]:
                         f"[REPETITIVE HOOK OPENING BLOCK] {folder.name} starts with '{my_open}...', matching {other_dir.name}."
                     )
 
+        # Also enforce forever deduplication against state/topic_memory.json (survives history/ pruning)
+        mem_file = BASE_DIR / "state" / "topic_memory.json"
+        if mem_file.exists():
+            try:
+                mem_data = json.loads(mem_file.read_text(encoding="utf-8"))
+                my_open = " ".join(re.findall(r"[a-z0-9]+", lower)[:3])
+                my_gram_strs = {" ".join(g) for g in my_grams}
+                folder_slug = folder.name.lower()
+                for entry in mem_data.get("entries", []):
+                    edl = (entry.get("day_label") or "").lower()
+                    # Skip self if re-linting an already recorded day folder
+                    m_cur = re.match(r"^day(\d+)_(morning|evening)$", folder_slug)
+                    if m_cur and edl == f"day {int(m_cur.group(1))} ({m_cur.group(2)})":
+                        continue
+                    old_open = (entry.get("linkedin_opener") or "").strip().lower()
+                    if my_open and old_open and my_open == old_open:
+                        errors.append(
+                            f"[FOREVER MEMORY OPENER BLOCK] {folder.name} repeats opener '{my_open}...' from {entry.get('day_label')}."
+                        )
+                    old_grams = set(entry.get("linkedin_4grams") or [])
+                    if my_gram_strs and old_grams:
+                        ov = len(my_gram_strs & old_grams) / min(len(my_gram_strs), len(old_grams))
+                        if ov > 0.18:
+                            errors.append(
+                                f"[FOREVER MEMORY COPY BLOCK] {folder.name} shares {ov*100:.1f}% 4-gram overlap with {entry.get('day_label')} (max 18%)."
+                            )
+            except Exception:
+                pass
+
     return errors
 
 
