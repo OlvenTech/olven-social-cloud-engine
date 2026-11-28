@@ -66,13 +66,15 @@ jobs:
             npx playwright install --with-deps chromium
           fi
 
-      - name: Execute Olven 6.0 Live R&D, Autonomous Copy, 8-World Editorial & 5-World Cinema Render + Quality Gate
+      - name: Execute Olven 6.5 Gemini 4 Grounded R&D, Nano Banana 2.1 Art & 5-World Cinema Render + Quality Gate
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           LLM_PROVIDER: ${{ secrets.LLM_PROVIDER }}
           GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+          GEMINI_IMAGE_MODEL: ${{ secrets.GEMINI_IMAGE_MODEL }}
+          ENABLE_AI_ART: ${{ secrets.ENABLE_AI_ART }}
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
         run: |
           python3 run_cloud_wave.py "${{ github.event.inputs.day_num }}" "${{ github.event.inputs.slot }}" "${{ github.event.inputs.media_type }}"

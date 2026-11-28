@@ -101,12 +101,16 @@ def main():
         f"(seq_index={seq_index}, media_type={media_type})..."
     )
     spec, signals = build_spec_for_day(day_num, seq_index=seq_index, slot=slot, media_type=media_type)
+
+    from live_content_generator import generate_bespoke_editorial_art
+    generate_bespoke_editorial_art(spec, wave_dir)
+
     write_research_dossier(f"{day_num} ({slot})", spec, signals, wave_dir)
 
     spec_path = wave_dir / "spec.json"
     spec_path.write_text(json.dumps(spec, indent=2), encoding="utf-8")
 
-    print(f"[2/6] Rendering 2x Retina bespoke visuals [archetype={spec.get('visual_archetype')}] via Playwright...")
+    print(f"[2/6] Rendering 2x Retina bespoke visuals [archetype={spec.get('visual_archetype')}, art={spec.get('art_engine', 'procedural-atelier')}] via Playwright...")
     run_cmd(["node", str(BASE_DIR / "render_case_study.js"), str(spec_path), str(wave_dir)])
 
     print(f"[3/6] Writing platform captions for {day_label}...")
@@ -139,6 +143,7 @@ def main():
 
     write_research_dossier(f"{day_num} ({slot})", spec, signals, wave_dir)
     spec_path.unlink(missing_ok=True)
+    (wave_dir / "hero_art.png").unlink(missing_ok=True)
 
     print(f"[6/6] Staging verified {day_label} ({media_type}) package into ./live_out/, updating forever memory, and advancing cursor...")
     stage_files = [
@@ -184,7 +189,9 @@ def main():
         "seq_index": seq_index,
         "media_type": media_type,
         "generation_mode": spec.get("generation_mode", "CURATED_FALLBACK"),
+        "art_engine": spec.get("art_engine", "procedural-atelier"),
         "source_signal": spec.get("source_signal", hn_top),
+        "source_url": spec.get("source_url", ""),
         "generated_at_utc": now_utc,
         "visual_archetype": spec.get("visual_archetype"),
         "reel_mode": spec.get("reel_mode"),

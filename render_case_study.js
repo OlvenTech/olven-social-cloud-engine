@@ -666,6 +666,17 @@ function buildPosterHtml(spec, plat) {
   const logoSvg = buildLogoSvg(logoH, theme.logoInk, theme.logoCut);
   const grainUri = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.032'/%3E%3C/svg%3E";
 
+  let heroArtUri = '';
+  if (spec.hero_art_path && fs.existsSync(spec.hero_art_path)) {
+    const ext = path.extname(spec.hero_art_path).toLowerCase() === '.jpg' ? 'jpeg' : 'png';
+    heroArtUri = `data:image/${ext};base64,${b64File(spec.hero_art_path)}`;
+  }
+  const isDarkTheme = ['milanese_oxblood_atelier', 'palantir_monolith', 'mayfair_racing_green', 'geneva_chronograph_noir'].includes(mode);
+  const frameBorder = isDarkTheme ? 'rgba(229, 198, 126, 0.28)' : 'rgba(15, 23, 42, 0.14)';
+  const artTopPct = plat.height > plat.width ? '30%' : (plat.height === plat.width ? '29%' : '28%');
+  const artBotPad = plat.height > plat.width ? '108px' : '84px';
+  const artSidePad = plat.width > plat.height ? '14%' : '9%';
+
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -686,6 +697,22 @@ function buildPosterHtml(spec, plat) {
     -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
   }
   canvas#art { position: absolute; inset: 0; width: ${plat.width}px; height: ${plat.height}px; }
+  .atelier-frame {
+    position: absolute; inset: 34px; border: 1.4px solid ${frameBorder};
+    pointer-events: none; z-index: 5;
+  }
+  .bespoke-stage {
+    position: absolute; top: ${artTopPct}; left: ${artSidePad}; right: ${artSidePad}; bottom: ${artBotPad};
+    display: flex; align-items: center; justify-content: center; z-index: 3;
+  }
+  .bespoke-frame {
+    width: 100%; height: 100%; border-radius: 14px; overflow: hidden; position: relative;
+    border: 1.5px solid ${frameBorder};
+    box-shadow: ${isDarkTheme ? '0 36px 90px rgba(0,0,0,0.65)' : '0 28px 72px rgba(15,23,42,0.18)'};
+  }
+  .bespoke-frame img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
   .grain {
     position: absolute; inset: 0; background-image: url("${grainUri}");
     background-repeat: repeat; pointer-events: none; z-index: 4;
@@ -708,14 +735,29 @@ function buildPosterHtml(spec, plat) {
 </head>
 <body>
   <canvas id="art"></canvas>
+  ${heroArtUri ? `<div class="atelier-frame"></div><div class="bespoke-stage"><div class="bespoke-frame"><img id="heroArt" src="${heroArtUri}" alt="" /></div></div>` : ''}
   <div class="grain"></div>
   <div class="headline-wrap"><h1>${formatHeadline(headline, accentWord, accentHex, theme)}</h1></div>
   <div class="logo-wrap">${logoSvg}</div>
   <script>
     ${ART_SCRIPT}
     document.fonts.ready.then(() => {
-      drawEditorialArt(document.getElementById('art'), ${JSON.stringify(mode)}, ${plat.width}, ${plat.height}, ${JSON.stringify(artMeta)});
-      window.__RENDER_READY__ = true;
+      const hasBespoke = ${JSON.stringify(Boolean(heroArtUri))};
+      if (hasBespoke) {
+        const c = document.getElementById('art');
+        c.width = ${plat.width}; c.height = ${plat.height};
+        const ctx = c.getContext('2d');
+        const g = ctx.createRadialGradient(${plat.width} * 0.5, ${plat.height} * 0.45, 50, ${plat.width} * 0.5, ${plat.height} * 0.55, Math.max(${plat.width}, ${plat.height}) * 0.8);
+        g.addColorStop(0, ${JSON.stringify(isDarkTheme ? theme.bg : '#FCFBF8')});
+        g.addColorStop(1, ${JSON.stringify(theme.bg)});
+        ctx.fillStyle = g; ctx.fillRect(0, 0, ${plat.width}, ${plat.height});
+        const img = document.getElementById('heroArt');
+        if (img && !img.complete) { img.onload = () => { window.__RENDER_READY__ = true; }; }
+        else { window.__RENDER_READY__ = true; }
+      } else {
+        drawEditorialArt(document.getElementById('art'), ${JSON.stringify(mode)}, ${plat.width}, ${plat.height}, ${JSON.stringify(artMeta)});
+        window.__RENDER_READY__ = true;
+      }
     });
   </script>
 </body>
