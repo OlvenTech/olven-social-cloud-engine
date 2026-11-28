@@ -1,3 +1,3 @@
-Per-charge Stripe zaps cost 6.5h/mo in NetSuite CSV pain.
-Postgres payout.paid ledger -> $0.00 drift, 12-min close.
+15m ERP cron oversold 38 Shopify orders every flash drop.
+Postgres delta-diff -> -98.6% API calls, 1.8s sync, 0 oversells.
 contact@olventech.com

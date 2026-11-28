@@ -1,3 +1,0 @@
-Wait until you find out the 42-minute DDoS attack was just your own app's retry loop firing 11x traffic.
-Jitter + token buckets -> 14s recovery, 0 outages in 9 months.
-contact@olventech.com

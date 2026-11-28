@@ -1,3 +1,3 @@
-Triggering NetSuite on raw Stripe charges left finance matching 18,400 CSV rows for 6.5 hours every month.
-A payout.paid Postgres ledger cut close to 12 mins and $0.00 variance.
+Re-uploading 14,200 unchanged SKUs every 15 mins throttled Shopify and oversold 38 orders per drop.
+Postgres delta-diff cut API writes 98.6% and zeroed hot SKUs in 1.8s.
 contact@olventech.com

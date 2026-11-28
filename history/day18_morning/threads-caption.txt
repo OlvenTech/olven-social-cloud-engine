@@ -1,0 +1,3 @@
+Why upload 14,200 unchanged SKUs during a flash sale while your #1 product oversells 38 times?
+Postgres delta-diff -> 98.6% fewer Shopify API writes, 1.8s zero-outs, 0 oversells.
+contact@olventech.com

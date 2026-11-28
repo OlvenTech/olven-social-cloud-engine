@@ -1,0 +1,3 @@
+Re-uploading 14,200 unchanged SKUs every 15 mins throttled Shopify and oversold 38 orders per drop.
+Postgres delta-diff cut API writes 98.6% and zeroed hot SKUs in 1.8s.
+contact@olventech.com

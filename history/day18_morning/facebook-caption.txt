@@ -1,0 +1,3 @@
+During flash sales, full-catalog ERP crons waste Shopify quota on unchanged products while bestsellers oversell.
+Our Postgres delta-diff fast lane synced in 1.8s with 0 oversells across 6 drops.
+contact@olventech.com

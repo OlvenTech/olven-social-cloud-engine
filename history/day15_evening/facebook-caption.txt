@@ -1,3 +1,0 @@
-Fixed-interval retries turn a tiny 15-second database blip into an 11x self-DDoS crash lasting 42 minutes.
-Token-bucket backpressure dropped recovery to 14 seconds with 0 outages.
-contact@olventech.com

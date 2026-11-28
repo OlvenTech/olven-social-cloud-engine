@@ -1,9 +1,9 @@
-# Olven Tech 2.1 — Daily R&D, 8-Flavour Editorial & Physics-Cinema Dossier (`Day 17 (Evening)`)
+# Olven Tech 2.1 — Daily R&D, 8-Flavour Editorial & Physics-Cinema Dossier (`Day 18 (Morning)`)
 
-- **R&D Execution Timestamp (PKT):** `2026-11-27 18:01:28 PKT`
-- **Selected Case Study:** `DAY 17 (EVENING) · STRIPE TO NETSUITE 6.5H PAYOUT DRIFT` — *Eliminating 6.5-Hour Month-End Stripe to NetSuite Drift*
-- **Editorial Poster Flavour:** `parisian_ivory_monograph` *(8-World Global Art Direction; verified distinct via 8x8 spatial RGB distance >= 22.0)*
-- **Cinema Reel World:** `flow_wire_ledger_geneva` *(480-frame 30fps continuous-flow animation + musical sound design)*
+- **R&D Execution Timestamp (PKT):** `2026-11-28 12:00:56 PKT`
+- **Selected Case Study:** `DAY 18 (MORNING) · STOPPING FLASH-SALE SHOPIFY OVERSELLS` — *Stopping Flash-Sale Oversells Caused by 15-Minute Crons*
+- **Editorial Poster Flavour:** `swiss_zurich_flow` *(8-World Global Art Direction; verified distinct via 8x8 spatial RGB distance >= 22.0)*
+- **Cinema Reel World:** `flow_bottleneck_zurich` *(480-frame 30fps continuous-flow animation + musical sound design)*
 - **Target Buyer Persona:** CTOs, VPs of Engineering, Heads of RevOps / Finance Ops, High-Volume Commerce Founders
 - **Conversion CTA:** `contact@olventech.com` (`https://olventech.com`)
 
@@ -12,12 +12,12 @@
 ## 1. Live Engineering & Market Signals Scanned Today
 
 ### Hacker News Front-Page Signals
-- **1Password Security Incident** (1679 pts, 716 comments) — https://1password.com/blog/update-on-nov-2026-security-incident
-- **AI made self-hosting fun again** (811 pts, 399 comments) — https://janlukas.blog/posts/ai-self-hosting
-- **Intel One Mono font (2023)** (537 pts, 259 comments) — https://github.com/intel/intel-one-mono
-- **YouTube Ad Punisher – Auto-reloads YouTube pages when an ad plays** (441 pts, 512 comments) — https://github.com/antonpictures/youtube-punisher
-- **Company Culture = Slack Emoji ÷ √Headcount** (421 pts, 203 comments) — https://lia.mg/posts/measuring-company-culture-with-slack-emoji/
-- **Kamil Khan Mumtaz: Pakistani architect, admired at home, almost invisible abroad** (408 pts, 106 comments) — https://worksinprogress.co/issue/the-greatest-architect-youve-never-heard-of-is-in-pakistan/
+- **Credit card skimming scripts using WebRTC found on popular shopping sites** (489 pts, 258 comments) — https://www.infohawk.com/news/2026-11-27-black-friday-webrtc-skimmer
+- **Michael Nielsen took down his book on neural nets** (483 pts, 299 comments) — https://neuralnetworksanddeeplearning.com/
+- **GPT 6.2 Astra Solves a Historical Mystery** (404 pts, 256 comments) — https://generativehistory.substack.com/p/gpt-62-astra-solves-a-historical
+- **Show HN: bouncemarket – a live prediction market game for a bouncing ball** (356 pts, 119 comments) — https://bouncemarket.minhanhday.com/
+- **States sue SpaceX to stop Grok from generating child sex images, revenge porn** (354 pts, 199 comments) — https://www.oag.state.va.us/media-center/news-releases/jay-jones/3162-attorneys-general-jones-and-rayfield-file-suit-against-spacex-parent-company-of-x-xai-and-grok-over-creation-and-promotion-of-child-exploitation-and-non-consensual-images-on-platform
+- **Google's DeepCrossAttention achieves comparable model quality up to 3x faster** (295 pts, 117 comments) — https://research.google/blog/supercharging-transformer-residual-connections/
 
 ### Live Infrastructure, Queue & ERP Operations Signals
 - Evaluated current production webhook, ERP, and database reliability signals.
@@ -27,17 +27,17 @@
 - **Can Your Agent Review Your Cloud Architecture?** (19 reactions) — https://dev.to/aws/can-your-agent-review-your-cloud-architecture-4coh
 - **Why millions of agents don't need millions of VMs on Agent Substrate** (8 reactions) — https://dev.to/googlecloud/why-millions-of-agents-dont-need-millions-of-vms-on-agent-substrate-2ech
 - **Blobasaur and the 4th Cross way: how Zerodha's ~35-person tech team keeps shipping open source** (8 reactions) — https://dev.to/amananandrai/blobasaur-and-the-4th-cross-way-how-zerodhas-35-person-tech-team-keeps-shipping-open-source-39o9
-- **Your IR Runbook Is a PDF Nobody Reads at 3 AM. I Turned Mine Into a State Machine.** (26 reactions) — https://dev.to/le_beltagy/your-ir-runbook-is-a-pdf-nobody-reads-at-3-am-i-turned-mine-into-a-state-machine-32o8
+- **Zero Repeat Regressions: The Golden Metric & The Future of Agentic Trust** (11 reactions) — https://dev.to/gde/zero-repeat-regressions-the-golden-metric-the-future-of-agentic-trust-4857
 
 ---
 
 ## 2. Olven Tech 2.1 Creative & Conversion Strategy
 
-1. **Concrete Financial / Operational Pain (`6.5 HRS MANUAL CLOSE`):**
-   - Buyers stop scrolling for sharp visual metaphors that expose the exact failure mode hurting their stack (*Per-Charge Webhook Zaps*).
-2. **Global Visual Flavour Contrast (`parisian_ivory_monograph`):**
+1. **Concrete Financial / Operational Pain (`38 OVERSELLS PER DROP`):**
+   - Buyers stop scrolling for sharp visual metaphors that expose the exact failure mode hurting their stack (*15-Min Full Catalog CSV Polling*).
+2. **Global Visual Flavour Contrast (`swiss_zurich_flow`):**
    - Full-bleed Pentagram/Ramp editorial poster with ONLY 1 bold 4-6 word headline and subtle Olven logo (zero UI boxes, zero charts, zero text walls).
 3. **Anti-Newspaper Punchy Voice:**
    - Funny, bold Duolingo/Ramp cadence strictly enforcing <= 85 words on LinkedIn and 2-3 punchy lines on IG/X/Threads/FB.
-4. **Quantified Business Outcome (`MONTH-END CLOSE: 12 mins`, `LEDGER VARIANCE: $0.00`):**
+4. **Quantified Business Outcome (`SYNC LATENCY: 1.8 sec`, `API SAVED: 98.6%`):**
    - Closes directly with verifiable engineering proof and low-friction invite to `contact@olventech.com`.

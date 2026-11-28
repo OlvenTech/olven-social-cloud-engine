@@ -1,8 +1,8 @@
-Pushing every individual Stripe card charge straight into NetSuite guarantees your finance team will spend 6.5 hours every month-end crying into CSVs.
+Nothing says "happy launch day" like emailing 38 excited customers to confess you sold them sneakers that do not exist.
 
-Per-charge zaps completely miss settled FX fees, grouped Stripe deductions, and mid-week refunds.
+Their 15-minute cron re-uploaded all 14,200 SKUs to Shopify, burning GraphQL limits on slow items while hot SKUs oversold for 22 minutes.
 
-We rebuilt their 18,400 txn/mo ledger around `payout.paid` in Postgres.
-Variance hit $0.00. ERP API calls dropped 84%. Close shrank to 12 minutes.
+We built a Postgres delta-diff worker with a fast lane for SKUs under 5 units.
+98.6% fewer API calls. 1.8s zero-outs. 0 oversells across 6 drops.
 
-Fix messy payout accounting: contact@olventech.com
+Stop launch-day oversells: contact@olventech.com

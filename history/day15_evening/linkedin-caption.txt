@@ -1,8 +1,0 @@
-Hackers did not take down their servers for 42 minutes. Their own polite retry button did.
-
-One 15-second database hiccup made every client smash refresh at the exact same millisecond, creating an 11x self-DDoS tsunami.
-
-We wired jittered backoff and token-bucket load shedding.
-Traffic spikes now cap at 1.1x. Recovery takes 14 seconds. Zero outages in 9 months.
-
-Stop self-DDoSing production: contact@olventech.com

@@ -1,3 +1,0 @@
-15-sec DB hiccup caused an 11x self-DDoS for 42 mins.
-Jittered backoff + token buckets -> 14s recovery, 0 outages.
-contact@olventech.com
