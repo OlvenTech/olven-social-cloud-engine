@@ -280,6 +280,25 @@ def get_next_day_slot(slot_override=None):
     return day_num, slot, seq_index
 
 
+DARK_ARCHETYPES = [
+    "milanese_oxblood_atelier",
+    "palantir_monolith",
+    "mayfair_racing_green",
+    "geneva_chronograph_noir",
+]
+# Safe universal light archetypes (never hijack non-bottleneck topics onto swiss_zurich_flow 32-sphere art)
+SAFE_LIGHT_ARCHETYPES = [
+    "parisian_ivory_monograph",
+    "wall_street_wire_slip",
+    "nordic_stockholm_slate",
+]
+LIGHT_ARCHETYPES = SAFE_LIGHT_ARCHETYPES + ["swiss_zurich_flow"]
+
+
+def _is_dark_arch(arch: str) -> bool:
+    return arch in DARK_ARCHETYPES
+
+
 def build_spec_for_day(day_num, seq_index=None, slot="Evening"):
     signals = gather_live_rd_signals()
     fp_count = len(signals.get("hn_frontpage", []))
@@ -298,10 +317,10 @@ def build_spec_for_day(day_num, seq_index=None, slot="Evening"):
     default_arch = spec.get("visual_archetype")
     chosen_arch = default_arch if default_arch in ARCHETYPE_ROTATION else ARCHETYPE_ROTATION[(lookup_idx - 7) % len(ARCHETYPE_ROTATION)]
 
-    # Proactively avoid any flavour used in the last 2 waves in ./history/ so Attempt 1 passes cleanly
+    # Proactively enforce Dark <-> Light alternation against the last wave and avoid repeating the last 2 flavours
     hist_dir = BASE_DIR / "history"
     if hist_dir.exists():
-        recent_archs = set()
+        recent_list = []
         def _hist_key(p: Path):
             m = re.match(r"^day(\d+)(?:_(morning|evening))?$", p.name.lower())
             return (int(m.group(1)), 0 if m.group(2) == "morning" else 1) if m else (0, 0)
@@ -311,16 +330,18 @@ def build_spec_for_day(day_num, seq_index=None, slot="Evening"):
         )[-2:]
         for hf in hist_folders:
             try:
-                recent_archs.add(json.loads((hf / "visual-metadata.json").read_text(encoding="utf-8")).get("visual_archetype"))
+                arch_name = json.loads((hf / "visual-metadata.json").read_text(encoding="utf-8")).get("visual_archetype")
+                if arch_name:
+                    recent_list.append(arch_name)
             except Exception:
                 pass
-        if chosen_arch in recent_archs:
-            start_i = ARCHETYPE_ROTATION.index(chosen_arch)
-            for offset in range(1, len(ARCHETYPE_ROTATION)):
-                cand = ARCHETYPE_ROTATION[(start_i + offset) % len(ARCHETYPE_ROTATION)]
-                if cand not in recent_archs:
-                    chosen_arch = cand
-                    break
+        recent_archs = set(recent_list)
+        last_arch = recent_list[-1] if recent_list else None
+        same_luminance = last_arch is not None and (_is_dark_arch(chosen_arch) == _is_dark_arch(last_arch))
+        if chosen_arch in recent_archs or same_luminance:
+            target_pool = SAFE_LIGHT_ARCHETYPES if (last_arch and _is_dark_arch(last_arch)) else DARK_ARCHETYPES
+            candidates = [c for c in target_pool if c not in recent_archs] or target_pool
+            chosen_arch = candidates[lookup_idx % len(candidates)]
 
     if chosen_arch != default_arch:
         # Clear custom accent hex so the newly rotated flavour uses its high-contrast default accent
@@ -332,16 +353,17 @@ def build_spec_for_day(day_num, seq_index=None, slot="Evening"):
 
 def auto_remediate_captions(day_dir: Path, spec_path: Path, spec: dict, lint_output: str, attempt: int):
     """
-    Olven Tech 2.1 self-healing remediation engine:
-    - Rotates visual_archetype/editorial_mode across the 8 global poster flavours if Visual Uniqueness blocks.
+    Olven Tech 5.1 self-healing remediation engine:
+    - Rotates visual_archetype/editorial_mode to an opposite-luminance European atelier flavour
+      if Visual Uniqueness blocks (never hijacking onto swiss_zurich_flow 32-sphere art).
     - Strips any AI punctuation, banned buzzwords, hashtag overflow, or Anti-Newspaper char/line overflow.
     """
     rerender_needed = False
 
     if "VISUAL DUPLICATE BLOCK" in lint_output or "ARCHETYPE REPEAT BLOCK" in lint_output:
         cur_arch = spec.get("visual_archetype", ARCHETYPE_ROTATION[0])
-        cur_idx = ARCHETYPE_ROTATION.index(cur_arch) if cur_arch in ARCHETYPE_ROTATION else 0
-        next_arch = ARCHETYPE_ROTATION[(cur_idx + attempt) % len(ARCHETYPE_ROTATION)]
+        pool = SAFE_LIGHT_ARCHETYPES if _is_dark_arch(cur_arch) else DARK_ARCHETYPES
+        next_arch = pool[(attempt - 1) % len(pool)]
         print(f"  [Self-Heal] Rotating editorial flavour from '{cur_arch}' -> '{next_arch}' for maximum grid contrast...")
         spec["visual_archetype"] = next_arch
         spec["editorial_mode"] = next_arch

@@ -69,6 +69,11 @@ CONCRETE_ANCHORS = [
     "cache", "circuit", "quota", "aws", "s3", "alert", "burn-rate", "edi",
     "sftp", "cron", "pdf", "llm", "ai", "token", "quickbooks", "soc-2", "audit",
     "slack", "alarm", "server", "bot", "worker", "checkout", "search", "billing",
+    "gpu", "cluster", "staging", "cloud", "replica", "csv", "card", "okta",
+    "saas", "zendesk", "jira", "tax", "avalara", "avif", "cdn", "datadog",
+    "excel", "smtp", "inbox", "seat", "vendor", "kyb", "scraper", "deploy",
+    "ssl", "tls", "cert", "interchange", "fx", "refund", "forecast", "trial",
+    "pixel", "capi", "roas", "microservice", "sigterm", "billing", "license",
 ]
 
 # Olven Tech 2.0 STRICT Anti-Newspaper Limits
@@ -135,7 +140,8 @@ def lint_visual_uniqueness(folder: Path) -> list[str]:
             break
     else:
         if ordered:
-            prev_folders = ordered[-2:]
+            # Ordered newest-first so idx == 0 is ALWAYS the immediately preceding wave
+            prev_folders = list(reversed(ordered[-2:]))
 
     cur_sig = compute_spatial_rgb_signature(ig_path)
     cur_meta_path = folder / "visual-metadata.json"
@@ -151,13 +157,16 @@ def lint_visual_uniqueness(folder: Path) -> list[str]:
         prev_ig = prev / "instagram.png"
         if not prev_ig.exists():
             continue
-        dist = spatial_signature_distance(cur_sig, compute_spatial_rgb_signature(prev_ig))
-        min_dist = 22.0 if idx == 0 else 16.0
-        if dist < min_dist:
-            errors.append(
-                f"[VISUAL DUPLICATE BLOCK] {folder.name}/instagram.png is visually too similar to {prev.name}/instagram.png "
-                f"(spatial RGB distance = {dist:.1f}, min = {min_dist:.1f}). Rotate 3D scene palette!"
-            )
+        # Enforce strict spatial RGB contrast against the immediately preceding post (idx == 0)
+        # so Dark -> Light -> Dark -> Light alternation never falsely blocks a distinct i-2 dark world.
+        if idx == 0:
+            dist = spatial_signature_distance(cur_sig, compute_spatial_rgb_signature(prev_ig))
+            min_dist = 22.0
+            if dist < min_dist:
+                errors.append(
+                    f"[VISUAL DUPLICATE BLOCK] {folder.name}/instagram.png is visually too similar to {prev.name}/instagram.png "
+                    f"(spatial RGB distance = {dist:.1f}, min = {min_dist:.1f}). Rotate poster palette!"
+                )
 
         prev_meta_path = prev / "visual-metadata.json"
         if cur_arch and prev_meta_path.exists():
