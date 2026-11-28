@@ -493,6 +493,18 @@ def _get_gemini_model_cascade() -> list[str]:
     return cascade
 
 
+def _gemini_endpoints(model: str) -> list[str]:
+    base = os.environ.get("GEMINI_BASE_URL", "").strip().rstrip("/")
+    if base:
+        if "/models" in base:
+            return [f"{base}/{model}:generateContent"]
+        return [f"{base}/v1beta/models/{model}:generateContent"]
+    return [
+        f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+        f"https://aiplatform.googleapis.com/v1/publishers/google/models/{model}:generateContent",
+    ]
+
+
 def _call_gemini_text(
     api_key: str,
     system_prompt: str,
@@ -501,13 +513,13 @@ def _call_gemini_text(
     use_google_search: bool = False,
 ) -> tuple[str, str]:
     """
-    Calls Gemini 4 Neon -> Gemini 4 Hydrogen (free+paid) -> Gemini 3.8 Flash cascade.
+    Calls Gemini 4 Neon -> Gemini 4 Hydrogen (free+paid) -> Gemini 3.8 Flash cascade
+    using modern `x-goog-api-key` auth (supports both AI Studio and Vertex Express `AQ.` keys).
     Supports native Google Search Grounding (5,000 FREE searches/month on Gemini 3/4!).
     Returns (response_text, model_used).
     """
     last_err = None
     for model in _get_gemini_model_cascade():
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
         payload: dict = {
             "system_instruction": {"parts": [{"text": system_prompt}]},
             "contents": [{"role": "user", "parts": [{"text": user_prompt}]}],
@@ -517,26 +529,33 @@ def _call_gemini_text(
         elif json_mode:
             payload["generationConfig"] = {"responseMimeType": "application/json"}
 
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        try:
-            with urllib.request.urlopen(req, timeout=90) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-            parts = data["candidates"][0]["content"]["parts"]
-            text = "".join(p.get("text", "") for p in parts if "text" in p).strip()
-            if text:
-                return text, model
-        except urllib.error.HTTPError as he:
-            body = he.read().decode("utf-8", errors="ignore")[:240]
-            last_err = f"{model} HTTP {he.code}: {body}"
-            print(f"  [Gemini cascade] {model} unavailable (HTTP {he.code}), trying next model...")
-        except Exception as exc:
-            last_err = f"{model}: {exc}"
-            print(f"  [Gemini cascade] {model} failed ({exc}), trying next model...")
+        body_bytes = json.dumps(payload).encode("utf-8")
+        for url in _gemini_endpoints(model):
+            req = urllib.request.Request(
+                url,
+                data=body_bytes,
+                headers={"Content-Type": "application/json", "x-goog-api-key": api_key},
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=90) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                parts = data["candidates"][0]["content"]["parts"]
+                text = "".join(p.get("text", "") for p in parts if "text" in p).strip()
+                if text:
+                    return text, model
+            except urllib.error.HTTPError as he:
+                err_txt = he.read().decode("utf-8", errors="ignore")[:240]
+                last_err = f"{model} HTTP {he.code}: {err_txt}"
+                if he.code == 403 and "aiplatform.googleapis.com" not in url:
+                    # Key may be bound to Vertex Express rather than AI Studio; try second endpoint
+                    continue
+                print(f"  [Gemini cascade] {model} unavailable (HTTP {he.code}), trying next model...")
+                break
+            except Exception as exc:
+                last_err = f"{model}: {exc}"
+                print(f"  [Gemini cascade] {model} failed ({exc}), trying next model...")
+                break
 
     raise RuntimeError(f"All Gemini cascade models failed: {last_err}")
 
@@ -950,35 +969,40 @@ def generate_bespoke_editorial_art(spec: dict, out_dir: Path) -> Path | None:
     cascade = ([override] if override else []) + [m for m in DEFAULT_IMAGE_CASCADE if m != override]
 
     for model in cascade:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
         payload = {
             "contents": [{"role": "user", "parts": [{"text": full_prompt}]}],
             "generationConfig": {"responseModalities": ["IMAGE"]},
         }
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        try:
-            with urllib.request.urlopen(req, timeout=90) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-            for cand in data.get("candidates", []):
-                for part in cand.get("content", {}).get("parts", []):
-                    inline = part.get("inlineData") or part.get("inline_data")
-                    if inline and inline.get("data"):
-                        img_bytes = base64.b64decode(inline["data"])
-                        out_path = out_dir / "hero_art.png"
-                        out_path.write_bytes(img_bytes)
-                        spec["hero_art_path"] = str(out_path)
-                        spec["art_engine"] = model
-                        print(f"  [Stage 3 Bespoke Art OK via {model}] Saved {out_path} ({len(img_bytes)//1024} KB)")
-                        return out_path
-        except urllib.error.HTTPError as he:
-            print(f"  [Stage 3 Art] {model} unavailable (HTTP {he.code}), trying fallback...")
-        except Exception as exc:
-            print(f"  [Stage 3 Art] {model} skipped ({exc}), trying fallback...")
+        body_bytes = json.dumps(payload).encode("utf-8")
+        for url in _gemini_endpoints(model):
+            req = urllib.request.Request(
+                url,
+                data=body_bytes,
+                headers={"Content-Type": "application/json", "x-goog-api-key": api_key},
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=90) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                for cand in data.get("candidates", []):
+                    for part in cand.get("content", {}).get("parts", []):
+                        inline = part.get("inlineData") or part.get("inline_data")
+                        if inline and inline.get("data"):
+                            img_bytes = base64.b64decode(inline["data"])
+                            out_path = out_dir / "hero_art.png"
+                            out_path.write_bytes(img_bytes)
+                            spec["hero_art_path"] = str(out_path)
+                            spec["art_engine"] = model
+                            print(f"  [Stage 3 Bespoke Art OK via {model}] Saved {out_path} ({len(img_bytes)//1024} KB)")
+                            return out_path
+            except urllib.error.HTTPError as he:
+                if he.code == 403 and "aiplatform.googleapis.com" not in url:
+                    continue
+                print(f"  [Stage 3 Art] {model} unavailable (HTTP {he.code}), trying fallback...")
+                break
+            except Exception as exc:
+                print(f"  [Stage 3 Art] {model} skipped ({exc}), trying fallback...")
+                break
 
     spec["art_engine"] = "procedural-atelier"
     return None
