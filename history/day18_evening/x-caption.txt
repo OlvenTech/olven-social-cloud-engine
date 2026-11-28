@@ -1,0 +1,3 @@
+A 20TB drive jumped from $12.50/TB to $27.50/TB in two years.
+We cut 10-disk server pools to 5 slots without cloud storage bloat.
+contact@olventech.com

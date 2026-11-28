@@ -1,3 +1,0 @@
-Senior engineers burned 110 hours taking AWS screenshots every single SOC-2 audit.
-Hash-chained S3 logs cut prep 90% into a 15-second, 1-click export.
-contact@olventech.com

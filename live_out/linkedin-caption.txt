@@ -1,8 +1,7 @@
-Nothing says "happy launch day" like emailing 38 excited customers to confess you sold them sneakers that do not exist.
+A 20TB enterprise drive that cost $249.99 in 2024 now runs $549.99 on sale. Storage jumped from $12.50/TB to $27.50/TB in two years.
 
-Their 15-minute cron re-uploaded all 14,200 SKUs to Shopify, burning GraphQL limits on slow items while hot SKUs oversold for 22 minutes.
+If your server fleet still treats raw disk and cloud retention as cheap, your bill just doubled. Tight ZFS pool planning cuts ten spinners down to five slots without downtime.
 
-We built a Postgres delta-diff worker with a fast lane for SKUs under 5 units.
-98.6% fewer API calls. 1.8s zero-outs. 0 oversells across 6 drops.
+Want storage FinOps audited before hardware renewals hit?
 
-Stop launch-day oversells: contact@olventech.com
+contact@olventech.com

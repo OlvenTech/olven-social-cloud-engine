@@ -1,0 +1,3 @@
+Storage prices spiked $300 per 20TB drive since 2024, reaching $27.50/TB on sale.
+Re-architecting ZFS server pools consolidates 10 aging drives into 5 high-density cloud slots.
+contact@olventech.com

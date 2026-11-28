@@ -1,0 +1,7 @@
+A 20TB enterprise drive that cost $249.99 in 2024 now runs $549.99 on sale. Storage jumped from $12.50/TB to $27.50/TB in two years.
+
+If your server fleet still treats raw disk and cloud retention as cheap, your bill just doubled. Tight ZFS pool planning cuts ten spinners down to five slots without downtime.
+
+Want storage FinOps audited before hardware renewals hit?
+
+contact@olventech.com

@@ -1,3 +1,0 @@
-Making senior devs take 110 hours of AWS screenshots for SOC-2 is a crime against morale.
-Hash-chained S3 audit vaults -> 15-second 1-click export, 0 findings.
-contact@olventech.com
